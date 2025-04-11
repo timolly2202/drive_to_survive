@@ -32,7 +32,7 @@ def generate_launch_description():
     )
     gui_arg = DeclareLaunchArgument(
         'gui',
-        default_value='false',
+        default_value='false', # set to true if you want GUI Gazebo
         description='Whether to launch gzclient GUI'
     )
 
