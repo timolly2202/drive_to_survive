@@ -17,9 +17,7 @@ from launch.conditions import IfCondition
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch_ros.actions import Node, PushRosNamespace
 from launch_ros.substitutions import FindPackageShare
-
 from ament_index_python.packages import get_package_share_directory
-
 
 def generate_launch_description():
     # ------------------- 1) Declare Launch Arguments -------------------
@@ -30,23 +28,30 @@ def generate_launch_description():
         ]),
         description='Path to the world SDF, default is race_track.world'
     )
+
     gui_arg = DeclareLaunchArgument(
         'gui',
-        default_value='false', # set to true if you want GUI Gazebo
+        default_value='true', # set to true to launch gzclient GUI Gazebo
         description='Whether to launch gzclient GUI'
     )
 
-    # For environment models
-    # We append the 'gazebo_tf/models' directory into GAZEBO_MODEL_PATH
+    use_rviz_arg = DeclareLaunchArgument(
+        'use_rviz',
+        default_value='false', # set to true to launch RViz
+        description='Whether to launch RViz'
+    )
+
     set_model_path = AppendEnvironmentVariable(
         name='GAZEBO_MODEL_PATH',
         value=os.path.join(get_package_share_directory('gazebo_tf'), 'models')
     )
 
-    # ------------------- 2) Load world, spawn Gazebo server/client -------------------
+    # Load arguments
     world_path = LaunchConfiguration('world_path')
     gui = LaunchConfiguration('gui')
+    use_rviz = LaunchConfiguration('use_rviz')
 
+    # ------------------- 2) Start Gazebo (server + client) -------------------
     gzserver = ExecuteProcess(
         cmd=['gzserver',
              '-s', 'libgazebo_ros_init.so',
@@ -61,13 +66,13 @@ def generate_launch_description():
         condition=IfCondition(gui),  # only if gui:=true
     )
 
-    # ------------------- 3) RViZ Node (optional) -------------------
-    # Using a sample config from 'gazebo_tf/rviz/audi.rviz'
+    # ------------------- 3) Conditionally Launch RViz -------------------
     rviz_node = Node(
+        condition=IfCondition(use_rviz),
         package='rviz2',
         executable='rviz2',
         name='a3_audi_rviz',
-        output={'both': 'log'},
+        output='screen',
         arguments=[
             '-d',
             os.path.join(
@@ -78,32 +83,29 @@ def generate_launch_description():
         ]
     )
 
-    # ------------------- 4) Generate robot_description from Xacro -------------------
-    # We'll pass this to the child audibot_robot.launch.py
+    # ------------------- 4) Xacro -> robot_description -------------------
     audibot_xacro = os.path.join(
         get_package_share_directory('audibot_description'),
         'urdf',
         'audibot.urdf.xacro'
     )
-    # This Command(...) runs xacro on the .urdf.xacro
-    # We'll store it in a LaunchConfiguration called 'robot_description'
     robot_description_cmd = Command([
         FindExecutable(name='xacro'),
         ' ',
         audibot_xacro,
         ' ',
-        'pub_tf:=true',  # optional arguments
+        'pub_tf:=true',
         ' ',
-        'blue:=false',   # pass "false" => "orange" car
+        'blue:=false',   # orange car
     ])
 
     declare_robot_description_arg = DeclareLaunchArgument(
         'robot_description',
         default_value=robot_description_cmd,
-        description='Combined URDF for Audibot (orange version)'
+        description='Combined URDF for the orange Audibot'
     )
 
-    # ------------------- 5) Spawn the "orange" Audibot with above URDF -------------------
+    # ------------------- 5) Spawn the orange Audibot -------------------
     orange_audibot_options = {
         'robot_name': 'orange',
         'start_x': '24.2',
@@ -113,13 +115,11 @@ def generate_launch_description():
         'pub_tf': 'true',
         'tf_freq': '100.0',
         'blue': 'false',
-        # crucially: pass the same LaunchConfiguration('robot_description')
         'robot_description': LaunchConfiguration('robot_description')
     }
 
-    # We'll nest the existing audibot_gazebo => audibot_robot.launch.py
     spawn_orange_audibot = GroupAction([
-        PushRosNamespace('orange'),  # put in "orange/" namespace
+        PushRosNamespace('orange'),
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource([
                 os.path.join(
@@ -132,21 +132,21 @@ def generate_launch_description():
         )
     ])
 
-    # ------------------- 6) A small "callback" so we only spawn after gzserver is up -------------------
+    # Wait 5s after gzserver starts, then spawn
     spawn_orange_robot_callback = RegisterEventHandler(
         event_handler=OnProcessStart(
             target_action=gzserver,
             on_start=[
                 LogInfo(msg='gzserver has started!'),
                 TimerAction(
-                    period=5.0,  # wait 5s
+                    period=5.0,
                     actions=[spawn_orange_audibot],
                 )
             ]
         )
     )
 
-    # ------------------- 7) Extra "gazebo_connect" Node (some custom bridging) -------------------
+    # ------------------- 6) "gazebo_connect" bridging node -------------------
     gazebo_connect_node = Node(
         package='gazebo_tf',
         executable='gazebo_connect',
@@ -154,26 +154,25 @@ def generate_launch_description():
         parameters=[{'use_sim_time': False}]
     )
 
-    # ------------------- 8) Build final LaunchDescription -------------------
+    # ------------------- 7) Build LaunchDescription -------------------
     ld = LaunchDescription()
 
-    # Add all declared arguments
+    # Add declared arguments
     ld.add_action(world_path_arg)
     ld.add_action(gui_arg)
+    ld.add_action(use_rviz_arg)
     ld.add_action(declare_robot_description_arg)
 
-    # Set environment for models
+    # Env for models
     ld.add_action(set_model_path)
 
-    # Start Gazebo
+    # Start Gazebo stuff
     ld.add_action(gzserver)
     ld.add_action(gzclient)
-
-    # Start bridging + spawn robot
     ld.add_action(gazebo_connect_node)
     ld.add_action(spawn_orange_robot_callback)
 
-    # Launch RViz
+    # Conditionally run RViz
     ld.add_action(rviz_node)
 
     return ld
