@@ -1,7 +1,7 @@
 # drive_to_survive
 
 > **AI in Robotics group project using an Audi model from PFMS** to learn a race track and increase speed.  
-> **ROS 2** (Humble or Foxy) + Gazebo + RViz environment.
+> **ROS 2** (Humble) + Gazebo + RViz environment.
 
 ---
 
