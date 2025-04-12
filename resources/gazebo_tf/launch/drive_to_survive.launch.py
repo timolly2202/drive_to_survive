@@ -31,13 +31,13 @@ def generate_launch_description():
 
     gui_arg = DeclareLaunchArgument(
         'gui',
-        default_value='true', # set to true to launch gzclient GUI Gazebo
+        default_value='false', # set to true to launch gzclient GUI Gazebo
         description='Whether to launch gzclient GUI'
     )
 
     use_rviz_arg = DeclareLaunchArgument(
         'use_rviz',
-        default_value='false', # set to true to launch RViz
+        default_value='true', # set to true to launch RViz
         description='Whether to launch RViz'
     )
 

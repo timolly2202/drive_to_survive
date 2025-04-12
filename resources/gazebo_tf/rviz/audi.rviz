@@ -25,6 +25,9 @@ Panels:
     Name: Time
     SyncMode: 0
     SyncSource: Audi LaserScan
+
+
+
 Visualization Manager:
   Class: ""
   Displays:
@@ -258,6 +261,53 @@ Visualization Manager:
           Visual Enabled: true
       Enabled: true
       Name: Audi
+        # =========================
+# =========== 4 Camera Displays ===========
+
+    - Class: rviz_default_plugins/Image
+      Name: Audi Front Camera
+      Enabled: true
+      Topic:
+        Value: /orange/front_camera_sensor/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+      Median window: 5
+      Min Value: 0
+      Max Value: 1
+
+    - Class: rviz_default_plugins/Image
+      Name: Audi Back Camera
+      Enabled: true
+      Topic:
+        Value: /orange/back_camera_sensor/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+      Median window: 5
+      Min Value: 0
+      Max Value: 1
+
+    - Class: rviz_default_plugins/Image
+      Name: Audi Left Camera
+      Enabled: true
+      Topic:
+        Value: /orange/left_camera_sensor/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+      Median window: 5
+      Min Value: 0
+      Max Value: 1
+
+    - Class: rviz_default_plugins/Image
+      Name: Audi Right Camera
+      Enabled: true
+      Topic:
+        Value: /orange/right_camera_sensor/image_raw
+        Reliability Policy: Best Effort
+      Normalize Range: true
+      Median window: 5
+      Min Value: 0
+      Max Value: 1
+
   Enabled: true
   Global Options:
     Background Color: 48; 48; 48

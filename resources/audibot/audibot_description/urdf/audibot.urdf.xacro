@@ -183,16 +183,39 @@
   <joint name="laser_joint" type="fixed">
     <parent link="base_link" />
     <child link="laser_link" />
-    <origin xyz="${body_depth -1.05} 0 0.1" rpy="0 0 0"/>
+    <origin xyz="${body_depth -3.4} 0 0.2" rpy="0 0 0"/>
   </joint>
   <link name="laser_link"/>
 
-  <joint name="camera_joint" type="fixed">
+  <joint name="camera_joint" type="fixed">  <!-- Front Camera - below onwards changed -->
     <parent link="base_link" />
     <child link="camera_link" />
     <origin xyz="${body_depth -1.05} 0 0.2" rpy="0 0 0"/>
   </joint>
   <link name="camera_link"/>
+
+  <joint name="cam_back_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="camera_back_link"/>
+  <origin xyz="-2.0 0.0 0.2" rpy="0 0 3.14159"/> 
+</joint>
+<link name="camera_back_link"/>
+
+<joint name="cam_left_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="camera_left_link"/>
+  <origin xyz="0.0 1.0 0.2" rpy="0 0 1.5708"/> 
+</joint>
+<link name="camera_left_link"/>
+
+<joint name="cam_right_joint" type="fixed">
+  <parent link="base_link"/>
+  <child link="camera_right_link"/>
+  <origin xyz="0.0 -1.0 0.2" rpy="0 0 -1.5708"/> 
+</joint>
+<link name="camera_right_link"/>
+<!-- camera setup -->
+
 
   <xacro:rear_wheel name="rl" x="${-half_wheelbase}" y="${half_rear_track_width}" z="0" flip="1" />
   <xacro:rear_wheel name="rr" x="${-half_wheelbase}" y="${-half_rear_track_width}" z="0" flip="0" />
@@ -237,13 +260,13 @@
           <horizontal>
             <samples>640</samples>
             <resolution>1</resolution>
-            <min_angle>-1.5707</min_angle>
-            <max_angle>1.5707</max_angle>
+            <min_angle>-3.14159</min_angle>
+            <max_angle>3.14159</max_angle>
           </horizontal>
         </scan>
         <range>
-          <min>0.10</min>
-          <max>30.0</max>
+          <min>2.5</min>
+          <max>100.0</max>
           <resolution>0.01</resolution>
         </range>
         <noise>
@@ -263,49 +286,164 @@
     </sensor>
   </gazebo>
 
-    <gazebo reference="camera_link">
-      <!-- front camera -->
-      <sensor type="camera" name="front_camera">
-        <camera>
-          <horizontal_fov>2.1</horizontal_fov>
-          <image>
-            <width>640</width>
-            <height>480</height>
-            <format>R8G8B8</format>
-          </image>
-          <clip>
-            <near>0.1</near>
-            <far>100</far>
-          </clip>
-          <noise>
-            <type>gaussian</type>
-            <mean>0.0</mean>
-            <stddev>0.005</stddev>
-          </noise>
-        </camera>
-        <visualize>true</visualize>
-        <plugin name='front_camera' filename='libgazebo_ros_camera.so'>
-          <ros>
-            <namespace>/$(arg robot_name)</namespace>
-            <!--remapping>~/out:=laserscan</remapping-->
-          </ros>
-          <frame_name>$(arg robot_name)/camera_link</frame_name>
-          <!--output_type>sensor_msgs/LaserScan</output_type-->
-          <alwaysOn>true</alwaysOn>
-          <updateRate>15.0</updateRate>
-          <cameraName>$(arg robot_name)/camera</cameraName>
-          <imageTopicName>$(arg robot_name)/camera/image_raw</imageTopicName>
-          <cameraInfoTopicName>$(arg robot_name)/camera/camera_info</cameraInfoTopicName>
-          <!--frameName>camera_link</frameName-->
-          <hackBaseline>0.07</hackBaseline>
-          <distortionK1>0.0</distortionK1>
-          <distortionK2>0.0</distortionK2>
-          <distortionK3>0.0</distortionK3>
-          <distortionT1>0.0</distortionT1>
-          <distortionT2>0.0</distortionT2>          
-        </plugin>
-      </sensor>
-    </gazebo>
+    <!-- ====== FRONT CAMERA ====== -->
+<gazebo reference="camera_link">
+  <sensor type="depth" name="front_camera_sensor">
+    <camera>
+      <horizontal_fov>2.1</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.005</stddev>
+      </noise>
+    </camera>
+    <visualize>true</visualize>
+
+    <!-- "libgazebo_ros_depth_camera.so" for RGB-D -->
+    <plugin name="front_camera_plugin" filename="libgazebo_ros_camera.so">
+      <ros>
+        <namespace>/$(arg robot_name)</namespace>
+      </ros>
+      <frame_name>$(arg robot_name)/camera_link</frame_name>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>15.0</updateRate>
+
+      <!-- Topics for color + depth -->
+      <cameraName>$(arg robot_name)/front_camera</cameraName>
+      <imageTopicName>$(arg robot_name)/front_camera/image_raw</imageTopicName>
+      <cameraInfoTopicName>$(arg robot_name)/front_camera/camera_info</cameraInfoTopicName>
+      <depthImageTopicName>$(arg robot_name)/front_camera/depth/image_raw</depthImageTopicName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+<!-- ====== BACK CAMERA ====== -->
+<gazebo reference="camera_back_link">
+  <sensor type="depth" name="back_camera_sensor">
+    <camera>
+      <horizontal_fov>2.1</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.005</stddev>
+      </noise>
+    </camera>
+    <visualize>true</visualize>
+
+    <plugin name="back_camera_plugin" filename="libgazebo_ros_camera.so">
+      <ros>
+        <namespace>/$(arg robot_name)</namespace>
+      </ros>
+      <frame_name>$(arg robot_name)/camera_back_link</frame_name>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>15.0</updateRate>
+
+      <!-- Topics for color + depth -->
+      <cameraName>$(arg robot_name)/back_camera</cameraName>
+      <imageTopicName>$(arg robot_name)/back_camera/image_raw</imageTopicName>
+      <cameraInfoTopicName>$(arg robot_name)/back_camera/camera_info</cameraInfoTopicName>
+      <depthImageTopicName>$(arg robot_name)/back_camera/depth/image_raw</depthImageTopicName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+<!-- ====== LEFT CAMERA ====== -->
+<gazebo reference="camera_left_link">
+  <sensor type="depth" name="left_camera_sensor">
+    <camera>
+      <horizontal_fov>2.1</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.005</stddev>
+      </noise>
+    </camera>
+    <visualize>true</visualize>
+
+    <plugin name="left_camera_plugin" filename="libgazebo_ros_camera.so">
+      <ros>
+        <namespace>/$(arg robot_name)</namespace>
+      </ros>
+      <frame_name>$(arg robot_name)/camera_left_link</frame_name>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>15.0</updateRate>
+      <!-- Topics for color + depth -->
+      <cameraName>$(arg robot_name)/left_camera</cameraName>
+      <imageTopicName>$(arg robot_name)/left_camera/image_raw</imageTopicName>
+      <cameraInfoTopicName>$(arg robot_name)/left_camera/camera_info</cameraInfoTopicName>
+      <depthImageTopicName>$(arg robot_name)/left_camera/depth/image_raw</depthImageTopicName>
+    </plugin>
+  </sensor>
+</gazebo>
+
+
+<!-- ====== RIGHT CAMERA ====== -->
+<gazebo reference="camera_right_link">
+  <sensor type="depth" name="right_camera_sensor">
+    <camera>
+      <horizontal_fov>2.1</horizontal_fov>
+      <image>
+        <width>640</width>
+        <height>480</height>
+        <format>R8G8B8</format>
+      </image>
+      <clip>
+        <near>0.1</near>
+        <far>100</far>
+      </clip>
+      <noise>
+        <type>gaussian</type>
+        <mean>0.0</mean>
+        <stddev>0.005</stddev>
+      </noise>
+    </camera>
+    <visualize>true</visualize>
+
+    <plugin name="right_camera_plugin" filename="libgazebo_ros_camera.so">
+      <ros>
+        <namespace>/$(arg robot_name)</namespace>
+      </ros>
+      <frame_name>$(arg robot_name)/camera_right_link</frame_name>
+      <alwaysOn>true</alwaysOn>
+      <updateRate>15.0</updateRate>
+      <!-- Topics for color + depth -->
+      <cameraName>$(arg robot_name)/right_camera</cameraName>
+      <imageTopicName>$(arg robot_name)/right_camera/image_raw</imageTopicName>
+      <cameraInfoTopicName>$(arg robot_name)/right_camera/camera_info</cameraInfoTopicName>
+      <depthImageTopicName>$(arg robot_name)/right_camera/depth/image_raw</depthImageTopicName>
+    </plugin>
+  </sensor>
+</gazebo>
+
 
 
 </robot>
