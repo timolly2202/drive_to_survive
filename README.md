@@ -68,9 +68,9 @@ source install/setup.bash
 5. **Launch Environment**
 ```bash
 # default launch config is RVIZ only, no gazebo:
-ros2 launch drive_to_survive drive_to_survive.launch.py
+ros2 launch gazebo_tf drive_to_survive.launch.py
 # to launch gazebo and no rviz:
-ros2 launch drive_to_survive drive_to_survive.launch.py gui:=true use_rviz:=false 
+ros2 launch gazebo_tf drive_to_survive.launch.py gui:=true use_rviz:=false 
 # to launch rviz and no gazebo:
-ros2 launch drive_to_survive drive_to_survive.launch.py gui:=false use_rviz:=true 
+ros2 launch gazebo_tf drive_to_survive.launch.py gui:=false use_rviz:=true 
 ```
