@@ -72,7 +72,7 @@ Make sure your robot simulation or hardware is publishing the following topics:
 Then launch the clustering node:
 
 ```bash
-ros2 run cluster_puck laser_to_global
+ros2 run cluster_puck lidar_processing
 ```
 
 ---

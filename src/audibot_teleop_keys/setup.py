@@ -1,6 +1,6 @@
 from setuptools import find_packages, setup
 
-package_name = 'cluster_puck'
+package_name = 'audibot_teleop_keys'
 
 setup(
     name=package_name,
@@ -15,12 +15,12 @@ setup(
     zip_safe=True,
     maintainer='jarred',
     maintainer_email='jarred.g.deluca@student.uts.edu.au',
-    description='Laser scan to global point cloud and marker visualizer',
-    license='MIT',
+    description='TODO: Package description',
+    license='TODO: License declaration',
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'lidar_processing = cluster_puck.lidar_processing:main',
+            'teleop_keys = audibot_teleop_keys.teleop_keys:main',
         ],
     },
 )
