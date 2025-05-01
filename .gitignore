@@ -1,5 +1,6 @@
 log/
 install/
+yolo_training/drive-to-survive.v2i.yolov8
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

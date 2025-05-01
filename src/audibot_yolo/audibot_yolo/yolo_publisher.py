@@ -7,6 +7,18 @@ from cv_bridge import CvBridge
 bridge = CvBridge()
 
 """
+@software{yolov8_ultralytics,
+  author = {Glenn Jocher and Ayush Chaurasia and Jing Qiu},
+  title = {Ultralytics YOLOv8},
+  version = {8.0.0},
+  year = {2023},
+  url = {https://github.com/ultralytics/ultralytics},
+  orcid = {0000-0001-5950-6979, 0000-0002-7603-6750, 0000-0003-3783-7069},
+  license = {AGPL-3.0}
+}
+"""
+
+"""
 SUBSCRIPTIONS:
 /orange/front_camera_sensor/image_raw
 /orange/back_camera_sensor/image_raw
@@ -23,7 +35,7 @@ PUBLISHERS:
 class Camera_subscriber(Node):
     def __init__(self):
         super().__init__('camera_subscriber')
-        self.model = YOLO('yolo/yolov8n.pt')
+        self.model = YOLO('resources/yolo/weights.pt')
 
         self.front_cam_subscription = self.create_subscription(
             Image,
