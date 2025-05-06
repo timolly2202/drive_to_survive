@@ -3,10 +3,10 @@ from svm_cone_classifier import ConeClassifierSVM
 
 def main():
     # Path to your dataset CSV
-    csv_path = '../training_data/cluster_training_data.csv'
+    csv_path = '/home/jarred/git/drive_to_survive/src/cluster_puck/training_data/cluster_training_data_v2.csv'
 
     # Path to save the trained SVM model
-    model_path = '../svm_weights/svm_cone_classifier.pkl'
+    model_path = '/home/jarred/git/drive_to_survive/src/cluster_puck/svm_weights/svm_cone_classifier_v2.pkl'
 
     print(f"📂 Training from: {csv_path}")
     print(f"💾 Model will be saved to: {model_path}")

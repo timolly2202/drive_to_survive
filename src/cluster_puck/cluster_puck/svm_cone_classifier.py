@@ -7,10 +7,11 @@ import joblib
 import os
 
 class ConeClassifierSVM:
-    def __init__(self, model_path='/home/jarred/git/drive_to_survive/src/cluster_puck/svm_weights/svm_cone_classifier.pkl'):
+    def __init__(self, model_path='/home/jarred/git/drive_to_survive/src/cluster_puck/svm_weights/svm_cone_classifier_v2.pkl'):
         self.model_path = model_path
         self.model = None
-        self.feature_names = ['extent_x', 'extent_y', 'aspect_ratio', 'area', 'num_points']
+        # UPDATED feature list
+        self.feature_names = ['extent_x', 'extent_y', 'aspect_ratio', 'area', 'num_points', 'compactness', 'elongation', 'density']
 
     def train(self, csv_path):
         """Train the SVM classifier from a CSV dataset and save the model."""
@@ -43,10 +44,12 @@ class ConeClassifierSVM:
         self.model = joblib.load(self.model_path)
         print(f"📥 Loaded model from {self.model_path}")
 
-    def predict(self, features):
-        """Predict if the current features correspond to a cone."""
+    def predict(self, features, threshold=0.95):
+        """Predict if the current features correspond to a cone based on probability threshold."""
         if self.model is None:
             raise RuntimeError("Model not loaded or trained.")
         
         features_df = pd.DataFrame([features], columns=self.feature_names)
-        return int(self.model.predict(features_df)[0])
+        prob = self.model.predict_proba(features_df)[0][1]  # Probability it's a cone (label=1)
+
+        return int(prob > threshold)

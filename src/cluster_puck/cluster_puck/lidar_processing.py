@@ -38,7 +38,7 @@ class LidarProcessing(Node):
         self.waiting_for_label = False
         self.processing_cluster = False
         self.current_cluster_features = None
-        self.dataset_path = '/home/jarred/git/drive_to_survive/src/cluster_puck/training_data/cluster_training_data.csv'
+        self.dataset_path = '/home/jarred/git/drive_to_survive/src/cluster_puck/training_data/cluster_training_data_v2.csv'
 
         if self.recording_enabled and not os.path.exists(self.dataset_path):
             with open(self.dataset_path, 'w', newline='') as f:
@@ -104,11 +104,26 @@ class LidarProcessing(Node):
                     yaw = math.atan2(axes[0][1], axes[0][0])
                     quat = tf_transformations.quaternion_from_euler(0, 0, yaw)
 
+                    # Calculate new features
+                    extent_x, extent_y = lengths
+                    aspect_ratio = extent_x / extent_y if extent_y != 0 else 0.0
+                    area = extent_x * extent_y
+                    num_points = len(cluster_pts)
+
+                    # New features
+                    compactness = np.mean(np.linalg.norm(cluster_pts[:, :2] - center_local, axis=1))
+                    elongation = lengths[0] / lengths[1] if lengths[1] != 0 else 0.0
+                    density = num_points / area if area != 0 else 0.0
+
                     features = [
-                        lengths[0], lengths[1],
-                        lengths[0] / lengths[1] if lengths[1] != 0 else 0.0,
-                        lengths[0] * lengths[1],
-                        len(cluster_pts)
+                        extent_x,
+                        extent_y,
+                        aspect_ratio,
+                        area,
+                        num_points,
+                        compactness,
+                        elongation,
+                        density
                     ]
 
                     is_cone = self.svm.predict(features)
