@@ -52,7 +52,7 @@ Make sure the Audibot simulator or system is running and ready to receive comman
 Then run:
 
 ```bash
-ros2 run audibot_teleop_keys audibot_teleop_keys
+ros2 run audibot_teleop_keys teleop_keys
 ```
 
 You’ll see a printed menu in your terminal. Use the keyboard to control the robot.
