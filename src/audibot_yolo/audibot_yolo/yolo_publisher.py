@@ -4,6 +4,9 @@ from rclpy.node import Node
 from sensor_msgs.msg import Image
 from cv_bridge import CvBridge
 
+from yolo_msg.msg import BoundingBox
+from yolo_msg.msg import YoloDetections
+
 bridge = CvBridge()
 
 """
@@ -36,6 +39,8 @@ class Camera_subscriber(Node):
     def __init__(self):
         super().__init__('camera_subscriber')
         self.model = YOLO('resources/yolo/weights.pt')
+
+        self.yolo_detections = YoloDetections()
 
         self.front_cam_subscription = self.create_subscription(
             Image,
