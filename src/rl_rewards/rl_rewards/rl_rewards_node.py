@@ -6,6 +6,9 @@ from std_msgs.msg import Float32MultiArray, Bool, String, Float32
 from nav_msgs.msg import Odometry
 import numpy as np
 import time
+from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import Point
+import json
 
 class RLRewardsNode(Node):
     def __init__(self):
@@ -34,6 +37,18 @@ class RLRewardsNode(Node):
         self.create_timer(0.1, self.timer_callback)
 
         self.get_logger().info("RL Rewards Node has been started.")
+
+        # Load goal data from JSON
+        with open('/home/jarred/git/drive_to_survive/src/rl_rewards/goals/goals.json', 'r') as f:  # update path
+            self.goals_data = json.load(f)['goals']
+
+        # Publisher for visualization
+        self.marker_pub = self.create_publisher(MarkerArray, '/goal_markers', 10)
+
+        # Timer to publish visualization once
+        self.visualized = False
+        self.create_timer(1.0, self.publish_goal_visuals)
+
 
     def yolo_callback(self, msg):
         """
@@ -117,6 +132,50 @@ class RLRewardsNode(Node):
         except ValueError:
             self.get_logger().error(f"Invalid goal format: {goal_str}")
             return 0.0, 0.0
+        
+    def publish_goal_visuals(self):
+        if self.visualized:
+            return
+
+        marker_array = MarkerArray()
+        for i, goal in enumerate(self.goals_data):
+            # Goal center marker
+            center_marker = Marker()
+            center_marker.header.frame_id = "world"
+            center_marker.type = Marker.TEXT_VIEW_FACING
+            center_marker.action = Marker.ADD
+            center_marker.id = i
+            center_marker.pose.position.x = goal['centre']['x']
+            center_marker.pose.position.y = goal['centre']['y']
+            center_marker.pose.position.z = 1.0  # Floating text
+            center_marker.scale.z = 0.8  # Text size
+            center_marker.color.b = 1.0
+            center_marker.color.a = 1.0
+            center_marker.text = str(i + 1)
+            marker_array.markers.append(center_marker)
+
+            # Prism lines (rectangle connecting the cones)
+            line_marker = Marker()
+            line_marker.header.frame_id = "world"
+            line_marker.type = Marker.LINE_STRIP
+            line_marker.action = Marker.ADD
+            line_marker.id = 100 + i
+            line_marker.scale.x = 0.1
+            line_marker.color.g = 1.0
+            line_marker.color.a = 0.4  # Transparent green
+
+            points = []
+            for j in range(4):
+                cone = goal['cones'][j]
+                pt = Point(x=cone['x'], y=cone['y'], z=0.0)
+                points.append(pt)
+            points.append(points[0])  # Close the loop
+
+            line_marker.points = points
+            marker_array.markers.append(line_marker)
+
+        self.marker_pub.publish(marker_array)
+        self.visualized = True
 
 def main(args=None):
     rclpy.init(args=args)
