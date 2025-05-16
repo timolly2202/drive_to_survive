@@ -9,12 +9,18 @@ import time
 from visualization_msgs.msg import Marker, MarkerArray
 from geometry_msgs.msg import Point
 import json
+from yolo_msg.msg import YoloDetections  # type: ignore
+import threading
 
 class RLRewardsNode(Node):
     def __init__(self):
+        """
+        Initialize the RLRewardsNode.
+        Sets up parameters, subscribers, publishers, goal data, and threads.
+        """
         super().__init__('rl_rewards_node')
 
-        # Parameters
+        # --- Parameters ---
         self.declare_parameter('goals', [])
         self.goals = self.get_parameter('goals').get_parameter_value().string_array_value
         self.goal_index = 0
@@ -23,123 +29,191 @@ class RLRewardsNode(Node):
         self.last_goal_time = None
         self.total_reward = 0.0
         self.in_track = True
+        self.image_width = 640
 
-        # Subscribers
-        self.create_subscription(Float32MultiArray, '/yolo_cone_tensors', self.yolo_callback, 10)
-        self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.declare_parameter('min_bbox_height', 20.0)
+        self.min_bbox_height = self.get_parameter('min_bbox_height').get_parameter_value().double_value
+
+        # --- Subscribers ---
+        self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.yolo_callback_front, 10)
+        self.create_subscription(YoloDetections, '/orange/back_image_yolo/detections', self.yolo_callback_back, 10)
+        self.create_subscription(YoloDetections, '/orange/left_image_yolo/detections', self.yolo_callback_left, 10)
+        self.create_subscription(YoloDetections, '/orange/right_image_yolo/detections', self.yolo_callback_right, 10)
+        self.create_subscription(Odometry, '/orange/odom', self.odom_callback, 10)
         self.create_subscription(String, '/episode_status', self.episode_status_callback, 10)
 
-        # Publishers
+        # --- Publishers ---
         self.in_track_pub = self.create_publisher(Bool, '/in_track_status', 10)
         self.reward_pub = self.create_publisher(Float32, '/episode_rewards', 10)
 
-        # Timer to periodically check and publish in_track status
+        # --- Marker Publisher and Visualisation ---
+        self.marker_pub = self.create_publisher(MarkerArray, '/goal_markers', 10)
+        self.visualized = False
+        self.create_timer(1.0, self.publish_goal_visuals)
+
+        # --- Timer to Check In-Track Status ---
         self.create_timer(0.1, self.timer_callback)
 
         self.get_logger().info("RL Rewards Node has been started.")
 
-        # Load goal data from JSON
-        with open('/home/jarred/git/drive_to_survive/src/rl_rewards/goals/goals.json', 'r') as f:  # update path
+        # --- Load Goal Data ---
+        with open('~/drive_to_survive/src/rl_rewards/goals/goals.json', 'r') as f:
             self.goals_data = json.load(f)['goals']
 
-        # Publisher for visualization
-        self.marker_pub = self.create_publisher(MarkerArray, '/goal_markers', 10)
+        self.detections = {cam: (False, 0.0) for cam in ['front', 'back', 'left', 'right']}
 
-        # Timer to publish visualization once
-        self.visualized = False
-        self.create_timer(1.0, self.publish_goal_visuals)
+        self.current_position = None
+        self.out_of_track_counter = 0
+        self.required_out_count = 10
+        self.last_in_track = True
+        self.has_looped = False
 
+        self.goal_pub = self.create_publisher(Point, '/current_goal', 10)
+        threading.Thread(target=self.goal_publisher_thread, daemon=True).start()
+        threading.Thread(target=self.goal_checker_thread, daemon=True).start()
 
-    def yolo_callback(self, msg):
-        """
-        Process YOLO detections to determine if the vehicle is within the track.
-        For simplicity, we assume that if any detection is present, the vehicle is within the track.
-        """
-        detections = msg.data
-        self.in_track = len(detections) > 0
+        self.declare_parameter('episode_time_limit', 60.0)
+        self.episode_time_limit = self.get_parameter('episode_time_limit').get_parameter_value().double_value
+        threading.Thread(target=self.episode_timeout_thread, daemon=True).start()
+
+    def yolo_callback_front(self, msg):
+        """Process front camera YOLO detections."""
+        self.process_yolo_detections(msg, 'front')
+
+    def yolo_callback_back(self, msg):
+        """Process back camera YOLO detections."""
+        self.process_yolo_detections(msg, 'back')
+
+    def yolo_callback_left(self, msg):
+        """Process left camera YOLO detections."""
+        self.process_yolo_detections(msg, 'left')
+
+    def yolo_callback_right(self, msg):
+        """Process right camera YOLO detections."""
+        self.process_yolo_detections(msg, 'right')
 
     def odom_callback(self, msg):
-        """
-        Monitor the vehicle's position to determine if it has reached the next goal.
-        """
-        if not self.episode_active or not self.goals:
-            return
-
+        """Update the robot's current position from odometry."""
         position = msg.pose.pose.position
-        current_goal = self.parse_goal(self.goals[self.goal_index])
-
-        distance = np.sqrt((position.x - current_goal[0])**2 + (position.y - current_goal[1])**2)
-
-        if distance < 1.0:  # Threshold to consider goal reached
-            current_time = time.time()
-            if self.last_goal_time is not None:
-                time_taken = current_time - self.last_goal_time
-                self.total_reward -= time_taken  # Penalize time taken
-                self.get_logger().info(f"Reached goal {self.goal_index}: Time taken = {time_taken:.2f}s, Total reward = {self.total_reward:.2f}")
-            else:
-                self.get_logger().info(f"Reached first goal {self.goal_index}")
-
-            self.last_goal_time = current_time
-            self.goal_index = (self.goal_index + 1) % len(self.goals)
+        self.current_position = (position.x, position.y)
 
     def episode_status_callback(self, msg):
-        """
-        Handle the start and end of episodes.
-        """
+        """Handle the start of an episode and reset all internal state."""
         if msg.data.lower() == 'start':
             self.episode_active = True
-            self.episode_start_time = time.time()
-            self.last_goal_time = None
+            now = self.get_clock().now().nanoseconds / 1e9
+            self.episode_start_time = now
+            self.last_goal_time = now
             self.total_reward = 0.0
             self.goal_index = 0
+            self.has_looped = False
+            self.current_position = None
             self.get_logger().info("Episode started.")
-        elif msg.data.lower() == 'end':
-            self.episode_active = False
-            self.publish_reward()
-            self.get_logger().info("Episode ended.")
 
     def timer_callback(self):
-        """
-        Periodically publish the in_track status and update rewards.
-        """
-        if self.episode_active:
-            if not self.in_track:
-                self.total_reward -= 1.0  # Penalize for being out of track
-                self.get_logger().warn(f"Out of track! Total reward = {self.total_reward:.2f}")
+        """Determine if the robot is in-track based on recent YOLO detections."""
+        now = self.get_clock().now().nanoseconds / 1e9
+        expiry_seconds = 0.5
+        active = {cam: active for cam, (active, t) in self.detections.items() if now - t < expiry_seconds and active}
 
-            # Publish in_track status
-            msg = Bool()
-            msg.data = self.in_track
-            self.in_track_pub.publish(msg)
+        left_right = 'left' in active and 'right' in active
+        front_back = 'front' in active and 'back' in active
+        current_in_track = left_right or front_back
+
+        if current_in_track:
+            self.out_of_track_counter = 0
+            if not self.last_in_track:
+                self.get_logger().info("Back in track.")
+            self.in_track = True
+        else:
+            self.out_of_track_counter += 1
+            if self.out_of_track_counter >= self.required_out_count:
+                if self.last_in_track:
+                    self.get_logger().warn("Out of track confirmed.")
+                    self.total_reward -= 100
+                    self.get_logger().warn(f"Penalty applied: Out of track! Total reward = {self.total_reward:.2f}")
+                self.in_track = False
+                self.publish_reward()
+
+        self.last_in_track = self.in_track
+
+        if self.episode_active:
+            self.in_track_pub.publish(Bool(data=self.in_track))
 
     def publish_reward(self):
-        """
-        Publish the total reward at the end of the episode.
-        """
+        """Gracefully end the episode and publish the reward."""
+        if not self.episode_active:
+            return
+        self.episode_active = False
+        self.current_position = None
         msg = Float32()
         msg.data = self.total_reward
         self.reward_pub.publish(msg)
         self.get_logger().info(f"Total reward published: {self.total_reward:.2f}")
 
-    def parse_goal(self, goal_str):
-        """
-        Parse a goal string into (x, y) coordinates.
-        Expected format: "x,y"
-        """
-        try:
-            x_str, y_str = goal_str.split(',')
-            return float(x_str), float(y_str)
-        except ValueError:
-            self.get_logger().error(f"Invalid goal format: {goal_str}")
-            return 0.0, 0.0
-        
+    def goal_checker_thread(self):
+        """Check whether the robot is in a goal region and reward accordingly."""
+        rate = self.create_rate(10)
+        while rclpy.ok():
+            if not self.episode_active or self.current_position is None:
+                time.sleep(0.1)
+                continue
+
+            goal = self.goals_data[self.goal_index]
+            quad = [(c['x'], c['y']) for c in goal['cones']]
+            px, py = self.current_position
+
+            if self.point_in_quad(px, py, quad):
+                current_time = self.get_clock().now().nanoseconds / 1e9
+                time_taken = current_time - self.last_goal_time
+                self.total_reward -= time_taken
+                self.total_reward += 5
+                self.get_logger().info(f"Reached goal {self.goal_index}: Time taken = {time_taken:.2f}s, Total reward = {self.total_reward:.2f}")
+                self.last_goal_time = current_time
+
+                if self.goal_index == 0 and self.has_looped:
+                    self.get_logger().info("Track fully completed by looping to first goal.")
+                    self.publish_reward()
+                    break
+
+                self.goal_index += 1
+                if self.goal_index >= len(self.goals_data):
+                    self.goal_index = 0
+                    self.has_looped = True
+
+                time.sleep(2.0)
+            else:
+                time.sleep(0.1)
+
+    def goal_publisher_thread(self):
+        """Continuously publish the position of the current goal."""
+        rate = self.create_rate(2)
+        while rclpy.ok():
+            if self.episode_active and self.goal_index < len(self.goals_data):
+                goal = self.goals_data[self.goal_index]['centre']
+                msg = Point(x=goal['x'], y=goal['y'], z=0.0)
+                self.goal_pub.publish(msg)
+            time.sleep(0.5)
+
+    def episode_timeout_thread(self):
+        """Enforce time limits per episode and end it if time is exceeded."""
+        rate = self.create_rate(1)
+        while rclpy.ok():
+            if self.episode_active and self.episode_start_time is not None:
+                current_time = self.get_clock().now().nanoseconds / 1e9
+                elapsed = current_time - self.episode_start_time
+                if elapsed > self.episode_time_limit:
+                    self.get_logger().warn(f"Episode timed out after {elapsed:.2f}s.")
+                    self.publish_reward()
+            time.sleep(1.0)
+
     def publish_goal_visuals(self):
+        """Publish RViz markers for all defined goal regions."""
         if self.visualized:
             return
 
         marker_array = MarkerArray()
         for i, goal in enumerate(self.goals_data):
-            # Goal center marker
             center_marker = Marker()
             center_marker.header.frame_id = "world"
             center_marker.type = Marker.TEXT_VIEW_FACING
@@ -147,14 +221,13 @@ class RLRewardsNode(Node):
             center_marker.id = i
             center_marker.pose.position.x = goal['centre']['x']
             center_marker.pose.position.y = goal['centre']['y']
-            center_marker.pose.position.z = 1.0  # Floating text
-            center_marker.scale.z = 0.8  # Text size
+            center_marker.pose.position.z = 1.0
+            center_marker.scale.z = 0.8
             center_marker.color.b = 1.0
             center_marker.color.a = 1.0
             center_marker.text = str(i + 1)
             marker_array.markers.append(center_marker)
 
-            # Prism lines (rectangle connecting the cones)
             line_marker = Marker()
             line_marker.header.frame_id = "world"
             line_marker.type = Marker.LINE_STRIP
@@ -162,22 +235,39 @@ class RLRewardsNode(Node):
             line_marker.id = 100 + i
             line_marker.scale.x = 0.1
             line_marker.color.g = 1.0
-            line_marker.color.a = 0.4  # Transparent green
-
-            points = []
-            for j in range(4):
-                cone = goal['cones'][j]
-                pt = Point(x=cone['x'], y=cone['y'], z=0.0)
-                points.append(pt)
-            points.append(points[0])  # Close the loop
-
+            line_marker.color.a = 0.4
+            points = [Point(x=c['x'], y=c['y'], z=0.0) for c in goal['cones']]
+            points.append(points[0])
             line_marker.points = points
             marker_array.markers.append(line_marker)
 
         self.marker_pub.publish(marker_array)
         self.visualized = True
 
+    def process_yolo_detections(self, msg, cam_name):
+        """Process YOLO messages and register detections per camera."""
+        in_range = any((bbox.bottom - bbox.top) >= self.min_bbox_height for bbox in msg.bounding_boxes)
+        timestamp = self.get_clock().now().nanoseconds / 1e9
+        self.detections[cam_name] = (in_range, timestamp)
+
+    def point_in_quad(self, px, py, quad):
+        """Check if a point is inside a quadrilateral using area comparison."""
+        def area(x1, y1, x2, y2, x3, y3):
+            return abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
+
+        x1, y1 = quad[0]
+        x2, y2 = quad[1]
+        x3, y3 = quad[2]
+        x4, y4 = quad[3]
+        A = area(x1, y1, x2, y2, x3, y3) + area(x1, y1, x3, y3, x4, y4)
+        A1 = area(px, py, x1, y1, x2, y2)
+        A2 = area(px, py, x2, y2, x3, y3)
+        A3 = area(px, py, x3, y3, x4, y4)
+        A4 = area(px, py, x4, y4, x1, y1)
+        return abs(A - (A1 + A2 + A3 + A4)) < 1e-1
+
 def main(args=None):
+    """Entry point for the node."""
     rclpy.init(args=args)
     node = RLRewardsNode()
     rclpy.spin(node)
