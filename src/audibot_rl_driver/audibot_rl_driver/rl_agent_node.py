@@ -2,225 +2,370 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64, String # Added String for episode_status
+from std_msgs.msg import Float64, String
 from nav_msgs.msg import Odometry
-# from geometry_msgs.msg import TwistStamped # Could be an alternative for odometry
-from yolo_msg.msg import YoloDetections # BoundingBox is part of YoloDetections
+from yolo_msg.msg import YoloDetections, BoundingBox # BoundingBox is implicitly used by YoloDetections
 
-# import random # For placeholder random actions initially
+import numpy as np
+import math
 
 # --- RL specific imports (you'll add these as you build out PPO) ---
 # For example, if using a library like Stable Baselines3 (SB3)
 # import gymnasium as gym # Or import gym if using older versions
 # from gymnasium import spaces
-# import numpy as np
 # from stable_baselines3 import PPO
 # from stable_baselines3.common.env_checker import check_env
 
+# Define constants for camera identifiers
+CAM_FRONT = 0
+CAM_LEFT = 1
+CAM_RIGHT = 2
+CAM_BACK = 3 # If you use it
+CAM_UNKNOWN = 4
 
-# Placeholder for your custom RL environment if you build one for SB3
-# class AudiRLEnv(gym.Env):
-#     # ... (implementation of your custom environment) ...
-#     pass
 
 class RLAgentNode(Node):
     def __init__(self):
         super().__init__('audibot_rl_agent_node')
-        self.get_logger().info('RL Agent Node has been started. V2')
+        self.get_logger().info('RL Agent Node with Observation Space V1 has been started.')
 
         # --- Parameters ---
-        # Example: self.declare_parameter('some_rl_parameter', 0.01)
-        #          self.some_rl_param = self.get_parameter('some_rl_parameter').value
+        # YOUR_INPUT_REQUIRED: Define these parameters for your specific setup
+        self.declare_parameter('num_closest_cones', 6)  # N: How many closest cones to consider in observation
+        self.declare_parameter('max_car_speed', 10.0) # m/s, for normalizing speed observation
+        self.declare_parameter('max_car_yaw_rate', 2.0) # rad/s, for normalizing yaw rate
+        self.declare_parameter('max_goal_distance', 50.0) # meters, for normalizing goal distance
+
+        # Image dimensions - crucial for normalization.
+        # These might be the same for all cameras or different.
+        # Get these from your Gazebo camera sensor configuration or Tim.
+        self.declare_parameter('front_cam.image_width', 640) # YOUR_INPUT_REQUIRED
+        self.declare_parameter('front_cam.image_height', 480) # YOUR_INPUT_REQUIRED
+        self.declare_parameter('left_cam.image_width', 640) # YOUR_INPUT_REQUIRED
+        self.declare_parameter('left_cam.image_height', 480) # YOUR_INPUT_REQUIRED
+        self.declare_parameter('right_cam.image_width', 640) # YOUR_INPUT_REQUIRED
+        self.declare_parameter('right_cam.image_height', 480) # YOUR_INPUT_REQUIRED
+        # Add for back camera if used
+
+        self.num_closest_cones = self.get_parameter('num_closest_cones').value
+        self.max_car_speed = self.get_parameter('max_car_speed').value
+        self.max_car_yaw_rate = self.get_parameter('max_car_yaw_rate').value
+        self.max_goal_distance = self.get_parameter('max_goal_distance').value
+
+        self.image_dimensions = {
+            CAM_FRONT: (self.get_parameter('front_cam.image_width').value, self.get_parameter('front_cam.image_height').value),
+            CAM_LEFT: (self.get_parameter('left_cam.image_width').value, self.get_parameter('left_cam.image_height').value),
+            CAM_RIGHT: (self.get_parameter('right_cam.image_width').value, self.get_parameter('right_cam.image_height').value),
+            # CAM_BACK: (self.get_parameter('back_cam.image_width').value, self.get_parameter('back_cam.image_height').value),
+        }
+
+        # Define the size of one cone's feature set in the observation space
+        # norm_center_x, norm_center_y, norm_height, norm_width, present_flag, cam_front, cam_left, cam_right
+        self.cone_feature_size = 4 + 1 + 3 # (x,y,h,w) + present_flag + (one-hot cam type)
+
+        # Calculate total observation space size
+        # car_vel_x, car_yaw_rate, goal_dist, goal_angle_cos, goal_angle_sin + N * cone_feature_size
+        self.observation_size = 2 + 3 + (self.num_closest_cones * self.cone_feature_size)
+        self.get_logger().info(f"Observation space size: {self.observation_size}")
+
 
         # --- Publishers (for controlling the car) ---
         self.throttle_pub = self.create_publisher(Float64, '/orange/throttle_cmd', 10)
         self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10)
         self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)
-        self.get_logger().info('Vehicle control publishers initialized.')
 
         # --- Subscribers (for getting information from the environment) ---
-        # YOLO Detections from different cameras
-        self.front_yolo_sub = self.create_subscription(
-            YoloDetections,
-            '/orange/front_image_yolo/detections', # Confirmed topic
-            self.front_yolo_callback,
-            10)
-        self.left_yolo_sub = self.create_subscription(
-            YoloDetections,
-            '/orange/left_image_yolo/detections',  # Confirmed topic
-            self.left_yolo_callback,
-            10)
-        self.right_yolo_sub = self.create_subscription(
-            YoloDetections,
-            '/orange/right_image_yolo/detections', # Confirmed topic
-            self.right_yolo_callback,
-            10)
-        # Optional: Subscribe to back camera if needed for your strategy
-        # self.back_yolo_sub = self.create_subscription(
-        #     YoloDetections,
-        #     '/orange/back_image_yolo/detections',
-        #     self.back_yolo_callback,
-        #     10)
-        
-        # Car's Odometry (for position, orientation, speed)
-        self.odom_sub = self.create_subscription(
-            Odometry,
-            '/odom', # As per README(audibot_gazebo).md
-            self.odom_callback,
-            10)
-        
-        # Episode status from Jarred's node (e.g., for resets)
-        self.episode_status_sub = self.create_subscription(
-            String, # Assuming Jarred uses std_msgs.msg.String
-            '/episode_status', # As per rl_rewards_node.py.txt
-            self.episode_status_callback,
-            10)
+        self.front_yolo_sub = self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.front_yolo_callback, 10)
+        self.left_yolo_sub = self.create_subscription(YoloDetections, '/orange/left_image_yolo/detections', self.left_yolo_callback, 10)
+        self.right_yolo_sub = self.create_subscription(YoloDetections, '/orange/right_image_yolo/detections', self.right_yolo_callback, 10)
+        self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
+        self.episode_status_sub = self.create_subscription(String, '/episode_status', self.episode_status_callback, 10)
 
-        # (Potentially) Jarred's direct reward or in_track status
-        # self.reward_sub = self.create_subscription(Float32, '/episode_rewards', self.reward_callback, 10)
-        # self.in_track_sub = self.create_subscription(Bool, '/in_track_status', self.in_track_callback, 10)
-
-        self.get_logger().info('Core subscribers initialized.')
-
-        # --- RL Algorithm Setup (PPO) ---
-        # This is where you'll integrate your PPO implementation or library.
-        # For now, it's a placeholder.
-        # Example:
-        # self.env = AudiRLEnv(self) # If your Env needs direct access to this node
-        # check_env(self.env) # Useful if using SB3 and gymnasium
-        # self.model = PPO("MlpPolicy", self.env, verbose=1, tensorboard_log="./ppo_audibot_tensorboard/")
-        
-        # A timer to periodically trigger the agent's decision-making process (training step or action step)
-        # The rate might depend on how fast you want the agent to react or your PPO implementation details.
-        self.agent_timer_period = 0.1  # seconds (e.g., 10 Hz)
+        self.agent_timer_period = 0.1
         self.agent_timer = self.create_timer(self.agent_timer_period, self.agent_step)
 
-        # --- Internal State Variables (to store the latest sensor data and agent state) ---
-        self.current_steering_action = 0.0
-        self.current_throttle_action = 0.0
-        self.current_brake_action = 0.0
-        
+        # --- Internal State Variables ---
         self.latest_odometry = None
-        self.front_traffic_cones = [] # List to store BoundingBox objects for traffic cones
-        self.left_traffic_cones = []
-        self.right_traffic_cones = []
-        # self.back_traffic_cones = [] # If using back camera
+        self.front_traffic_cones_raw = [] # Stores raw BoundingBox objects
+        self.left_traffic_cones_raw = []
+        self.right_traffic_cones_raw = []
+        # self.back_traffic_cones_raw = []
 
-        self.episode_running = False # To track if an episode is active
+        self.current_target_goal = None # Stores (x, y) of the current goal from Jarred's system
+        # YOUR_INPUT_REQUIRED: How will you get the list of goals and current_target_goal?
+        # Option A: Replicate Jarred's 'goals' parameter and logic for goal_index
+        # self.declare_parameter('track_goals', ['0.0,0.0']) # Example
+        # self.track_goals_str = self.get_parameter('track_goals').value
+        # self.track_goals = [self.parse_goal_str(g) for g in self.track_goals_str]
+        # self.current_goal_index = 0
+        # if self.track_goals:
+        #     self.current_target_goal = self.track_goals[self.current_goal_index]
 
+        # Option B: Subscribe to a topic from Jarred's node that publishes the current target goal.
+        # self.current_goal_sub = self.create_subscription(Point, '/current_target_goal', self.current_goal_callback, 10)
+
+
+        self.episode_running = False
         self.get_logger().info("RL Agent Node fully initialized.")
 
+    # def parse_goal_str(self, goal_str): # If using Option A for goals
+    #     try:
+    #         x_str, y_str = goal_str.split(',')
+    #         return float(x_str), float(y_str)
+    #     except ValueError:
+    #         self.get_logger().error(f"Invalid goal format in parameter: {goal_str}")
+    #         return 0.0, 0.0
+
+    # def current_goal_callback(self, msg): # If using Option B for goals
+    #    self.current_target_goal = (msg.x, msg.y)
+
     def front_yolo_callback(self, msg: YoloDetections):
-        # Filter for "traffic-cones" and store their BoundingBox data
-        # Since score is not yet reliable, we don't filter by it for now.
-        self.front_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-        # self.get_logger().debug(f'Front cam: {len(self.front_traffic_cones)} traffic cones detected.')
+        self.front_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
 
     def left_yolo_callback(self, msg: YoloDetections):
-        self.left_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-        # self.get_logger().debug(f'Left cam: {len(self.left_traffic_cones)} traffic cones detected.')
+        self.left_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
 
     def right_yolo_callback(self, msg: YoloDetections):
-        self.right_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-        # self.get_logger().debug(f'Right cam: {len(self.right_traffic_cones)} traffic cones detected.')
-
-    # def back_yolo_callback(self, msg: YoloDetections): # If you add the back camera subscriber
-    #     self.back_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-    # self.get_logger().debug(f'Back cam: {len(self.back_traffic_cones)} traffic cones detected.')
+        self.right_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
 
     def odom_callback(self, msg: Odometry):
         self.latest_odometry = msg
-        # Example:
-        # position_x = msg.pose.pose.position.x
-        # linear_velocity_x = msg.twist.twist.linear.x
-        # self.get_logger().debug(f'Odom: X={position_x:.2f}, VelX={linear_velocity_x:.2f}')
 
     def episode_status_callback(self, msg: String):
         status = msg.data.lower()
         if status == 'start':
             self.episode_running = True
             self.get_logger().info("Episode started.")
-            # Reset any episode-specific states for the agent here
-        elif status == 'end' or status == 'reset': # Assuming 'reset' also implies end of an attempt
+            # YOUR_INPUT_REQUIRED: Reset agent's internal episodic states if any
+            # For example, if using Option A for goals:
+            # self.current_goal_index = 0
+            # if self.track_goals:
+            #     self.current_target_goal = self.track_goals[self.current_goal_index]
+        elif status == 'end' or status == 'reset':
             self.episode_running = False
             self.get_logger().info(f"Episode ended/reset: {status}.")
-            # Potentially stop the car or perform other end-of-episode actions
-            self.publish_control_commands(steering=0.0, throttle=0.0, brake=1.0) # Example: full brake on episode end
+            self.publish_control_commands(steering=0.0, throttle=0.0, brake=1.0)
+
+
+    def _normalize_bounding_box(self, box: BoundingBox, camera_id: int):
+        img_width, img_height = self.image_dimensions.get(camera_id, (1.0, 1.0)) # Default to 1.0 to avoid division by zero if misconfigured
+        if img_width == 0: img_width = 1.0
+        if img_height == 0: img_height = 1.0
+
+        center_x = box.left + (box.right - box.left) / 2.0
+        center_y = box.top + (box.bottom - box.top) / 2.0
+        width = float(box.right - box.left)
+        height = float(box.bottom - box.top)
+
+        # Normalize to [0, 1]
+        norm_center_x = center_x / img_width
+        norm_center_y = center_y / img_height
+        norm_width = width / img_width
+        norm_height = height / img_height
+        
+        # Clamping to ensure they are within [0,1] robustly, or [-0.5, 0.5] if you change normalization
+        norm_center_x = np.clip(norm_center_x, 0.0, 1.0)
+        norm_center_y = np.clip(norm_center_y, 0.0, 1.0)
+        norm_width = np.clip(norm_width, 0.0, 1.0)
+        norm_height = np.clip(norm_height, 0.0, 1.0)
+
+        return norm_center_x, norm_center_y, norm_width, norm_height
+    
+
+    '''
+You're at a crucial point: translating raw sensor data (YOLO bounding boxes) into a meaningful "observation" for your RL agent. The goal is to give the agent the information it needs to decide how to steer towards the center of the two closest cones.
+
+Here are several ideas for implementing the observation space, ranging from simpler to more complex. You'll likely need to experiment to see what works best.
+
+Core Idea: Relative Information is Key
+
+The RL agent doesn't necessarily need to know the absolute pixel coordinates of cones. It needs to know where the cones are relative to the car and relative to each other to find that midpoint.
+
+General Preprocessing for Bounding Boxes (BBs):
+
+For each detected cone (box from self.front_traffic_cones, etc.):
+
+Calculate Center:
+    bb_center_x = box.left + (box.right - box.left) / 2
+    bb_center_y = box.top + (box.bottom - box.top) / 2
+
+Calculate Size:
+    bb_width = box.right - box.left
+    bb_height = box.bottom - box.top
+
+Normalization (Highly Recommended): 
+
+Normalize these values to a consistent range (e.g., 0 to 1, or -1 to 1). This helps the neural network learn more effectively.
+You'll need the image dimensions (width, height) for each camera. Let's assume you have image_width and image_height.
+    norm_center_x = bb_center_x / image_width (range 0 to 1)
+    norm_center_y = bb_center_y / image_height (range 0 to 1)
+    norm_width = bb_width / image_width (range 0 to 1)
+    norm_height = bb_height / image_height (range 0 to 1)
+
+Alternatively, for norm_center_x, you might want it in the range -0.5 to 0.5 (by doing (bb_center_x / image_width) - 0.5) to represent left/right of the image center.
+
+Observation Space Ideas:
+
+Option 2: Fixed Number of "Closest" Cones
+
+This is often more robust than trying to explicitly find pairs.
+
+How it Works:
+
+    1) Gather All Cones: Collect all normalized cone features (center x, y, height, width) from all relevant cameras.
+
+    2) Sort by "Closeness": Use a heuristic like sort_key = (1 - norm_height) (prioritizing taller cones). You might also factor in norm_center_y (lower in image = closer).
+
+    3)Select Top N: Take the top N (e.g., N=4 or N=6) "closest" cones.
+
+Observation Vector Features:
+
+For each of the N selected cones:
+    cone_i_norm_center_x
+    cone_i_norm_center_y
+    cone_i_norm_height
+    cone_i_norm_width (optional, height might be a better distance proxy)
+    A flag indicating which camera detected it (e.g., one-hot encode: [1,0,0] for front, [0,1,0] for left, [0,0,1] for right). This can be important if normalization doesn't fully account for camera perspective differences.
+
+If fewer than N cones are detected, pad the remaining slots with special values (e.g., 0 or -1).
+
+Pros: Simpler to implement, more robust to noisy detections than explicit pairing. The RL agent learns to interpret the spatial arrangement of these N cones.
+
+Cons: The agent has to implicitly learn the "gate" concept. The order of cones in the observation vector matters (sorting is crucial).
+
+'''
 
     def process_observations(self):
-        """
-        Combines all raw sensor data into a structured observation state for the PPO agent.
-        This is a CRITICAL and COMPLEX part.
-        Output should be a consistent format, e.g., a NumPy array for SB3.
-        """
         if not self.latest_odometry:
-            self.get_logger().warn("No odometry data yet to process observations.")
-            return None # Or return a zeroed/default observation array
+            self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=5.0, msg="No odometry data yet.")
+            return np.zeros(self.observation_size, dtype=np.float32) # Return a default observation
 
-        # --- Example elements for your observation state (you'll need to expand and refine) ---
-        
-        # 1. Car's own state (from odometry)
-        # linear_velocity_x = self.latest_odometry.twist.twist.linear.x
-        # angular_velocity_z = self.latest_odometry.twist.twist.angular.z
-        # Note: For PPO, it's often good to normalize these values.
-        
-        # 2. Cone data (this is the challenging part: converting pixel BBs to meaningful features)
-        # For each camera (front, left, right):
-        #   - How many cones?
-        #   - For each cone (or a fixed number of closest/most relevant cones):
-        #     - Center x, y in pixel space (normalized to image width/height?)
-        #     - Width, height of bounding box (normalized?)
-        #     - These are proxies for distance and angle. True 3D position estimation is harder.
-        
-        # Simplistic example: concatenate features from cones.
-        # This needs significant thought to create a good state representation.
-        # For now, let's just log what we have.
-        # self.get_logger().info(
-        #     f"Processing Obs: ODEM VelX={linear_velocity_x:.2f}, "
-        #     f"FrontCones={len(self.front_traffic_cones)}, "
-        #     f"LeftCones={len(self.left_traffic_cones)}, "
-        #     f"RightCones={len(self.right_traffic_cones)}"
-        # )
 
-        # Placeholder: this would be your actual observation vector/matrix
-        # observation = np.array([linear_velocity_x, angular_velocity_z, ... cone features ...])
-        # return observation
-        return "placeholder_observation" # Replace with actual processed data
+        # 1. Car's Kinematic State
+        linear_velocity_x = self.latest_odometry.twist.twist.linear.x
+        angular_velocity_z = self.latest_odometry.twist.twist.angular.z
+
+        norm_linear_velocity_x = np.clip(linear_velocity_x / self.max_car_speed, -1.0, 1.0)
+        norm_angular_velocity_z = np.clip(angular_velocity_z / self.max_car_yaw_rate, -1.0, 1.0)
+        
+        car_obs_part = [norm_linear_velocity_x, norm_angular_velocity_z]
+
+        # 2. Target Waypoint Information
+        goal_obs_part = [0.0, 0.0, 0.0] # dist, cos(angle), sin(angle) - default if no goal
+        if self.current_target_goal and self.latest_odometry:
+            car_pos_x = self.latest_odometry.pose.pose.position.x
+            car_pos_y = self.latest_odometry.pose.pose.position.y
+            
+            # Orientation of the car (quaternion to yaw)
+            orientation_q = self.latest_odometry.pose.pose.orientation
+            # Simple conversion assuming yaw is around Z axis
+            # For more robust conversion: from tf_transformations import euler_from_quaternion
+            # qx, qy, qz, qw = orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w
+            # _, _, car_yaw = euler_from_quaternion([qx, qy, qz, qw]) # Needs tf_transformations
+            # Temporary simpler yaw (less robust, assumes car is mostly flat)
+            car_yaw = 2.0 * math.atan2(orientation_q.z, orientation_q.w)
+
+
+            target_x, target_y = self.current_target_goal
+            
+            delta_x_world = target_x - car_pos_x
+            delta_y_world = target_y - car_pos_y
+            
+            distance_to_goal = math.sqrt(delta_x_world**2 + delta_y_world**2)
+            norm_distance_to_goal = np.clip(distance_to_goal / self.max_goal_distance, 0.0, 1.0)
+            
+            # Angle to goal in world frame
+            angle_to_goal_world = math.atan2(delta_y_world, delta_x_world)
+            # Angle to goal relative to car's heading
+            angle_to_goal_relative = angle_to_goal_world - car_yaw
+            # Normalize angle to be within -pi to pi
+            while angle_to_goal_relative > math.pi: angle_to_goal_relative -= 2 * math.pi
+            while angle_to_goal_relative < -math.pi: angle_to_goal_relative += 2 * math.pi
+            
+            # Using cos and sin is often better for NNs than raw angle
+            goal_angle_cos = math.cos(angle_to_goal_relative)
+            goal_angle_sin = math.sin(angle_to_goal_relative)
+            
+            goal_obs_part = [norm_distance_to_goal, goal_angle_cos, goal_angle_sin]
+        else:
+            self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=5.0, msg="No current target goal set for observation.")
+
+
+        # 3. Cone Data
+        all_processed_cones = []
+        for cam_id, raw_cone_list in [
+            (CAM_FRONT, self.front_traffic_cones_raw),
+            (CAM_LEFT, self.left_traffic_cones_raw),
+            (CAM_RIGHT, self.right_traffic_cones_raw),
+            # (CAM_BACK, self.back_traffic_cones_raw) # If using back camera
+        ]:
+            for box in raw_cone_list:
+                norm_cx, norm_cy, norm_w, norm_h = self._normalize_bounding_box(box, cam_id)
+                # Closeness heuristic: taller cones are considered closer.
+                # You might want to refine this, e.g. cones lower in FRONT camera view.
+                closeness_score = norm_h # Larger height = closer
+                all_processed_cones.append({
+                    'cx': norm_cx, 'cy': norm_cy, 'w': norm_w, 'h': norm_h,
+                    'cam_id': cam_id, 'score': closeness_score
+                })
+        
+        # Sort cones by closeness_score (descending, so closest first)
+        all_processed_cones.sort(key=lambda c: c['score'], reverse=True)
+        
+        cone_obs_part = []
+        for i in range(self.num_closest_cones):
+            if i < len(all_processed_cones):
+                cone = all_processed_cones[i]
+                present_flag = 1.0
+                cam_one_hot = [0.0, 0.0, 0.0] # For Front, Left, Right
+                if cone['cam_id'] == CAM_FRONT: cam_one_hot[0] = 1.0
+                elif cone['cam_id'] == CAM_LEFT: cam_one_hot[1] = 1.0
+                elif cone['cam_id'] == CAM_RIGHT: cam_one_hot[2] = 1.0
+                #elif cone['cam_id'] == CAM_BACK: # Add if using back camera
+                
+                cone_features = [cone['cx'], cone['cy'], cone['h'], cone['w'], present_flag] + cam_one_hot
+                cone_obs_part.extend(cone_features)
+            else:
+                # Pad with zeros if fewer than num_closest_cones are detected
+                cone_obs_part.extend([0.0] * self.cone_feature_size)
+                
+        # Combine all parts into a single observation vector
+        observation = np.array(car_obs_part + goal_obs_part + cone_obs_part, dtype=np.float32)
+        
+        if len(observation) != self.observation_size:
+            self.get_logger().error(f"Observation length mismatch! Expected {self.observation_size}, Got {len(observation)}")
+            # Return a correctly sized zero array to prevent PPO errors, but log the issue.
+            return np.zeros(self.observation_size, dtype=np.float32)
+            
+        return observation
+
 
     def select_action(self, observation):
-        """
-        Given an observation, the PPO agent's policy network outputs an action.
-        """
-        # If using a trained SB3 model:
-        # action, _states = self.model.predict(observation, deterministic=True) # Get deterministic action for deployment/testing
+        # YOUR_INPUT_REQUIRED: This is where your PPO model's predict() method will go
+        # action, _states = self.model.predict(observation, deterministic=True)
         # steering_action = action[0]
         # throttle_action = action[1]
-        # brake_action = action[2] # if your action space includes brake
+        # brake_action = 0.0 # Or action[2] if brake is part of PPO output
         
-        # --- Placeholder for random/dummy actions ---
-        # For initial testing before PPO is integrated:
-        # steering_action = (random.random() * 2.0) - 1.0  # Range: -1.0 to 1.0
-        # throttle_action = random.random() * 0.3          # Range: 0.0 to 0.3 (start slow)
-        # brake_action = 0.0                               # Initially no braking
-        
-        # For now, just a simple forward command for testing connections
+        # Placeholder: simple forward action
         steering_action = 0.0
-        throttle_action = 0.1 # Gentle throttle
+        throttle_action = 0.1 # Gentle throttle for testing
         brake_action = 0.0
-
-        self.current_throttle_action = throttle_action
-        self.current_steering_action = steering_action
-        self.current_brake_action = brake_action
-        
         return steering_action, throttle_action, brake_action
 
     def publish_control_commands(self, steering, throttle, brake):
+        # YOUR_INPUT_REQUIRED: Add clipping or scaling if PPO outputs actions in a different range
+        # e.g., PPO might output steering in [-1, 1], which is fine.
+        # PPO might output throttle in [-1, 1], needs scaling to [0, 1] or [0, MAX_THROTTLE]
+        
         steer_msg = Float64()
         steer_msg.data = float(steering)
         self.steering_pub.publish(steer_msg)
 
         throttle_msg = Float64()
-        throttle_msg.data = float(throttle)
+        # Example: scale throttle if PPO outputs [-1,1] and you want [0,1]
+        # throttle_msg.data = float((throttle + 1.0) / 2.0) 
+        throttle_msg.data = float(throttle) # Assuming PPO outputs throttle in desired range for now
         self.throttle_pub.publish(throttle_msg)
 
         brake_msg = Float64()
@@ -228,72 +373,36 @@ class RLAgentNode(Node):
         self.brake_pub.publish(brake_msg)
 
     def calculate_reward(self, observation, action, next_observation):
-        """
-        Calculates the reward based on the agent's action and the resulting state.
-        This is another CRITICAL and COMPLEX part.
-        """
+        # YOUR_INPUT_REQUIRED: Implement your reward function here.
+        # This is a placeholder.
         reward = 0.0
-        
-        # --- Example Reward Components (you'll need to define these based on your goals) ---
-        # - Reward for speed (e.g., current_forward_velocity from odometry)
-        # - Reward for making progress towards the next waypoint (between cones)
-        # - Large negative reward if off-track (you'll need a signal for this from Jarred or implement detection)
-        # - Reward for passing through a pair of cones successfully
-        # - Penalty for time (to encourage speed)
-        # - Penalty for collision (if detectable)
-        # - Penalty for jerky actions (e.g., large changes in steering/throttle)
-        
-        # Placeholder
+        # Example: reward for forward speed
         # if self.latest_odometry:
-        #     reward += self.latest_odometry.twist.twist.linear.x * 0.1 # Small reward for forward speed
-            
-        # self.get_logger().debug(f"Calculated reward: {reward}")
+        #    reward += self.latest_odometry.twist.twist.linear.x * 0.01 # Small reward
         return reward
 
     def agent_step(self):
-        """
-        This function is called periodically by the timer.
-        It represents one step of the agent's interaction with the environment.
-        """
         if not self.episode_running:
-            # self.get_logger().info("Agent step: Episode not running. Idling.")
-            # Optionally ensure car is stopped if episode isn't running
-            # self.publish_control_commands(0.0, 0.0, 1.0) # Brake
             return
 
-        # 1. Get current observation from processed sensor data
         current_observation = self.process_observations()
-        if current_observation is None: # e.g. if odometry isn't available yet
-            return
+        if current_observation is None or current_observation.shape[0] != self.observation_size : # check for valid observation
+             self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=1.0, msg="Invalid observation received in agent_step, skipping.")
+             return
 
-        # 2. Select an action based on the current observation using the PPO policy
+
         steering, throttle, brake = self.select_action(current_observation)
-        # For now, action is just a placeholder.
-
-        # 3. Apply the action: publish control commands to the car
         self.publish_control_commands(steering, throttle, brake)
         
-        # --- This part below is more relevant for a full RL training loop (e.g., with SB3) ---
-        # 4. Wait for the environment to react (implicitly handled by ROS callbacks updating state)
-        #    and then get the next_observation.
-        #    For a typical RL loop, you'd often get next_observation, reward, done AFTER applying the action.
-        #    In this ROS setup, callbacks update the state asynchronously.
-        #    The `self.agent_timer_period` defines how often we take an action based on the latest state.
+        # For a full RL loop, you would also:
+        # 1. Get the `next_observation` after the action has taken effect.
+        #    (In ROS, this happens asynchronously via callbacks; you might need to wait briefly or use the next `agent_step`'s `current_observation` as the `next_observation` for the previous step's experience tuple)
+        # 2. Call `reward = self.calculate_reward(current_observation, (steering, throttle, brake), next_observation)`
+        # 3. Determine if the episode is `done` (e.g., from `episode_status_callback` or other conditions).
+        # 4. Store the experience `(current_observation, action, reward, next_observation, done)` for PPO training.
+        # 5. Periodically trigger `model.learn()` if using SB3, or your custom PPO update logic.
 
-        # 5. Calculate reward (based on new state, action taken, etc.)
-        #    For a full PPO implementation, you'd calculate reward here based on the transition.
-        #    next_observation = self.process_observations() # Re-process after action has had time to take effect
-        #    reward = self.calculate_reward(current_observation, (steering, throttle, brake), next_observation)
-
-        # 6. Store experience (current_observation, action, reward, next_observation, done_flag)
-        #    This is for training the PPO model. `done_flag` would come from `episode_status_callback`
-        #    or other conditions (e.g., task completion).
-        #    If using SB3, this is often handled within the `env.step()` method.
-
-        # 7. If enough experiences are collected, perform a PPO model update.
-        #    If using SB3, `model.learn(total_timesteps=X)` handles this.
-
-        self.get_logger().debug(f"Agent Step: Action Pub -> S:{steering:.2f} T:{throttle:.2f} B:{brake:.2f}")
+        # self.get_logger().debug(f"Agent Step: Action Pub -> S:{steering:.2f} T:{throttle:.2f} B:{brake:.2f}")
 
 
 def main(args=None):
@@ -304,10 +413,9 @@ def main(args=None):
     except KeyboardInterrupt:
         rl_agent_node.get_logger().info('Keyboard interrupt, shutting down RL Agent Node.')
     finally:
-        # Perform any necessary cleanup here
         rl_agent_node.get_logger().info('Destroying RL Agent Node.')
-        if rl_agent_node.episode_running: # Ensure car is stopped if node is killed mid-episode
-             rl_agent_node.publish_control_commands(0.0, 0.0, 1.0) # Send a brake command
+        if hasattr(rl_agent_node, 'episode_running') and rl_agent_node.episode_running:
+             rl_agent_node.publish_control_commands(0.0, 0.0, 1.0)
         rl_agent_node.destroy_node()
         rclpy.shutdown()
 
