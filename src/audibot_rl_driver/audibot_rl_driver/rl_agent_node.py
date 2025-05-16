@@ -1,155 +1,218 @@
-# Basic structure for audibot_rl_driver/rl_agent_node.py
+# audibot_rl_driver/audibot_rl_driver/rl_agent_node.py
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64 # For throttle, steering, brake
+from std_msgs.msg import Float64, String # Added String for episode_status
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import TwistStamped # Another way car's twist might be published
-from yolo_msg.msg import YoloDetections, BoundingBox # Your custom messages
+# from geometry_msgs.msg import TwistStamped # Could be an alternative for odometry
+from yolo_msg.msg import YoloDetections # BoundingBox is part of YoloDetections
 
-# If you use Stable Baselines3 or another RL library
-# import stable_baselines3
-# from stable_baselines3.common.env_checker import check_env
+# import random # For placeholder random actions initially
+
+# --- RL specific imports (you'll add these as you build out PPO) ---
+# For example, if using a library like Stable Baselines3 (SB3)
+# import gymnasium as gym # Or import gym if using older versions
+# from gymnasium import spaces
+# import numpy as np
 # from stable_baselines3 import PPO
+# from stable_baselines3.common.env_checker import check_env
+
 
 # Placeholder for your custom RL environment if you build one for SB3
-# class AudiRLEnv(stable_baselines3.common.envs. ফেসবুকরকEnv):
-#     def __init__(self):
-#         super(AudiRLEnv, self).__init__()
-#         # Define action and observation space
-#         # They must be gym.spaces objects
-#         # Example:
-#         # self.action_space = spaces.Box(low=-1, high=1, shape=(2,), dtype=np.float32) # steering, throttle
-#         # self.observation_space = spaces.Box(low=0, high=255, shape=(...your_obs_shape...), dtype=np.uint8)
-#         pass
-
-#     def step(self, action):
-#         # Apply action, get observation, reward, done, info
-#         pass
-
-#     def reset(self, seed=None, options=None):
-#         # Reset the environment and return initial observation
-#         pass
-
-#     def render(self, mode='human'):
-#         pass
-
-#     def close(self):
-#         pass
-
+# class AudiRLEnv(gym.Env):
+#     # ... (implementation of your custom environment) ...
+#     pass
 
 class RLAgentNode(Node):
     def __init__(self):
         super().__init__('audibot_rl_agent_node')
-        self.get_logger().info('RL Agent Node has been started.')
+        self.get_logger().info('RL Agent Node has been started. V2')
 
         # --- Parameters ---
-        # Example: self.declare_parameter('learning_rate', 0.0003)
-        #          self.learning_rate = self.get_parameter('learning_rate').value
+        # Example: self.declare_parameter('some_rl_parameter', 0.01)
+        #          self.some_rl_param = self.get_parameter('some_rl_parameter').value
 
-        # --- Publishers ---
+        # --- Publishers (for controlling the car) ---
         self.throttle_pub = self.create_publisher(Float64, '/orange/throttle_cmd', 10)
         self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10)
         self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)
         self.get_logger().info('Vehicle control publishers initialized.')
 
-        # --- Subscribers ---
-        # YOLO Detections
+        # --- Subscribers (for getting information from the environment) ---
+        # YOLO Detections from different cameras
         self.front_yolo_sub = self.create_subscription(
             YoloDetections,
-            '/orange/front_image_yolo/detections',
+            '/orange/front_image_yolo/detections', # Confirmed topic
             self.front_yolo_callback,
             10)
         self.left_yolo_sub = self.create_subscription(
             YoloDetections,
-            '/orange/left_image_yolo/detections',
+            '/orange/left_image_yolo/detections',  # Confirmed topic
             self.left_yolo_callback,
             10)
         self.right_yolo_sub = self.create_subscription(
             YoloDetections,
-            '/orange/right_image_yolo/detections',
+            '/orange/right_image_yolo/detections', # Confirmed topic
             self.right_yolo_callback,
             10)
-
-        # Car Odometry
+        # Optional: Subscribe to back camera if needed for your strategy
+        # self.back_yolo_sub = self.create_subscription(
+        #     YoloDetections,
+        #     '/orange/back_image_yolo/detections',
+        #     self.back_yolo_callback,
+        #     10)
+        
+        # Car's Odometry (for position, orientation, speed)
         self.odom_sub = self.create_subscription(
             Odometry,
             '/odom', # As per README(audibot_gazebo).md
             self.odom_callback,
             10)
+        
+        # Episode status from Jarred's node (e.g., for resets)
+        self.episode_status_sub = self.create_subscription(
+            String, # Assuming Jarred uses std_msgs.msg.String
+            '/episode_status', # As per rl_rewards_node.py.txt
+            self.episode_status_callback,
+            10)
 
-        # (Potentially) Jarred's reward/status topics
-        # self.reward_sub = self.create_subscription(...)
-        # self.episode_status_sub = self.create_subscription(...)
+        # (Potentially) Jarred's direct reward or in_track status
+        # self.reward_sub = self.create_subscription(Float32, '/episode_rewards', self.reward_callback, 10)
+        # self.in_track_sub = self.create_subscription(Bool, '/in_track_status', self.in_track_callback, 10)
 
-        self.get_logger().info('Subscribers initialized.')
+        self.get_logger().info('Core subscribers initialized.')
 
         # --- RL Algorithm Setup (PPO) ---
-        # This is where you'll integrate your PPO implementation or library
+        # This is where you'll integrate your PPO implementation or library.
+        # For now, it's a placeholder.
         # Example:
-        # self.env = AudiRLEnv(self) # Pass the node if the env needs to interact with ROS
-        # self.model = PPO("MlpPolicy", self.env, verbose=1)
-        # self.training_timer = self.create_timer(0.1, self.training_step) # Or however you structure training
+        # self.env = AudiRLEnv(self) # If your Env needs direct access to this node
+        # check_env(self.env) # Useful if using SB3 and gymnasium
+        # self.model = PPO("MlpPolicy", self.env, verbose=1, tensorboard_log="./ppo_audibot_tensorboard/")
+        
+        # A timer to periodically trigger the agent's decision-making process (training step or action step)
+        # The rate might depend on how fast you want the agent to react or your PPO implementation details.
+        self.agent_timer_period = 0.1  # seconds (e.g., 10 Hz)
+        self.agent_timer = self.create_timer(self.agent_timer_period, self.agent_step)
 
-        # --- Internal State ---
-        self.current_steering = 0.0
-        self.current_throttle = 0.0
-        self.current_brake = 0.0
+        # --- Internal State Variables (to store the latest sensor data and agent state) ---
+        self.current_steering_action = 0.0
+        self.current_throttle_action = 0.0
+        self.current_brake_action = 0.0
+        
         self.latest_odometry = None
-        self.front_cone_detections = []
-        self.left_cone_detections = []
-        self.right_cone_detections = []
+        self.front_traffic_cones = [] # List to store BoundingBox objects for traffic cones
+        self.left_traffic_cones = []
+        self.right_traffic_cones = []
+        # self.back_traffic_cones = [] # If using back camera
 
+        self.episode_running = False # To track if an episode is active
 
-    def front_yolo_callback(self, msg):
-        # Process front cone detections
-        # self.front_cone_detections = msg.bounding_boxes
-        # self.get_logger().debug(f'Received front YOLO: {len(msg.bounding_boxes)} detections')
-        pass
+        self.get_logger().info("RL Agent Node fully initialized.")
 
-    def left_yolo_callback(self, msg):
-        # Process left cone detections
-        # self.left_cone_detections = msg.bounding_boxes
-        pass
+    def front_yolo_callback(self, msg: YoloDetections):
+        # Filter for "traffic-cones" and store their BoundingBox data
+        # Since score is not yet reliable, we don't filter by it for now.
+        self.front_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
+        # self.get_logger().debug(f'Front cam: {len(self.front_traffic_cones)} traffic cones detected.')
 
-    def right_yolo_callback(self, msg):
-        # Process right cone detections
-        # self.right_cone_detections = msg.bounding_boxes
-        pass
+    def left_yolo_callback(self, msg: YoloDetections):
+        self.left_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
+        # self.get_logger().debug(f'Left cam: {len(self.left_traffic_cones)} traffic cones detected.')
 
-    def odom_callback(self, msg):
+    def right_yolo_callback(self, msg: YoloDetections):
+        self.right_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
+        # self.get_logger().debug(f'Right cam: {len(self.right_traffic_cones)} traffic cones detected.')
+
+    # def back_yolo_callback(self, msg: YoloDetections): # If you add the back camera subscriber
+    #     self.back_traffic_cones = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
+    # self.get_logger().debug(f'Back cam: {len(self.back_traffic_cones)} traffic cones detected.')
+
+    def odom_callback(self, msg: Odometry):
         self.latest_odometry = msg
-        # Example: speed = msg.twist.twist.linear.x
-        # self.get_logger().debug(f'Received odometry: X={msg.pose.pose.position.x:.2f}, Y={msg.pose.pose.position.y:.2f}')
-        pass
+        # Example:
+        # position_x = msg.pose.pose.position.x
+        # linear_velocity_x = msg.twist.twist.linear.x
+        # self.get_logger().debug(f'Odom: X={position_x:.2f}, VelX={linear_velocity_x:.2f}')
+
+    def episode_status_callback(self, msg: String):
+        status = msg.data.lower()
+        if status == 'start':
+            self.episode_running = True
+            self.get_logger().info("Episode started.")
+            # Reset any episode-specific states for the agent here
+        elif status == 'end' or status == 'reset': # Assuming 'reset' also implies end of an attempt
+            self.episode_running = False
+            self.get_logger().info(f"Episode ended/reset: {status}.")
+            # Potentially stop the car or perform other end-of-episode actions
+            self.publish_control_commands(steering=0.0, throttle=0.0, brake=1.0) # Example: full brake on episode end
 
     def process_observations(self):
-        # Combine all sensor data into a state representation for the PPO agent
-        # This is a critical part:
-        # - Convert bounding box coordinates (pixel space) to something meaningful for navigation
-        #   (e.g., relative positions of cones to the car).
-        # - Include car's speed, angular velocity.
-        # - Include information about the target goal.
-        # The output of this function will be the 'observation' fed to your PPO model.
-        observation = [] # Placeholder
-        return observation
+        """
+        Combines all raw sensor data into a structured observation state for the PPO agent.
+        This is a CRITICAL and COMPLEX part.
+        Output should be a consistent format, e.g., a NumPy array for SB3.
+        """
+        if not self.latest_odometry:
+            self.get_logger().warn("No odometry data yet to process observations.")
+            return None # Or return a zeroed/default observation array
+
+        # --- Example elements for your observation state (you'll need to expand and refine) ---
+        
+        # 1. Car's own state (from odometry)
+        # linear_velocity_x = self.latest_odometry.twist.twist.linear.x
+        # angular_velocity_z = self.latest_odometry.twist.twist.angular.z
+        # Note: For PPO, it's often good to normalize these values.
+        
+        # 2. Cone data (this is the challenging part: converting pixel BBs to meaningful features)
+        # For each camera (front, left, right):
+        #   - How many cones?
+        #   - For each cone (or a fixed number of closest/most relevant cones):
+        #     - Center x, y in pixel space (normalized to image width/height?)
+        #     - Width, height of bounding box (normalized?)
+        #     - These are proxies for distance and angle. True 3D position estimation is harder.
+        
+        # Simplistic example: concatenate features from cones.
+        # This needs significant thought to create a good state representation.
+        # For now, let's just log what we have.
+        # self.get_logger().info(
+        #     f"Processing Obs: ODEM VelX={linear_velocity_x:.2f}, "
+        #     f"FrontCones={len(self.front_traffic_cones)}, "
+        #     f"LeftCones={len(self.left_traffic_cones)}, "
+        #     f"RightCones={len(self.right_traffic_cones)}"
+        # )
+
+        # Placeholder: this would be your actual observation vector/matrix
+        # observation = np.array([linear_velocity_x, angular_velocity_z, ... cone features ...])
+        # return observation
+        return "placeholder_observation" # Replace with actual processed data
 
     def select_action(self, observation):
-        # If using SB3: action, _states = self.model.predict(observation, deterministic=True)
-        # Else: your PPO policy network takes observation and outputs action probabilities or direct actions
+        """
+        Given an observation, the PPO agent's policy network outputs an action.
+        """
+        # If using a trained SB3 model:
+        # action, _states = self.model.predict(observation, deterministic=True) # Get deterministic action for deployment/testing
+        # steering_action = action[0]
+        # throttle_action = action[1]
+        # brake_action = action[2] # if your action space includes brake
+        
+        # --- Placeholder for random/dummy actions ---
+        # For initial testing before PPO is integrated:
+        # steering_action = (random.random() * 2.0) - 1.0  # Range: -1.0 to 1.0
+        # throttle_action = random.random() * 0.3          # Range: 0.0 to 0.3 (start slow)
+        # brake_action = 0.0                               # Initially no braking
+        
+        # For now, just a simple forward command for testing connections
+        steering_action = 0.0
+        throttle_action = 0.1 # Gentle throttle
+        brake_action = 0.0
 
-        # Placeholder for random actions
-        # self.current_steering = (random.random() * 2.0) - 1.0 # -1 to 1
-        # self.current_throttle = random.random() * 0.5 # 0 to 0.5 (be careful with initial speed)
-        # self.current_brake = 0.0 # No braking initially
-
-        # For now, let's just set some dummy values
-        # You'll replace this with your PPO agent's output
-        action_steering = 0.0 # PPO output
-        action_throttle = 0.1 # PPO output
-        action_brake = 0.0    # PPO output
-
-        return action_steering, action_throttle, action_brake
+        self.current_throttle_action = throttle_action
+        self.current_steering_action = steering_action
+        self.current_brake_action = brake_action
+        
+        return steering_action, throttle_action, brake_action
 
     def publish_control_commands(self, steering, throttle, brake):
         steer_msg = Float64()
@@ -164,42 +227,87 @@ class RLAgentNode(Node):
         brake_msg.data = float(brake)
         self.brake_pub.publish(brake_msg)
 
-    def training_step(self): # Or your main RL loop logic
-        # 1. Get observation
-        observation = self.process_observations()
+    def calculate_reward(self, observation, action, next_observation):
+        """
+        Calculates the reward based on the agent's action and the resulting state.
+        This is another CRITICAL and COMPLEX part.
+        """
+        reward = 0.0
+        
+        # --- Example Reward Components (you'll need to define these based on your goals) ---
+        # - Reward for speed (e.g., current_forward_velocity from odometry)
+        # - Reward for making progress towards the next waypoint (between cones)
+        # - Large negative reward if off-track (you'll need a signal for this from Jarred or implement detection)
+        # - Reward for passing through a pair of cones successfully
+        # - Penalty for time (to encourage speed)
+        # - Penalty for collision (if detectable)
+        # - Penalty for jerky actions (e.g., large changes in steering/throttle)
+        
+        # Placeholder
+        # if self.latest_odometry:
+        #     reward += self.latest_odometry.twist.twist.linear.x * 0.1 # Small reward for forward speed
+            
+        # self.get_logger().debug(f"Calculated reward: {reward}")
+        return reward
 
-        # 2. Select action using PPO policy
-        #    (if using SB3, this is part of env.step() or model.learn())
-        steering_action, throttle_action, brake_action = self.select_action(observation)
+    def agent_step(self):
+        """
+        This function is called periodically by the timer.
+        It represents one step of the agent's interaction with the environment.
+        """
+        if not self.episode_running:
+            # self.get_logger().info("Agent step: Episode not running. Idling.")
+            # Optionally ensure car is stopped if episode isn't running
+            # self.publish_control_commands(0.0, 0.0, 1.0) # Brake
+            return
 
-        # 3. Publish action to the car
-        self.publish_control_commands(steering_action, throttle_action, brake_action)
+        # 1. Get current observation from processed sensor data
+        current_observation = self.process_observations()
+        if current_observation is None: # e.g. if odometry isn't available yet
+            return
 
-        # 4. Calculate reward (this will be complex and use cone data, odom, goal status)
-        #    reward = self.calculate_reward()
+        # 2. Select an action based on the current observation using the PPO policy
+        steering, throttle, brake = self.select_action(current_observation)
+        # For now, action is just a placeholder.
 
-        # 5. If using SB3 `model.learn(total_timesteps=X)`, much of this loop is handled.
-        #    Otherwise, you'll collect (obs, action, reward, next_obs, done) and update PPO.
-        #    The 'done' signal would come from Jarred's system (e.g., off-track, task complete).
+        # 3. Apply the action: publish control commands to the car
+        self.publish_control_commands(steering, throttle, brake)
+        
+        # --- This part below is more relevant for a full RL training loop (e.g., with SB3) ---
+        # 4. Wait for the environment to react (implicitly handled by ROS callbacks updating state)
+        #    and then get the next_observation.
+        #    For a typical RL loop, you'd often get next_observation, reward, done AFTER applying the action.
+        #    In this ROS setup, callbacks update the state asynchronously.
+        #    The `self.agent_timer_period` defines how often we take an action based on the latest state.
 
-        self.get_logger().info(f"Steering: {steering_action:.2f}, Throttle: {throttle_action:.2f}")
+        # 5. Calculate reward (based on new state, action taken, etc.)
+        #    For a full PPO implementation, you'd calculate reward here based on the transition.
+        #    next_observation = self.process_observations() # Re-process after action has had time to take effect
+        #    reward = self.calculate_reward(current_observation, (steering, throttle, brake), next_observation)
+
+        # 6. Store experience (current_observation, action, reward, next_observation, done_flag)
+        #    This is for training the PPO model. `done_flag` would come from `episode_status_callback`
+        #    or other conditions (e.g., task completion).
+        #    If using SB3, this is often handled within the `env.step()` method.
+
+        # 7. If enough experiences are collected, perform a PPO model update.
+        #    If using SB3, `model.learn(total_timesteps=X)` handles this.
+
+        self.get_logger().debug(f"Agent Step: Action Pub -> S:{steering:.2f} T:{throttle:.2f} B:{brake:.2f}")
 
 
 def main(args=None):
     rclpy.init(args=args)
     rl_agent_node = RLAgentNode()
-
-    # For now, let's create a simple timer to call training_step periodically
-    # This is NOT how a full SB3 training loop would typically be structured,
-    # but it helps to test basic publishing and observation processing.
-    # A proper RL loop will be event-driven by the environment steps.
-    loop_rate = rl_agent_node.create_timer(0.1, rl_agent_node.training_step) # 10 Hz
-
     try:
         rclpy.spin(rl_agent_node)
     except KeyboardInterrupt:
-        rl_agent_node.get_logger().info('Keyboard interrupt, shutting down.')
+        rl_agent_node.get_logger().info('Keyboard interrupt, shutting down RL Agent Node.')
     finally:
+        # Perform any necessary cleanup here
+        rl_agent_node.get_logger().info('Destroying RL Agent Node.')
+        if rl_agent_node.episode_running: # Ensure car is stopped if node is killed mid-episode
+             rl_agent_node.publish_control_commands(0.0, 0.0, 1.0) # Send a brake command
         rl_agent_node.destroy_node()
         rclpy.shutdown()
 
