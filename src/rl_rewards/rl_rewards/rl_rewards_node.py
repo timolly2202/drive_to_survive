@@ -146,6 +146,16 @@ class RLRewardsNode(Node):
             return
         self.episode_active = False
         self.current_position = None
+
+        now = self.get_clock().now().nanoseconds / 1e9
+        time_since_last_goal = now - self.last_goal_time
+
+        # Apply penalty only if we haven't just reached a goal
+        if time_since_last_goal > 0.5:  # allow a small buffer to avoid double-penalizing
+            penalty = 5.0 * time_since_last_goal
+            self.total_reward -= penalty
+            self.get_logger().warn(f"Penalty for not reaching next goal: -{penalty:.2f} (Time since last goal: {time_since_last_goal:.2f}s)")
+
         msg = Float32()
         msg.data = self.total_reward
         self.reward_pub.publish(msg)

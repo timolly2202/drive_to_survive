@@ -85,7 +85,12 @@ ros2 launch audibot_yolo multi_camera.launch.py
 ros2 run rl_rewards rl_rewards
 ```
 
----
+### 4. Start Episode (Simulated)
+```bash
+ros2 topic pub /episode_status std_msgs/msg/String "data: 'start'"
+```
+
+--- 
 
 ## 🧮 How Rewards Are Calculated
 
@@ -94,8 +99,9 @@ ros2 run rl_rewards rl_rewards
 | Reaching a goal                | `+5` points               |
 | Time taken between goals       | `-1` per second           |
 | Going out of the track         | `-100` points + episode end |
-| Timeout (exceeding time limit) | Episode ends, rewards published |
-| Completing all goals and returning to start | Episode ends, rewards published |
+| Timeout (exceeding time limit)	Episode ends `+ -5` × time since last goal penalty applied |
+| Completing all goals and returning to start	Episode ends, no penalty applied |
+| Episode ends before next goal is reached (any reason)	`-5 × time since last goal penalty applied` |
 
 ### Reward Publication Triggers:
 - When **all goals are reached** (looped back to first goal).
