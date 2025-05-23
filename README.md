@@ -35,7 +35,7 @@ Once these dependencies are installed, clone the repository into your workspace 
 
 1. **Clone the repository into your workspace:** 
 ```bash
-git clone git@github.com:TejasB4/drive_to_survive.git
+git clone git@github.com:timolly2202/drive_to_survive.git
 ```
 
 2. **Install Dependencies**
