@@ -136,6 +136,8 @@ class AudibotRLDriverDQNNode(Node):
         self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10) # To car
         self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)       # To car
         self.episode_status_pub_for_jarred = self.create_publisher(String, '/episode_status', 10) # To Jarred's rewards_node
+        self.current_goal_pub = self.create_publisher(Point, '/current_goal', 10)
+
 
         # --- ROS Subscribers ---
         # For receiving information from rl_gym, Jarred's rewards_node, and sensors.
@@ -224,8 +226,23 @@ class AudibotRLDriverDQNNode(Node):
         A3 = area(px, py, x3, y3, x4, y4)
         A4 = area(px, py, x4, y4, x1, y1)
 
+        
         return abs(A - (A1 + A2 + A3 + A4)) < 1e-1
 
+    def publish_current_goal(self):
+        if not self.goals_data:
+            self.get_logger().warn("No goals loaded; cannot publish current goal.")
+            return
+        
+        goal = self.goals_data[self.goal_index]['centre']
+        goal_msg = Point()
+        goal_msg.x = goal['x']
+        goal_msg.y = goal['y']
+        goal_msg.z = 0.0  # z is unused
+
+        self.current_goal_pub.publish(goal_msg)
+        self.latest_current_goal = goal_msg  # Ensure internal obs processing has latest
+        self.get_logger().debug(f"📍 Published current goal: ({goal_msg.x:.2f}, {goal_msg.y:.2f})")
 
     def _define_discrete_actions(self):
         # Defines the mapping from discrete action indices to throttle, steering, and brake commands.
@@ -335,6 +352,7 @@ class AudibotRLDriverDQNNode(Node):
         # Also informs Jarred's rewards_node that a new episode is beginning.
         # DEPENDS_ON_RL_GYM: rl_gym node must be running and listening to 'dqn_agent/start_episode_request'.
         # DEPENDS_ON_REWARDS_PKG: Jarred's node must be listening to '/episode_status'.
+        
         if not self.use_env_manager:
             return
 
@@ -352,6 +370,8 @@ class AudibotRLDriverDQNNode(Node):
         start_msg_for_jarred.data = "start" # Signal for Jarred's node
         self.episode_status_pub_for_jarred.publish(start_msg_for_jarred)
         self.get_logger().info("Published 'start' to /episode_status for Jarred's node.")
+        self.publish_current_goal()
+
 
         self.env_confirmed_ready_for_rl = False # Reset flag, wait for rl_gym confirmation
         self.current_rl_trajectory_step_count = 0 # Reset steps for the new RL trajectory
@@ -413,9 +433,15 @@ class AudibotRLDriverDQNNode(Node):
         # Constructs the fixed-size observation vector from all latest sensor data.
         # This is a critical part for the DQN agent's input.
         # Returns None if essential data (odom, current_goal) is missing.
-        if not self.latest_odom or not self.latest_current_goal:
-            # self.get_logger().debug("Observation data incomplete: Odom or Current Goal missing.")
+        if not self.latest_odom or not self.goals_data:
+            self.get_logger().warn("Missing odometry or goal list; observation invalid.")
             return None
+        # if not self.latest_odom:
+        #     self.get_logger().warn("Missing odometry data.")
+        # if not self.latest_current_goal:
+        #     self.get_logger().warn("Missing current goal data.")
+        # if not self.latest_odom or not self.latest_current_goal:
+        #     return None
 
         # Car state part
         lx = self.latest_odom.twist.twist.linear.x
@@ -436,7 +462,9 @@ class AudibotRLDriverDQNNode(Node):
             self.get_logger().error("tf_transformations.euler_from_quaternion not available! Yaw calculation will be incorrect if car pitches/rolls.")
             car_yaw = 2.0 * math.atan2(q.z, q.w) # Simplified, less robust backup
 
-        gx, gy = self.latest_current_goal.x, self.latest_current_goal.y
+        # gx, gy = self.latest_current_goal.x, self.latest_current_goal.y
+        goal = self.goals_data[self.goal_index]['centre']  # centre from goals.json
+        gx, gy = goal['x'], goal['y']
         dx, dy = gx - car_x, gy - car_y
         dist_goal = math.sqrt(dx**2 + dy**2)
         norm_dist_goal = np.clip(dist_goal / self.max_goal_distance, 0.0, 1.0)
@@ -587,6 +615,7 @@ class AudibotRLDriverDQNNode(Node):
                     self.get_logger().info(f"Goal {self.goal_index} reached. +10 reward.")
                     self.goal_reached_time = now
                     self.goal_index = (self.goal_index + 1) % len(self.goals_data)
+                    self.publish_current_goal()
 
         
         return reward
