@@ -4,10 +4,12 @@
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import String, Bool, Int64, Float32 # ROS standard message types
+from std_msgs.msg import String, Bool, Int64, Float32, Float64 # ROS standard message types
 from geometry_msgs.msg import Point                 # For receiving current goal coordinates
 from nav_msgs.msg import Odometry                   # For receiving car's odometry (position, velocity)
 from yolo_msg.msg import YoloDetections             # Custom message for YOLO cone detections
+from yolo_msg.msg import BoundingBox
+
 
 import numpy as np
 import math
@@ -18,7 +20,7 @@ import random
 from collections import deque # For ReplayBuffer implementation
 import time
 import os # For file path operations (saving/loading models)
-from tf_transformations import euler_from_quaternion # For robust yaw calculation from odometry quaternions
+from transformations import euler_from_quaternion # For robust yaw calculation from odometry quaternions
 
 # --- Constants for camera IDs ---
 # Used to identify the source camera of YOLO detections when processing observations.
@@ -86,6 +88,8 @@ class ReplayBuffer:
 class AudibotRLDriverDQNNode(Node):
     def __init__(self):
         super().__init__('audibot_rl_driver_dqn_node')
+        self.use_env_manager = self.declare_parameter('use_env_manager', True).value
+
         self.get_logger().info("Audibot RL Driver (DQN) Node: Initializing...")
 
         # --- Hyperparameters & Configuration ---
@@ -176,8 +180,52 @@ class AudibotRLDriverDQNNode(Node):
         # Timer for the main RL agent step (action selection, learning)
         self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
 
-        self.get_logger().info("Initialization complete. Requesting first ROS episode from rl_gym.")
-        self.request_new_ros_episode_from_rl_gym() # Start the process
+        if self.use_env_manager:
+            self.get_logger().info("Initialization complete. Requesting first ROS episode from rl_gym.")
+            self.request_new_ros_episode_from_rl_gym()
+        else:
+            self.get_logger().info("Initialization complete. Running WITHOUT environment manager.")
+            self.env_confirmed_ready_for_rl = True
+
+        
+        import json
+
+        self.goals_data = []
+        self.goal_index = 0
+        self.goal_reached_time = None
+
+        goal_file = os.path.expanduser("~/git/drive_to_survive/src/rl_rewards/goals/goals.json")
+        try:
+            with open(goal_file, 'r') as f:
+                self.goals_data = json.load(f)["goals"]
+                self.get_logger().info(f"Loaded {len(self.goals_data)} goals.")
+        except Exception as e:
+            self.get_logger().error(f"Failed to load goal JSON: {e}")
+
+    def _check_if_goal_reached(self, car_x: float, car_y: float) -> bool:
+        """Checks if current position is inside the current goal region (quad)."""
+        if not self.goals_data:
+            return False
+
+        def area(x1, y1, x2, y2, x3, y3):
+            return abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
+
+        quad = [(c['x'], c['y']) for c in self.goals_data[self.goal_index]['cones']]
+        px, py = car_x, car_y
+
+        x1, y1 = quad[0]
+        x2, y2 = quad[1]
+        x3, y3 = quad[2]
+        x4, y4 = quad[3]
+
+        A = area(x1, y1, x2, y2, x3, y3) + area(x1, y1, x3, y3, x4, y4)
+        A1 = area(px, py, x1, y1, x2, y2)
+        A2 = area(px, py, x2, y2, x3, y3)
+        A3 = area(px, py, x3, y3, x4, y4)
+        A4 = area(px, py, x4, y4, x1, y1)
+
+        return abs(A - (A1 + A2 + A3 + A4)) < 1e-1
+
 
     def _define_discrete_actions(self):
         # Defines the mapping from discrete action indices to throttle, steering, and brake commands.
@@ -287,6 +335,8 @@ class AudibotRLDriverDQNNode(Node):
         # Also informs Jarred's rewards_node that a new episode is beginning.
         # DEPENDS_ON_RL_GYM: rl_gym node must be running and listening to 'dqn_agent/start_episode_request'.
         # DEPENDS_ON_REWARDS_PKG: Jarred's node must be listening to '/episode_status'.
+        if not self.use_env_manager:
+            return
 
         if self.current_ros_episode_num >= self.NUM_ROS_EPISODES_TO_RUN:
             self.get_logger().info("Maximum training ROS episodes reached. Halting further episode requests.")
@@ -312,11 +362,11 @@ class AudibotRLDriverDQNNode(Node):
         # Callback for rl_gym's confirmation that the environment is ready.
         # DEPENDS_ON_RL_GYM: Expects 'rl_gym/environment_started_confirm' topic.
         if msg.data:
-            self.get_logger().info("DQN Node: Received confirmation from rl_gym - environment IS READY.")
+            self.get_logger().info("✅ DQN Node: Received confirmation from rl_gym - environment IS READY.")
             self.env_confirmed_ready_for_rl = True
             # The perform_rl_step_and_learn timer will now be able to proceed fully once sensor data arrives.
         else:
-            self.get_logger().error("DQN Node: rl_gym indicated environment FAILED to start. Scheduling retry...")
+            self.get_logger().error("❌ DQN Node: rl_gym indicated environment FAILED to start. Scheduling retry...")
             self.env_confirmed_ready_for_rl = False
             # Consider a more robust retry mechanism or error handling
             rclpy.create_timer(5.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
@@ -324,12 +374,18 @@ class AudibotRLDriverDQNNode(Node):
     # --- Raw Sensor Data Callbacks ---
     # These callbacks simply store the latest received sensor data.
     # Processing into the observation vector happens in process_observation_vector().
-    def current_goal_callback(self, msg: Point): self.latest_current_goal = msg
+    def current_goal_callback(self, msg: Point): 
+        self.latest_current_goal = msg
+        self.get_logger().debug(f"✅ Received goal: ({msg.x:.2f}, {msg.y:.2f})")
+
     def front_yolo_callback(self, msg: YoloDetections): self.latest_front_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
     def back_yolo_callback(self, msg: YoloDetections): self.latest_back_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
     def left_yolo_callback(self, msg: YoloDetections): self.latest_left_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
     def right_yolo_callback(self, msg: YoloDetections): self.latest_right_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
-    def odom_callback(self, msg: Odometry): self.latest_odom = msg
+    def odom_callback(self, msg: Odometry): 
+        self.latest_odom = msg
+        self.get_logger().debug(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
+
     def in_track_callback(self, msg: Bool):
         # DEPENDS_ON_REWARDS_PKG: Expects '/in_track_status' from Jarred's node.
         if self.is_in_track and not msg.data: self.get_logger().warn("Transitioned to OFF TRACK based on /in_track_status.")
@@ -521,6 +577,18 @@ class AudibotRLDriverDQNNode(Node):
             # For now, just a small bonus for surviving the trajectory length.
             reward += 10.0
         
+        # --- Reward for reaching a goal (based on current pose) ---
+        if self.latest_odom and self.goals_data:
+            pos = self.latest_odom.pose.pose.position
+            if self._check_if_goal_reached(pos.x, pos.y):
+                now = self.get_clock().now().nanoseconds / 1e9
+                if self.goal_reached_time is None or (now - self.goal_reached_time) > 2.0:
+                    reward += 10.0  # Tunable bonus
+                    self.get_logger().info(f"Goal {self.goal_index} reached. +10 reward.")
+                    self.goal_reached_time = now
+                    self.goal_index = (self.goal_index + 1) % len(self.goals_data)
+
+        
         return reward
 
     # --- DQN Model Optimization (Adapted from train_agent.py) ---
@@ -569,10 +637,12 @@ class AudibotRLDriverDQNNode(Node):
     def perform_rl_step_and_learn(self):
         # This method is called periodically by self.rl_step_timer.
         # It orchestrates observation processing, action selection, experience storing, and learning.
+        self.get_logger().debug("🔁 perform_rl_step_and_learn called")
+
 
         # Ensure environment is ready and not already processing a step
         if not self.env_confirmed_ready_for_rl or self.processing_rl_step_active:
-            # self.get_logger().debug("RL step skipped: Env not ready or already processing step.")
+            self.get_logger().debug("RL step skipped: Env not ready or already processing step.")
             return
         
         self.processing_rl_step_active = True # Set mutex to prevent re-entry
@@ -581,7 +651,7 @@ class AudibotRLDriverDQNNode(Node):
         s_t1_current_observation_vec = self.process_observation_vector()
 
         if s_t1_current_observation_vec is None:
-            self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=1.0, msg="Observation data incomplete, cannot perform RL step.")
+            rclpy.logging.get_logger('audibot_rl_driver_dqn_node').warn("Observation data incomplete, cannot perform RL step.")
             self.processing_rl_step_active = False
             return
 
@@ -616,7 +686,7 @@ class AudibotRLDriverDQNNode(Node):
                 self.get_logger().info(f"Updated Target Network at total_agent_step {self.total_agent_steps_taken}.")
 
             # If the RL trajectory ended for s_t (leading to s_t+1 which is terminal for this trajectory)
-            if rl_trajectory_done_for_previous_step: # This variable name was from previous logic, should be rl_trajectory_done_at_s_t1
+            if rl_trajectory_done_at_s_t1: # This variable name was from previous logic, should be rl_trajectory_done_at_s_t1
                 self.get_logger().info(f"RL Trajectory ended (InTrack: {self.is_in_track}, Steps: {self.current_rl_trajectory_step_count}). Waiting for Jarred's official ROS episode end signal.")
                 # Stop the car if RL trajectory is done.
                 self.publish_car_commands(self.discrete_actions_map.index(next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
@@ -693,7 +763,7 @@ def main(args=None):
     except KeyboardInterrupt:
         dqn_node.get_logger().info("Keyboard interrupt received by DQN Node.")
     except Exception as e:
-        dqn_node.get_logger().error(f"Unhandled exception in DQN Node: {e}", exc_info=True)
+        dqn_node.get_logger().error(f"Unhandled exception in DQN Node: {e}")
     finally:
         dqn_node.get_logger().info("Shutting down DQN Node...")
         if hasattr(dqn_node, 'throttle_pub') and dqn_node.throttle_pub is not None: # Check if publishers are initialized
