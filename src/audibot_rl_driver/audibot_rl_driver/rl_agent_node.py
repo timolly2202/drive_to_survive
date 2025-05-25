@@ -4,12 +4,13 @@
 
 import rclpy
 from rclpy.node import Node
+from rclpy.task import Future
+from rclpy.duration import Duration
 from std_msgs.msg import String, Bool, Int64, Float32, Float64 # ROS standard message types
 from geometry_msgs.msg import Point                 # For receiving current goal coordinates
 from nav_msgs.msg import Odometry                   # For receiving car's odometry (position, velocity)
 from yolo_msg.msg import YoloDetections             # Custom message for YOLO cone detections
 from yolo_msg.msg import BoundingBox
-
 
 import numpy as np
 import math
@@ -20,7 +21,11 @@ import random
 from collections import deque # For ReplayBuffer implementation
 import time
 import os # For file path operations (saving/loading models)
+import json
 from transformations import euler_from_quaternion # For robust yaw calculation from odometry quaternions
+
+import subprocess
+import signal
 
 # --- Constants for camera IDs ---
 # Used to identify the source camera of YOLO detections when processing observations.
@@ -187,6 +192,10 @@ class AudibotRLDriverDQNNode(Node):
         self.ASSIST_PROB_END      = 0.0      # fades to 0 as training progresses
         self.ASSIST_DECAY_STEPS   = 20_000   # how fast the assistance probability decays
 
+        # Processes for the environment
+        self.gazebo_process = None
+        self.camera_process = None
+
 
         # Timer for the main RL agent step (action selection, learning)
         self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
@@ -197,9 +206,6 @@ class AudibotRLDriverDQNNode(Node):
         else:
             self.get_logger().info("Initialization complete. Running WITHOUT environment manager.")
             self.env_confirmed_ready_for_rl = True
-
-        
-        import json
 
         self.goals_data = []
         self.goal_index = 0
@@ -369,23 +375,21 @@ class AudibotRLDriverDQNNode(Node):
             self.get_logger().info("Maximum training ROS episodes reached. Halting further episode requests.")
             if self.rl_step_timer: self.rl_step_timer.cancel() # Stop the RL agent's step timer
             return
+        
+        if self.gazebo_process is not None:
+            self.shutdown_environment()
 
         self.get_logger().info(f"DQN Node: Requesting rl_gym to prepare for ROS episode {self.current_ros_episode_num + 1}.")
-        start_msg_for_rl_gym = String()
-        start_msg_for_rl_gym.data = "start" # Signal for rl_gym
-        self.env_start_request_pub.publish(start_msg_for_rl_gym)
-        
-        start_msg_for_jarred = String()
-        start_msg_for_jarred.data = "start" # Signal for Jarred's node
-        self.episode_status_pub_for_jarred.publish(start_msg_for_jarred)
-        self.get_logger().info("Published 'start' to /episode_status for Jarred's node.")
-        self.publish_current_goal()
-
 
         self.env_confirmed_ready_for_rl = False # Reset flag, wait for rl_gym confirmation
         self.current_rl_trajectory_step_count = 0 # Reset steps for the new RL trajectory
         self.s_t_observation_buffer = None      # Clear previous observation for the new episode
         self.a_t_action_idx_buffer = -1         # Clear previous action
+        
+        self.start_environment()
+
+
+        
 
     def env_started_callback(self, msg: Bool):
         # Callback for rl_gym's confirmation that the environment is ready.
@@ -699,13 +703,82 @@ class AudibotRLDriverDQNNode(Node):
         self.optimizer.step()     # Update policy_net weights
         
         return loss.item() # Return scalar loss value for logging
+    
+    def wait_for_topic(self, topic_name, timeout_sec=10.0):
+        timeout_sec = float(timeout_sec)  # ensure it's a float
+        start_time = self.get_clock().now()
+        
+        while True:
+            elapsed_sec = (self.get_clock().now() - start_time).nanoseconds / 1e9
+            if elapsed_sec >= timeout_sec:
+                return False
+
+            topics = [name for name, _ in self.get_topic_names_and_types()]
+            if topic_name in topics:
+                return True
+
+            rclpy.spin_once(self, timeout_sec=0.2)
+    
+    def start_environment(self):
+        try:
+            # Launch Gazebo
+            self.gazebo_process = subprocess.Popen(
+                ['ros2', 'launch', 'gazebo_tf', 'drive_to_survive.launch.py', 'gui:=false', 'use_rviz:=false'],
+                # stdout=subprocess.DEVNULL,
+                # stderr=subprocess.DEVNULL,
+                preexec_fn=os.setsid
+                )
+
+            # Launch Camera nodes
+            self.camera_process = subprocess.Popen(
+                ['ros2', 'launch', 'audibot_yolo', 'multi_camera.launch.py'],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                preexec_fn=os.setsid
+                )
+
+            self.get_logger().info('Waiting for Gazebo and camera nodes to initialize...')
+
+            all_ready = (
+                self.wait_for_topic('/orange/odom') and
+                self.wait_for_topic('/orange/joint_states') and
+                self.wait_for_topic('/tf') and
+                self.wait_for_topic('/orange/right_image_yolo/detections') and
+                self.wait_for_topic('/orange/left_image_yolo/detections') and
+                self.wait_for_topic('/orange/front_image_yolo/detections') and
+                self.wait_for_topic('/orange/back_image_yolo/detections')
+                )
+            
+            if all_ready:
+                self.get_logger().info('Environment ready.')
+                self.env_confirmed_ready_for_rl = True
+
+            else:
+                self.get_logger().error('Timed out waiting for environment readiness.')
+                self.env_confirmed_ready_for_rl = False
+
+        except Exception as e:
+            self.get_logger().error(f'Failed to start environment: {e}')
+
+    def shutdown_environment(self):
+        def terminate_process(p):
+            if p:
+                os.killpg(os.getpgid(p.pid), signal.SIGTERM)
+        
+        terminate_process(self.gazebo_process)
+        terminate_process(self.camera_process)
+
+        self.gazebo_process = None
+        self.camera_process = None
+
+        self.get_logger().info('Simulation processes terminated.')
+        self.env_confirmed_ready_for_rl = False
 
     # --- Main RL Step (called by timer) ---
     def perform_rl_step_and_learn(self):
         # This method is called periodically by self.rl_step_timer.
         # It orchestrates observation processing, action selection, experience storing, and learning.
         self.get_logger().debug("🔁 perform_rl_step_and_learn called")
-
 
         # Ensure environment is ready and not already processing a step
         if not self.env_confirmed_ready_for_rl or self.processing_rl_step_active:
@@ -771,6 +844,9 @@ class AudibotRLDriverDQNNode(Node):
                 self.a_t_action_idx_buffer = -1    # Clear buffer
                 # current_rl_trajectory_step_count is reset when new ROS episode starts (via request_new_ros_episode_from_rl_gym)
                 self.processing_rl_step_active = False
+
+                self.shutdown_environment()
+
                 return # Wait for Jarred's signal before starting new trajectory logic within a new ROS episode
 
         # --- Action Selection for current state s_t1_current_observation_vec (which becomes s_t for next step) ---
@@ -829,7 +905,9 @@ class AudibotRLDriverDQNNode(Node):
         # Ensure car is stopped before requesting new episode
         self.publish_car_commands(self.discrete_actions_map.index(next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
         # Request rl_gym to prepare for a new ROS episode after a short delay
-        rclpy.create_timer(2.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
+        # rclpy.create_timer(2.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
+        self.shutdown_environment()
+        self.request_new_ros_episode_from_rl_gym()
 
 
 def main(args=None):
@@ -839,6 +917,7 @@ def main(args=None):
         rclpy.spin(dqn_node)
     except KeyboardInterrupt:
         dqn_node.get_logger().info("Keyboard interrupt received by DQN Node.")
+        dqn_node.shutdown_environment()
     except Exception as e:
         dqn_node.get_logger().error(f"Unhandled exception in DQN Node: {e}")
     finally:
