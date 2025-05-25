@@ -30,6 +30,7 @@ CAM_RIGHT = 2
 CAM_BACK = 3
 CAM_UNKNOWN = 4 # Fallback, should ideally not be used
 
+
 # --- DQN Network Definition ---
 # Defines the neural network architecture for the Q-value function approximation.
 # This network takes an observation as input and outputs Q-values for each discrete action.
@@ -178,6 +179,14 @@ class AudibotRLDriverDQNNode(Node):
         self.s_t_observation_buffer = None      # Stores s_t (previous observation) for replay buffer
         self.a_t_action_idx_buffer = -1         # Stores a_t (last action index taken) for replay buffer
         self.current_rl_trajectory_step_count = 0 # Steps within the current internal RL learning trajectory
+        
+        # --- Goal / termination helpers ---
+        self.GOAL_RADIUS_M        = 1.5      # distance at which we consider the goal “reached”
+        self.MAX_GOAL_DISTANCE_M  = 15.0     # > this ⇒ abort episode
+        self.ASSIST_PROB_START    = 0.8      # heuristic assistance at the beginning
+        self.ASSIST_PROB_END      = 0.0      # fades to 0 as training progresses
+        self.ASSIST_DECAY_STEPS   = 20_000   # how fast the assistance probability decays
+
 
         # Timer for the main RL agent step (action selection, learning)
         self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
@@ -469,6 +478,12 @@ class AudibotRLDriverDQNNode(Node):
         dist_goal = math.sqrt(dx**2 + dy**2)
         norm_dist_goal = np.clip(dist_goal / self.max_goal_distance, 0.0, 1.0)
         
+        if dist_goal > self.MAX_GOAL_DISTANCE_M:
+            # Mark a special flag so the main loop knows to end trajectory/episode
+            self.too_far_from_goal = True
+        else:
+            self.too_far_from_goal = False
+        
         angle_goal_world = math.atan2(dy, dx)
         angle_goal_relative = angle_goal_world - car_yaw
         # Normalize angle to [-pi, pi]
@@ -510,26 +525,58 @@ class AudibotRLDriverDQNNode(Node):
             self.get_logger().error(f"Observation vector length mismatch! Expected {self.OBSERVATION_SIZE}, got {len(final_observation_vector)}. Check processing logic.")
             return None # Return None if size is incorrect
         return final_observation_vector
+    
+    def _heuristic_action_toward_goal(self, obs: np.ndarray) -> int:
+        """
+        Very rough steering heuristic just to bootstrap learning:
+        - chooses throttle 'low'
+        - picks steering bucket based on goal angle (relative).
+        """
+        _, _, dist_norm, cos_ang, sin_ang = obs[0], obs[1], obs[2], obs[3], obs[4]
+        angle = math.atan2(sin_ang, cos_ang)  # [-pi, pi]
+        # Choose a steering bucket
+        if angle > 0.4:    steering = "hard_left"
+        elif angle > 0.15: steering = "soft_left"
+        elif angle < -0.4: steering = "hard_right"
+        elif angle < -0.15:steering = "soft_right"
+        else:              steering = "straight"
+        # Find the matching discrete action with 'low' throttle & no brake
+        for idx, a in enumerate(self.discrete_actions_map):
+            if a['throttle'] > 0 and a['throttle'] <= 0.4 and a['description'].startswith("LowThrottle") and steering in a['description']:
+                return idx
+        return random.randrange(self.num_discrete_actions)
+
 
     # --- DQN Action Selection (Epsilon-Greedy) ---
     def select_dqn_action(self, state_np_array: np.ndarray) -> int:
-        # Selects an action using epsilon-greedy: explore with prob epsilon, exploit with prob 1-epsilon.
-        sample = random.random()
-        eps_threshold = self.EPS_END + (self.EPS_START - self.EPS_END) * \
-            math.exp(-1. * self.total_agent_steps_taken / self.EPS_DECAY)
+        """
+        1)   Heuristic assist (probability decays with training steps)
+        2)   Standard ε-greedy over the learned Q-network
+        """
+        # ---------- assisted-driving probability ----------
+        assist_p = self.ASSIST_PROB_END + (self.ASSIST_PROB_START - self.ASSIST_PROB_END) * \
+                math.exp(-1.0 * self.total_agent_steps_taken / self.ASSIST_DECAY_STEPS)
 
-        if sample > eps_threshold: # Exploit: choose best action from policy network
-            self.policy_net.eval() # Set network to evaluation mode for inference
-            with torch.no_grad(): # Disable gradient calculations
-                state_tensor = torch.tensor(state_np_array, dtype=torch.float32, device=self.device).unsqueeze(0) # Add batch dim
-                q_values = self.policy_net(state_tensor)
-                action_idx = q_values.max(1)[1].item() # Get action with highest Q-value
-            # self.policy_net.train() # Set back to train mode if network has layers like BatchNorm/Dropout
-                                    # For simple MLP, this might not be strictly necessary for eval.
-        else: # Explore: choose a random action
-            # YOUR_DQN_LOGIC_HERE: Implement non-uniform exploration probabilities if desired.
-            action_idx = random.randrange(self.num_discrete_actions)
-        return action_idx
+        if random.random() < assist_p:
+            return self._heuristic_action_toward_goal(state_np_array)
+        # --------------------------------------------------
+
+        # ---------- ε-greedy selection --------------------
+        eps_threshold = self.EPS_END + (self.EPS_START - self.EPS_END) * \
+                        math.exp(-1.0 * self.total_agent_steps_taken / self.EPS_DECAY)
+
+        if random.random() > eps_threshold:
+            # exploit
+            with torch.no_grad():
+                q_vals = self.policy_net(
+                    torch.tensor(state_np_array, dtype=torch.float32, device=self.device).unsqueeze(0)
+                )
+            return int(q_vals.argmax().item())
+        else:
+            # explore
+            return random.randrange(self.num_discrete_actions)
+    # --------------------------------------------------
+
 
     # --- Car Command Publishing ---
     def publish_car_commands(self, discrete_action_index: int):
@@ -551,74 +598,65 @@ class AudibotRLDriverDQNNode(Node):
             self.brake_pub.publish(Float64(data=self.max_brake_torque * 0.5)) # Moderate brake
 
     # --- Dense Reward Calculation (CRUCIAL FOR DQN LEARNING) ---
-    def calculate_dense_reward(self, s_t_obs_vec, a_t_idx, s_t1_obs_vec, is_rl_trajectory_done: bool) -> float:
-        # Calculates the step-by-step (dense) reward for the agent.
-        # NEEDS_TUNING: The scaling factors and components of this reward function are critical
-        #               and will require significant experimentation.
-        reward = 0.0
+    def calculate_dense_reward(
+        self,
+        s_t_obs_vec: np.ndarray | None,
+        a_t_idx: int,
+        s_t1_obs_vec: np.ndarray | None,
+        is_rl_trajectory_done: bool
+    ) -> float:
+        """
+        Dense shaping signal used every step.
+        Positive ≈ “you’re making progress & driving well”.
+        Negative ≈ “you’re off-track or moving away from the goal”.
+        """
 
-        # Penalty for being off-track (from /in_track_status, reflected in self.is_in_track)
+        # --------------------------------------------------
+        reward = 0.0                       # ← always start with zero
+        # --------------------------------------------------
+
+        # 1.  Big penalty if the car has left the track
         if not self.is_in_track:
-            reward -= 50.0 # Large penalty
-            # self.get_logger().warn("Dense Reward: Off-track penalty applied.")
-            return reward # Early exit, no further positive rewards if off-track
+            return -50.0                   # early-exit (nothing else matters)
 
-        # Small survival reward for each step taken while in track
+        # 2.  Tiny survival reward keeps the agent alive & exploring
         reward += 0.05
 
-        # Speed reward (using normalized speed from s_t+1, which is s_t1_obs_vec)
-        if s_t1_obs_vec is not None and len(s_t1_obs_vec) > 0: # Index 0 is norm_linear_velocity_x
-            norm_speed = s_t1_obs_vec[0]
-            if norm_speed > 0.05: # If moving forward meaningfully
-                reward += norm_speed * 2.0 # Reward proportional to normalized forward speed (tune factor)
-            # Optional: Penalty for reversing if not intended by an action
-            # elif norm_speed < -0.05: reward -= abs(norm_speed) * 1.0
+        # 3.  Forward-speed reward (encourage motion, but only forward)
+        if s_t1_obs_vec is not None and len(s_t1_obs_vec) > 0:
+            norm_speed = max(0.0, s_t1_obs_vec[0])   # clip reverse
+            reward += norm_speed * 1.0               # 1 pt per 0-1 normalised speed
 
-        # Goal progress reward (using normalized distances from s_t and s_t+1)
-        if s_t_obs_vec is not None and s_t1_obs_vec is not None and \
-           len(s_t_obs_vec) > 2 and len(s_t1_obs_vec) > 2: # Indices 2,3,4 are goal info
-            dist_s_t_norm = s_t_obs_vec[2]    # norm_dist_to_goal for s_t
-            dist_s_t1_norm = s_t1_obs_vec[2]  # norm_dist_to_goal for s_t+1
-            
-            progress_to_goal_norm = dist_s_t_norm - dist_s_t1_norm # Positive if got closer
-            
-            if progress_to_goal_norm > 0.001: # Made some progress (threshold to avoid noise)
-                reward += progress_to_goal_norm * 20.0 # Significant reward for getting closer (tune factor)
-            elif progress_to_goal_norm < -0.001: # Moved away
-                reward -= abs(progress_to_goal_norm) * 10.0 # Penalty for moving away (tune factor)
+        # 4.  *Progress* towards the active goal (dominant term!)
+        if s_t_obs_vec is not None and s_t1_obs_vec is not None:
+            d_prev = s_t_obs_vec[2]  * self.max_goal_distance   # metres
+            d_curr = s_t1_obs_vec[2] * self.max_goal_distance
+            delta  = d_prev - d_curr                            # +ve ⇒ closer
+            reward += 5.0 * delta                               # 5 pts per metre
 
-            # Goal alignment reward (using cosine of relative angle from s_t+1)
-            # Index 3 is goal_angle_cos for s_t+1
-            if len(s_t1_obs_vec) > 3:
-                goal_angle_cos_s_t1 = s_t1_obs_vec[3]
-                if goal_angle_cos_s_t1 > 0.707: # Pointing somewhat towards goal (cos(45deg) ~ 0.707)
-                    reward += goal_angle_cos_s_t1 * 1.0 # Reward for good alignment (tune factor)
-        
-        # Optional: Penalty for specific actions if undesired in certain contexts
-        # e.g., action_def = self.discrete_actions_map[a_t_idx]
-        # if action_def['brake'] > 0 and (s_t1_obs_vec is not None and s_t1_obs_vec[0] * self.max_car_speed < 0.1):
-        #     reward -= 0.5 # Penalty for braking at very low speed
+        # 5.  Alignment bonus (points car in the right direction)
+        if s_t1_obs_vec is not None and len(s_t1_obs_vec) > 3:
+            cos_rel = s_t1_obs_vec[3]                           # already cos(angle)
+            if cos_rel > 0.7:                                   # ≈ <45°
+                reward += cos_rel                               # up to +1
 
-        # Bonus if RL trajectory ends successfully (e.g., max steps reached while still on track and making progress)
-        if is_rl_trajectory_done and self.is_in_track:
-            # This might indicate it completed a segment or the whole track if you have a final goal condition.
-            # For now, just a small bonus for surviving the trajectory length.
-            reward += 10.0
-        
-        # --- Reward for reaching a goal (based on current pose) ---
+        # 6.  Bonus for actually entering the goal quad
         if self.latest_odom and self.goals_data:
-            pos = self.latest_odom.pose.pose.position
-            if self._check_if_goal_reached(pos.x, pos.y):
+            p = self.latest_odom.pose.pose.position
+            if self._check_if_goal_reached(p.x, p.y):
                 now = self.get_clock().now().nanoseconds / 1e9
                 if self.goal_reached_time is None or (now - self.goal_reached_time) > 2.0:
-                    reward += 10.0  # Tunable bonus
-                    self.get_logger().info(f"Goal {self.goal_index} reached. +10 reward.")
+                    reward += 50.0                               # big bonus
                     self.goal_reached_time = now
                     self.goal_index = (self.goal_index + 1) % len(self.goals_data)
                     self.publish_current_goal()
 
-        
-        return reward
+        # 7.  Small “trajectory survived” bonus
+        if is_rl_trajectory_done and self.is_in_track:
+            reward += 10.0
+
+        return float(reward)
+
 
     # --- DQN Model Optimization (Adapted from train_agent.py) ---
     def optimize_dqn_model(self):
@@ -681,6 +719,16 @@ class AudibotRLDriverDQNNode(Node):
 
         if s_t1_current_observation_vec is None:
             rclpy.logging.get_logger('audibot_rl_driver_dqn_node').warn("Observation data incomplete, cannot perform RL step.")
+            self.processing_rl_step_active = False
+            return
+    
+        # Abort entire ROS episode if > 50 m from goal
+        if getattr(self, "too_far_from_goal", False):
+            self.get_logger().info("🚫 Too far from goal – ending episode early.")
+            self.publish_car_commands(self.discrete_actions_map.index(
+                next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
+            # Pretend rewards-node sent an end-of-episode signal:
+            self.jarred_episode_over_callback(Float32(data=0.0))
             self.processing_rl_step_active = False
             return
 
