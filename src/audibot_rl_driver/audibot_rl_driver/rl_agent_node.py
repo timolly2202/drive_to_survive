@@ -710,7 +710,7 @@ class AudibotRLDriverDQNNode(Node):
         
         return loss.item() # Return scalar loss value for logging
     
-    def wait_for_publishers(self, topic_name: str, timeout_sec: float = 10.0) -> bool:
+    def wait_for_publishers(self, topic_name: str, timeout_sec: float = 50.0) -> bool:
         """Wait until topic has at least one publisher."""
         start_time = self.get_clock().now()
         while rclpy.ok():
@@ -758,7 +758,7 @@ class AudibotRLDriverDQNNode(Node):
 
         for topic, msg_type in topics_and_types:
             self.get_logger().info(f"Waiting for publisher and first message on {topic}...")
-            if not self.wait_for_publishers(topic, timeout_sec=10):
+            if not self.wait_for_publishers(topic, timeout_sec=50):
                 return False
             if not self.wait_for_first_message(topic, msg_type):
                 return False
@@ -844,7 +844,7 @@ class AudibotRLDriverDQNNode(Node):
                     return
 
                 try:
-                    p.wait(timeout=10)
+                    p.wait(timeout=50)
                     self.get_logger().info(f"Process PID={p.pid} terminated (not gracefully...).")
                 except subprocess.TimeoutExpired:
                     self.get_logger().warning(f"Process PID={p.pid} did not terminate in time. Forcing kill...")
