@@ -771,14 +771,36 @@ class AudibotRLDriverDQNNode(Node):
         self.odom_sub = self.create_subscription(Odometry, '/orange/odom', self.odom_callback, qos_profile=self.qos)
 
         self.get_logger().info("Re-subscribed")
+
+    def wait_for_initial_pose(self, target_x=24.2, target_y=13.2, tolerance=0.1, timeout=60.0):
+        self.get_logger().info(f"Waiting for Audibot to reach starting position x={target_x}, y={target_y}...")
+
+        start_time = self.get_clock().now()
+        while rclpy.ok():
+            rclpy.spin_once(self, timeout_sec=0.1)
+
+            if self.latest_odom is not None:
+                position = self.latest_odom.pose.pose.position
+                if (
+                    abs(position.x - target_x) < tolerance and
+                    abs(position.y - target_y) < tolerance
+                ):
+                    self.get_logger().info("Audibot is at the starting pose.")
+                    return True
+
+            elapsed = (self.get_clock().now() - start_time).nanoseconds / 1e9
+            self.resubscribe_to_topics()
+            if elapsed > timeout:
+                self.get_logger().warning("Timed out waiting for initial pose.")
+                return False
     
     def start_environment(self):
         try:
             # Launch Gazebo
             self.gazebo_process = subprocess.Popen(
                 ['ros2', 'launch', 'gazebo_tf', 'drive_to_survive.launch.py', 'gui:=false', 'use_rviz:=true'],
-                # stdout=subprocess.DEVNULL,
-                # stderr=subprocess.DEVNULL,
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
                 preexec_fn=os.setsid
                 )
 
@@ -809,27 +831,7 @@ class AudibotRLDriverDQNNode(Node):
             self.get_logger().error(f'Failed to start environment: {e}')
             self.shutdown_environment()
 
-    def wait_for_initial_pose(self, target_x=24.2, target_y=13.2, tolerance=0.1, timeout=60.0):
-        self.get_logger().info(f"Waiting for Audibot to reach starting position x={target_x}, y={target_y}...")
-
-        start_time = self.get_clock().now()
-        while rclpy.ok():
-            rclpy.spin_once(self, timeout_sec=0.1)
-
-            if self.latest_odom is not None:
-                position = self.latest_odom.pose.pose.position
-                if (
-                    abs(position.x - target_x) < tolerance and
-                    abs(position.y - target_y) < tolerance
-                ):
-                    self.get_logger().info("Audibot is at the starting pose.")
-                    return True
-
-            elapsed = (self.get_clock().now() - start_time).nanoseconds / 1e9
-            self.resubscribe_to_topics()
-            if elapsed > timeout:
-                self.get_logger().warning("Timed out waiting for initial pose.")
-                return False
+    
 
     def shutdown_environment(self):
         def terminate_process(p):
