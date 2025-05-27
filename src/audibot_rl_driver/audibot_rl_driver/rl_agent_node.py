@@ -19,15 +19,11 @@ import torch.nn as nn
 import torch.optim as optim
 import random
 from collections import deque # For ReplayBuffer implementation
-import time
 import os # For file path operations (saving/loading models)
 import json
 from transformations import euler_from_quaternion # For robust yaw calculation from odometry quaternions
 # import threading
 from rclpy.qos import QoSProfile, ReliabilityPolicy
-
-import subprocess
-import signal
 
 # --- Constants for camera IDs ---
 # Used to identify the source camera of YOLO detections when processing observations.
@@ -141,7 +137,8 @@ class AudibotRLDriverDQNNode(Node):
         # For interacting with rl_gym and the car controllers.
         self.qos = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
 
-        self.env_start_request_pub = self.create_publisher(String, 'dqn_agent/start_episode_request', 10) # To rl_gym
+        self.env_start_request_pub = self.create_publisher(Bool, '/dqn_agent/start_episode_request', 10) # To rl_gym
+        self.env_end_request_pub = self.create_publisher(Bool, '/dqn_agent/end_episode_request', 10) # To rl_gym
         self.throttle_pub = self.create_publisher(Float64, '/orange/throttle_cmd', 10) # To car
         self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10) # To car
         self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)       # To car
@@ -195,12 +192,6 @@ class AudibotRLDriverDQNNode(Node):
         self.ASSIST_PROB_START    = 0.8      # heuristic assistance at the beginning
         self.ASSIST_PROB_END      = 0.0      # fades to 0 as training progresses
         self.ASSIST_DECAY_STEPS   = 20_000   # how fast the assistance probability decays
-
-        # Processes for the environment
-        self.gazebo_process = None
-        self.camera_process = None
-
-        self.sub = None
 
         # Timer for the main RL agent step (action selection, learning)
         self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
@@ -380,9 +371,6 @@ class AudibotRLDriverDQNNode(Node):
             self.get_logger().info("Maximum training ROS episodes reached. Halting further episode requests.")
             if self.rl_step_timer: self.rl_step_timer.cancel() # Stop the RL agent's step timer
             return
-        
-        if self.gazebo_process is not None:
-            self.shutdown_environment()
 
         self.get_logger().info(f"DQN Node: Requesting rl_gym to prepare for ROS episode {self.current_ros_episode_num + 1}.")
 
@@ -391,7 +379,9 @@ class AudibotRLDriverDQNNode(Node):
         self.s_t_observation_buffer = None      # Clear previous observation for the new episode
         self.a_t_action_idx_buffer = -1         # Clear previous action
         
-        self.start_environment()
+        start_msg = Bool()
+        start_msg.data = True
+        self.env_start_request_pub.publish(start_msg)
 
 
         
@@ -422,7 +412,7 @@ class AudibotRLDriverDQNNode(Node):
     def right_yolo_callback(self, msg: YoloDetections): self.latest_right_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
     def odom_callback(self, msg: Odometry): 
         self.latest_odom = msg
-        self.get_logger().info(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
+        # self.get_logger().info(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
         self.get_logger().debug(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
 
     def in_track_callback(self, msg: Bool):
@@ -709,161 +699,6 @@ class AudibotRLDriverDQNNode(Node):
         self.optimizer.step()     # Update policy_net weights
         
         return loss.item() # Return scalar loss value for logging
-    
-    def wait_for_publishers(self, topic_name: str, timeout_sec: float = 50.0) -> bool:
-        """Wait until topic has at least one publisher."""
-        start_time = self.get_clock().now()
-        while rclpy.ok():
-            # topic_info = self.get_topic_names_and_types(topic_name)
-            publishers_amount = self.count_publishers(topic_name)
-            # self.get_logger().info(f"publishers_info {publishers_amount}")
-            if publishers_amount > 0:
-                return True
-            if (self.get_clock().now() - start_time).nanoseconds / 1e9 > timeout_sec:
-                self.get_logger().warning(f"Timeout waiting for publishers on {topic_name}")
-                return False
-            time.sleep(0.1)
-    
-    def wait_for_first_message(self, topic_name: str, msg_type, timeout_sec: float = 120.0) -> bool:
-        received_msg = False
-
-        def on_msg(msg):
-            nonlocal received_msg
-            received_msg = True
-
-        sub = self.create_subscription(msg_type, topic_name, on_msg, qos_profile=self.qos)
-
-        start_time = self.get_clock().now()
-        while rclpy.ok() and not received_msg:
-            if (self.get_clock().now() - start_time).nanoseconds / 1e9 > timeout_sec:
-                self.get_logger().warning(f"Timeout waiting for first message on {topic_name}")
-                self.destroy_subscription(sub)
-                return False
-            rclpy.spin_once(self, timeout_sec=0.1)  # spin the node to process callbacks
-            self.get_logger().info(f"ROS_DOMAIN_ID: {os.environ.get('ROS_DOMAIN_ID', 'Not Set')}")
-            self.get_logger().info(f"waiting on topic first message")
-            self.get_logger().info(f"publishers_info {self.count_publishers(topic_name)}")
-
-        self.destroy_subscription(sub)
-        return True
-    
-    def wait_for_environment_ready(self):
-        topics_and_types = [
-            ('/orange/odom', Odometry),
-            ('/orange/right_image_yolo/detections', YoloDetections),
-            ('/orange/left_image_yolo/detections', YoloDetections),
-            ('/orange/front_image_yolo/detections', YoloDetections),
-            ('/orange/back_image_yolo/detections', YoloDetections),
-        ]
-
-        for topic, msg_type in topics_and_types:
-            self.get_logger().info(f"Waiting for publisher and first message on {topic}...")
-            if not self.wait_for_publishers(topic, timeout_sec=50):
-                return False
-            if not self.wait_for_first_message(topic, msg_type):
-                return False
-        return True
-
-    def resubscribe_to_topics(self):
-        if hasattr(self, 'odom_sub') and self.odom_sub is not None:
-            self.destroy_subscription(self.odom_sub)
-
-        self.odom_sub = self.create_subscription(Odometry, '/orange/odom', self.odom_callback, qos_profile=self.qos)
-
-        self.get_logger().info("Re-subscribed")
-
-    def wait_for_initial_pose(self, target_x=24.2, target_y=13.2, tolerance=0.1, timeout=60.0):
-        self.get_logger().info(f"Waiting for Audibot to reach starting position x={target_x}, y={target_y}...")
-
-        start_time = self.get_clock().now()
-        while rclpy.ok():
-            rclpy.spin_once(self, timeout_sec=0.1)
-
-            if self.latest_odom is not None:
-                position = self.latest_odom.pose.pose.position
-                if (
-                    abs(position.x - target_x) < tolerance and
-                    abs(position.y - target_y) < tolerance
-                ):
-                    self.get_logger().info("Audibot is at the starting pose.")
-                    return True
-
-            elapsed = (self.get_clock().now() - start_time).nanoseconds / 1e9
-            self.resubscribe_to_topics()
-            if elapsed > timeout:
-                self.get_logger().warning("Timed out waiting for initial pose.")
-                return False
-    
-    def start_environment(self):
-        try:
-            # Launch Gazebo
-            self.gazebo_process = subprocess.Popen(
-                ['ros2', 'launch', 'gazebo_tf', 'drive_to_survive.launch.py', 'gui:=false', 'use_rviz:=true'],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                preexec_fn=os.setsid
-                )
-
-            # Launch Camera nodes
-            self.camera_process = subprocess.Popen(
-                ['ros2', 'launch', 'audibot_yolo', 'multi_camera.launch.py'],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
-                preexec_fn=os.setsid
-                )
-
-            self.get_logger().info('Waiting for Gazebo and camera nodes to initialize...')
-            
-            if self.wait_for_environment_ready():
-                self.get_logger().info('Environment ready.')
-                self.resubscribe_to_topics()
-                # making sure starting opsition is right before confirming ready
-                self.wait_for_initial_pose()
-                
-                self.env_confirmed_ready_for_rl = True
-
-            else:
-                self.get_logger().error('Timed out waiting for environment readiness.')
-                self.shutdown_environment()
-                self.env_confirmed_ready_for_rl = False
-
-        except Exception as e:
-            self.get_logger().error(f'Failed to start environment: {e}')
-            self.shutdown_environment()
-
-    
-
-    def shutdown_environment(self):
-        def terminate_process(p):
-            if p:
-                self.get_logger().info(f"Terminating process PID={p.pid}...")
-                try:
-                    os.killpg(os.getpgid(p.pid), signal.SIGKILL)
-                except ProcessLookupError:
-                    self.get_logger().warning(f"Process group for PID={p.pid} does not exist (already terminated?)")
-                    return
-
-                try:
-                    p.wait(timeout=50)
-                    self.get_logger().info(f"Process PID={p.pid} terminated (not gracefully...).")
-                except subprocess.TimeoutExpired:
-                    self.get_logger().warning(f"Process PID={p.pid} did not terminate in time. Forcing kill...")
-                    try:
-                        os.killpg(os.getpgid(p.pid), signal.SIGKILL)
-                        p.wait(timeout=5)
-                        self.get_logger().info(f"Process PID={p.pid} force-killed.")
-                    except Exception as e:
-                        self.get_logger().error(f"Failed to kill process PID={p.pid}: {e}")
-        
-        terminate_process(self.gazebo_process)
-        terminate_process(self.camera_process)
-
-        self.gazebo_process = None
-        self.camera_process = None
-        
-
-        self.get_logger().info('Simulation processes terminated.')
-        self.env_confirmed_ready_for_rl = False
 
     # --- Main RL Step (called by timer) ---
     def perform_rl_step_and_learn(self):
@@ -936,7 +771,7 @@ class AudibotRLDriverDQNNode(Node):
                 # current_rl_trajectory_step_count is reset when new ROS episode starts (via request_new_ros_episode_from_rl_gym)
                 self.processing_rl_step_active = False
 
-                self.shutdown_environment()
+                # self.shutdown_environment()
 
                 return # Wait for Jarred's signal before starting new trajectory logic within a new ROS episode
 
@@ -997,9 +832,13 @@ class AudibotRLDriverDQNNode(Node):
         self.publish_car_commands(self.discrete_actions_map.index(next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
         # Request rl_gym to prepare for a new ROS episode after a short delay
         # rclpy.create_timer(2.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
-        self.shutdown_environment()
+        # self.shutdown_environment()
         self.request_new_ros_episode_from_rl_gym()
 
+    def shutdown_environment(self):
+        end_msg = Bool()
+        end_msg.data = True
+        self.env_end_request_pub.publish(end_msg)
 
 def main(args=None):
     rclpy.init(args=args)
