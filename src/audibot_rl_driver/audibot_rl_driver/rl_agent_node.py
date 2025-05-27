@@ -171,6 +171,8 @@ class AudibotRLDriverDQNNode(Node):
 
         self._load_checkpoint() # Attempt to load checkpoint after initializing networks and optimizer
 
+        self.total_rewards = 0
+        
         # --- State variables for interaction and data storage ---
         self.env_confirmed_ready_for_rl = False # Flag: Is rl_gym ready for this ROS episode?
         self.processing_rl_step_active = False  # Mutex to prevent re-entrant RL steps if timer is too fast
@@ -188,7 +190,7 @@ class AudibotRLDriverDQNNode(Node):
         
         # --- Goal / termination helpers ---
         self.GOAL_RADIUS_M        = 1.5      # distance at which we consider the goal “reached”
-        self.MAX_GOAL_DISTANCE_M  = 35.0     # > this ⇒ abort episode
+        self.MAX_GOAL_DISTANCE_M  = 50.0     # > this ⇒ abort episode
         self.ASSIST_PROB_START    = 0.8      # heuristic assistance at the beginning
         self.ASSIST_PROB_END      = 0.0      # fades to 0 as training progresses
         self.ASSIST_DECAY_STEPS   = 20_000   # how fast the assistance probability decays
@@ -196,12 +198,6 @@ class AudibotRLDriverDQNNode(Node):
         # Timer for the main RL agent step (action selection, learning)
         self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
 
-        if self.use_env_manager:
-            self.get_logger().info("Initialization complete. Requesting first ROS episode from rl_gym.")
-            self.request_new_ros_episode_from_rl_gym()
-        else:
-            self.get_logger().info("Initialization complete. Running WITHOUT environment manager.")
-            self.env_confirmed_ready_for_rl = True
 
         self.goals_data = []
         self.goal_index = 0
@@ -214,6 +210,14 @@ class AudibotRLDriverDQNNode(Node):
                 self.get_logger().info(f"Loaded {len(self.goals_data)} goals.")
         except Exception as e:
             self.get_logger().error(f"Failed to load goal JSON: {e}")
+
+        if self.use_env_manager:
+            self.get_logger().info("Initialization complete. Requesting first ROS episode from rl_gym.")
+            self.request_new_ros_episode_from_rl_gym()
+        else:
+            self.get_logger().info("Initialization complete. Running WITHOUT environment manager.")
+            self.env_confirmed_ready_for_rl = True
+
 
     def _check_if_goal_reached(self, car_x: float, car_y: float) -> bool:
         """Checks if current position is inside the current goal region (quad)."""
@@ -378,6 +382,10 @@ class AudibotRLDriverDQNNode(Node):
         self.current_rl_trajectory_step_count = 0 # Reset steps for the new RL trajectory
         self.s_t_observation_buffer = None      # Clear previous observation for the new episode
         self.a_t_action_idx_buffer = -1         # Clear previous action
+
+        # reset goal
+        self.goal_index = 0
+        self.publish_current_goal()
         
         start_msg = Bool()
         start_msg.data = True
@@ -404,7 +412,7 @@ class AudibotRLDriverDQNNode(Node):
     # Processing into the observation vector happens in process_observation_vector().
     def current_goal_callback(self, msg: Point): 
         self.latest_current_goal = msg
-        self.get_logger().debug(f"✅ Received goal: ({msg.x:.2f}, {msg.y:.2f})")
+        self.get_logger().info(f"✅ Received goal: ({msg.x:.2f}, {msg.y:.2f})")
 
     def front_yolo_callback(self, msg: YoloDetections): self.latest_front_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
     def back_yolo_callback(self, msg: YoloDetections): self.latest_back_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
@@ -477,6 +485,8 @@ class AudibotRLDriverDQNNode(Node):
         dx, dy = gx - car_x, gy - car_y
         dist_goal = math.sqrt(dx**2 + dy**2)
         norm_dist_goal = np.clip(dist_goal / self.max_goal_distance, 0.0, 1.0)
+
+        self.get_logger().info(f'Distance to Goal: {dist_goal}')
         
         if dist_goal > self.MAX_GOAL_DISTANCE_M:
             # Mark a special flag so the main loop knows to end trajectory/episode
@@ -811,7 +821,7 @@ class AudibotRLDriverDQNNode(Node):
                 s_t1_final_obs_at_jarred_end, True # Definitely done from ROS episode perspective
             )
             self.memory.push(self.s_t_observation_buffer, self.a_t_action_idx_buffer, final_dense_reward_for_buffer, s_t1_final_obs_at_jarred_end, True)
-            self.get_logger().debug(f"Pushed final experience due to Jarred's episode end. Dense Reward: {final_dense_reward_for_buffer:.2f}")
+            self.get_logger().info(f"Pushed final experience due to Jarred's episode end. Dense Reward: {final_dense_reward_for_buffer:.2f}")
             # Potentially one last optimization call if desired
             # self.optimize_dqn_model()
 

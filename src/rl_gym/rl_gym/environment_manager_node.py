@@ -160,7 +160,7 @@ class EnvironmentManager(Node):
             
             # return True
             if self.use_rviz:
-                time_wait = 15
+                time_wait = 12
             else:
                 time_wait = 10
             self.get_logger().info(f'Waiting for Gazebo and camera nodes to initialize ({time_wait} seconds)')
