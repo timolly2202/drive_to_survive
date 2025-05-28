@@ -760,6 +760,8 @@ class AudibotRLDriverDQNNode(Node):
             # Store the experience (s_t, a_t, r_t, s_t+1, done_t)
             self.memory.push(self.s_t_observation_buffer, self.a_t_action_idx_buffer, r_t_dense_reward, s_t1_current_observation_vec, rl_trajectory_done_at_s_t1)
             
+            self.total_rewards = self.total_rewards + r_t_dense_reward
+
             # Perform model optimization periodically
             if self.total_agent_steps_taken > self.BATCH_SIZE and \
                self.total_agent_steps_taken % self.OPTIMIZE_MODEL_FREQUENCY == 0:
@@ -804,8 +806,16 @@ class AudibotRLDriverDQNNode(Node):
         # Callback for when Jarred's rewards_node signals the end of the official ROS episode.
         # DEPENDS_ON_REWARDS_PKG: Expects '/episode_rewards' topic.
         final_reward_from_jarred = msg.data
-        self.get_logger().info(f"DQN Node: OFFICIAL ROS EPISODE END (Jarred's /episode_rewards). Jarred's Cumulative Reward: {final_reward_from_jarred:.2f}")
+        self.get_logger().info(f"DQN Node: OFFICIAL ROS EPISODE END Cumulative reward: {self.total_rewards:.2f}")
         
+        # Save reward to file
+        rewards_file = os.path.expanduser("~/git/drive_to_survive/resources/rl_information/episode_rewards.csv")
+        try:
+            with open(rewards_file, "a") as f:
+                f.write(f"{self.current_ros_episode_num},{self.total_rewards}\n")
+        except Exception as e:
+            self.get_logger().error(f"Failed to write reward: {e}")
+
         # This is the primary signal that the ROS-level episode has ended.
         # If the RL trajectory was still ongoing (i.e., not internally "done"),
         # store the final transition with done=True because the ROS episode ended.
@@ -832,6 +842,8 @@ class AudibotRLDriverDQNNode(Node):
         self.s_t_observation_buffer = None 
         self.a_t_action_idx_buffer = -1    
         self.current_rl_trajectory_step_count = 0 # Reset for the new ROS episode
+
+        self.total_rewards = 0
 
         # Save checkpoint periodically based on ROS episodes completed
         if self.current_ros_episode_num > 0 and self.current_ros_episode_num % self.checkpoint_save_frequency == 0:
