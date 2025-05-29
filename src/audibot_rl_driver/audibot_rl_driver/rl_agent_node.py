@@ -486,7 +486,7 @@ class AudibotRLDriverDQNNode(Node):
         dist_goal = math.sqrt(dx**2 + dy**2)
         norm_dist_goal = np.clip(dist_goal / self.max_goal_distance, 0.0, 1.0)
 
-        self.get_logger().info(f'Distance to Goal: {dist_goal}')
+        # self.get_logger().info(f'Distance to Goal: {dist_goal}')
         
         if dist_goal > self.MAX_GOAL_DISTANCE_M:
             # Mark a special flag so the main loop knows to end trajectory/episode
@@ -782,6 +782,7 @@ class AudibotRLDriverDQNNode(Node):
                 self.a_t_action_idx_buffer = -1    # Clear buffer
                 # current_rl_trajectory_step_count is reset when new ROS episode starts (via request_new_ros_episode_from_rl_gym)
                 self.processing_rl_step_active = False
+                self.jarred_episode_over_callback(Float32(data=0.0))
 
                 # self.shutdown_environment()
 
