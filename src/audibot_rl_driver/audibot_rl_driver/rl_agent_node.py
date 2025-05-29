@@ -1,423 +1,903 @@
-# audibot_rl_driver/audibot_rl_driver/rl_agent_node.py
+#!/usr/bin/env python3
+# This script defines the main DQN agent node for controlling the Audibot.
+# It handles ROS2 communication, observation processing, DQN learning, and action execution.
 
 import rclpy
 from rclpy.node import Node
-from std_msgs.msg import Float64, String
-from nav_msgs.msg import Odometry
-from yolo_msg.msg import YoloDetections, BoundingBox # BoundingBox is implicitly used by YoloDetections
+from rclpy.task import Future
+from rclpy.duration import Duration
+from std_msgs.msg import String, Bool, Int64, Float32, Float64 # ROS standard message types
+from geometry_msgs.msg import Point                 # For receiving current goal coordinates
+from nav_msgs.msg import Odometry                   # For receiving car's odometry (position, velocity)
+from yolo_msg.msg import YoloDetections             # Custom message for YOLO cone detections
+from yolo_msg.msg import BoundingBox
 
 import numpy as np
 import math
+import torch
+import torch.nn as nn
+import torch.optim as optim
+import random
+from collections import deque # For ReplayBuffer implementation
+import os # For file path operations (saving/loading models)
+import json
+from transformations import euler_from_quaternion # For robust yaw calculation from odometry quaternions
+# import threading
+from rclpy.qos import QoSProfile, ReliabilityPolicy
 
-# --- RL specific imports (you'll add these as you build out PPO) ---
-# For example, if using a library like Stable Baselines3 (SB3)
-# import gymnasium as gym # Or import gym if using older versions
-# from gymnasium import spaces
-# from stable_baselines3 import PPO
-# from stable_baselines3.common.env_checker import check_env
-
-# Define constants for camera identifiers
+# --- Constants for camera IDs ---
+# Used to identify the source camera of YOLO detections when processing observations.
 CAM_FRONT = 0
 CAM_LEFT = 1
 CAM_RIGHT = 2
-CAM_BACK = 3 # If you use it
-CAM_UNKNOWN = 4
+CAM_BACK = 3
+CAM_UNKNOWN = 4 # Fallback, should ideally not be used
 
 
-class RLAgentNode(Node):
+# --- DQN Network Definition ---
+# Defines the neural network architecture for the Q-value function approximation.
+# This network takes an observation as input and outputs Q-values for each discrete action.
+# NEEDS_TUNING: Network architecture (number of layers, neurons per layer, activation functions)
+#               might need adjustment based on learning performance.
+class DQNNetwork(nn.Module):
+    def __init__(self, input_dim: int, output_dim: int):
+        super(DQNNetwork, self).__init__()
+        # Standard MLP (Multi-Layer Perceptron) architecture.
+        self.fc1 = nn.Linear(input_dim, 256) # First hidden layer
+        self.fc2 = nn.Linear(256, 128)       # Second hidden layer
+        self.fc3 = nn.Linear(128, output_dim)# Output layer (Q-values)
+
+    def forward(self, x: torch.Tensor) -> torch.Tensor:
+        # Defines the forward pass of the network.
+        # Ensures input is a FloatTensor. Device handling is managed externally before calling.
+        if not isinstance(x, torch.Tensor): x = torch.tensor(x, dtype=torch.float32)
+        elif x.dtype != torch.float32: x = x.float()
+        
+        x = torch.relu(self.fc1(x)) # ReLU activation for hidden layers
+        x = torch.relu(self.fc2(x))
+        q_values = self.fc3(x)      # Linear output for Q-values
+        return q_values
+
+# --- Replay Buffer Definition ---
+# Stores experiences (transitions) for off-policy learning.
+# This helps break correlations between consecutive samples and allows for efficient reuse of experiences.
+class ReplayBuffer:
+    def __init__(self, capacity: int):
+        self.buffer = deque(maxlen=capacity) # Uses a deque for efficient appends and pops
+
+    def push(self, state, action: int, reward: float, next_state, done: bool):
+        # Adds a new experience tuple to the buffer.
+        self.buffer.append((np.array(state, dtype=np.float32),
+                            action, # Discrete action index (int)
+                            reward, # Dense reward (float)
+                            np.array(next_state, dtype=np.float32),
+                            done))  # Whether the RL trajectory ended (bool)
+
+    def sample(self, batch_size: int):
+        # Randomly samples a batch of experiences from the buffer.
+        state, action, reward, next_state, done = zip(*random.sample(self.buffer, batch_size))
+        return np.array(state, dtype=np.float32), \
+               np.array(action, dtype=np.int64), \
+               np.array(reward, dtype=np.float32), \
+               np.array(next_state, dtype=np.float32), \
+               np.array(done, dtype=np.float32) # 'done' converted to float for (1-done) masking in Bellman eq.
+
+    def __len__(self) -> int:
+        # Returns the current number of experiences stored in the buffer.
+        return len(self.buffer)
+
+# --- Main DQN Agent ROS2 Node ---
+# This class encapsulates all logic for the DQN agent, including ROS interactions,
+# observation processing, learning, and action execution.
+class AudibotRLDriverDQNNode(Node):
     def __init__(self):
-        super().__init__('audibot_rl_agent_node')
-        self.get_logger().info('RL Agent Node with Observation Space V1 has been started.')
+        super().__init__('audibot_rl_driver_dqn_node')
+        self.use_env_manager = self.declare_parameter('use_env_manager', True).value
 
-        # --- Parameters ---
-        # YOUR_INPUT_REQUIRED: Define these parameters for your specific setup
-        self.declare_parameter('num_closest_cones', 6)  # N: How many closest cones to consider in observation
-        self.declare_parameter('max_car_speed', 10.0) # m/s, for normalizing speed observation
-        self.declare_parameter('max_car_yaw_rate', 2.0) # rad/s, for normalizing yaw rate
-        self.declare_parameter('max_goal_distance', 50.0) # meters, for normalizing goal distance
+        self.get_logger().info("Audibot RL Driver (DQN) Node: Initializing...")
 
-        # Image dimensions - crucial for normalization.
-        # These might be the same for all cameras or different.
-        # Get these from your Gazebo camera sensor configuration or Tim.
-        self.declare_parameter('front_cam.image_width', 640) # YOUR_INPUT_REQUIRED
-        self.declare_parameter('front_cam.image_height', 480) # YOUR_INPUT_REQUIRED
-        self.declare_parameter('left_cam.image_width', 640) # YOUR_INPUT_REQUIRED
-        self.declare_parameter('left_cam.image_height', 480) # YOUR_INPUT_REQUIRED
-        self.declare_parameter('right_cam.image_width', 640) # YOUR_INPUT_REQUIRED
-        self.declare_parameter('right_cam.image_height', 480) # YOUR_INPUT_REQUIRED
-        # Add for back camera if used
+        # --- Hyperparameters & Configuration ---
+        # These parameters control the DQN algorithm's behavior and training process.
+        # NEEDS_TUNING: These are critical and will likely require adjustment based on experimental results.
+        self.BUFFER_SIZE = self.declare_parameter('buffer_size', 50000).value
+        self.BATCH_SIZE = self.declare_parameter('batch_size', 64).value
+        self.GAMMA = self.declare_parameter('gamma', 0.99).value # Discount factor for future rewards
+        self.EPS_START = self.declare_parameter('eps_start', 1.0).value # Initial epsilon for exploration
+        self.EPS_END = self.declare_parameter('eps_end', 0.05).value   # Final epsilon value
+        self.EPS_DECAY = self.declare_parameter('eps_decay', 30000).value # Epsilon decay rate (in agent steps)
+        self.TARGET_UPDATE_FREQUENCY = self.declare_parameter('target_update_frequency', 1000).value # How often to update target network (in agent steps)
+        self.LEARNING_RATE = self.declare_parameter('learning_rate', 0.0001).value # Optimizer learning rate
+        self.OPTIMIZE_MODEL_FREQUENCY = self.declare_parameter('optimize_model_frequency', 4).value # How many agent steps per model optimization
 
-        self.num_closest_cones = self.get_parameter('num_closest_cones').value
-        self.max_car_speed = self.get_parameter('max_car_speed').value
-        self.max_car_yaw_rate = self.get_parameter('max_car_yaw_rate').value
-        self.max_goal_distance = self.get_parameter('max_goal_distance').value
+        # Simulation/Episode Control Parameters
+        self.NUM_ROS_EPISODES_TO_RUN = self.declare_parameter('num_ros_episodes_to_run', 2000).value # Total ROS-level episodes for training
+        self.MAX_STEPS_PER_RL_TRAJECTORY = self.declare_parameter('max_steps_per_rl_trajectory', 1000).value # Max steps for an internal RL learning trajectory
 
-        self.image_dimensions = {
-            CAM_FRONT: (self.get_parameter('front_cam.image_width').value, self.get_parameter('front_cam.image_height').value),
-            CAM_LEFT: (self.get_parameter('left_cam.image_width').value, self.get_parameter('left_cam.image_height').value),
-            CAM_RIGHT: (self.get_parameter('right_cam.image_width').value, self.get_parameter('right_cam.image_height').value),
-            # CAM_BACK: (self.get_parameter('back_cam.image_width').value, self.get_parameter('back_cam.image_height').value),
+        # Action Space Configuration (Car Control Limits)
+        # NEEDS_TUNING: Ensure these reflect the car's actual capabilities in Gazebo.
+        self.max_steering_angle_rad = self.declare_parameter('max_steering_angle_rad', 0.7).value # Approx 40 degrees
+        self.max_brake_torque = self.declare_parameter('max_brake_torque', 1000.0).value # Example Nm
+        self._define_discrete_actions() # Helper method to populate self.discrete_actions_map
+
+        # Observation Space Configuration
+        self.num_closest_cones = self.declare_parameter('num_closest_cones', 6).value # How many cones to include in observation
+        self._define_image_dimensions_and_obs_size() # Defines self.OBSERVATION_SIZE and normalization constants
+
+        # Model Saving Configuration
+        self.save_dir = self.declare_parameter('save_dir', 'dqn_models_audibot').value
+        self.checkpoint_filename = self.declare_parameter('checkpoint_filename', 'dqn_checkpoint.pth').value
+        self.final_model_filename = self.declare_parameter('final_model_filename', 'dqn_final_policy.pth').value
+        self.checkpoint_save_frequency = self.declare_parameter('checkpoint_save_frequency', 50).value # Save checkpoint every N ROS episodes
+        
+        self.checkpoint_path = os.path.join(self.save_dir, self.checkpoint_filename)
+        self.final_model_path = os.path.join(self.save_dir, self.final_model_filename)
+        os.makedirs(self.save_dir, exist_ok=True) # Create save directory if it doesn't exist
+
+        # --- ROS Publishers ---
+        # For interacting with rl_gym and the car controllers.
+        self.qos = QoSProfile(depth=10, reliability=ReliabilityPolicy.RELIABLE)
+
+        self.env_start_request_pub = self.create_publisher(Bool, '/dqn_agent/start_episode_request', 10) # To rl_gym
+        self.env_end_request_pub = self.create_publisher(Bool, '/dqn_agent/end_episode_request', 10) # To rl_gym
+        self.throttle_pub = self.create_publisher(Float64, '/orange/throttle_cmd', 10) # To car
+        self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10) # To car
+        self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)       # To car
+        self.episode_status_pub_for_jarred = self.create_publisher(String, '/episode_status', 10) # To Jarred's rewards_node
+        self.current_goal_pub = self.create_publisher(Point, '/current_goal', 10)
+
+
+        # --- ROS Subscribers ---
+        # For receiving information from rl_gym, Jarred's rewards_node, and sensors.
+        self.env_started_confirm_sub = self.create_subscription(Bool, 'rl_gym/environment_started_confirm', self.env_started_callback, 10) # From rl_gym
+        self.current_goal_sub = self.create_subscription(Point, '/current_goal', self.current_goal_callback, 10) # From Jarred
+        self.front_yolo_sub = self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.front_yolo_callback, qos_profile=self.qos) # From Tim (YOLO)
+        self.back_yolo_sub = self.create_subscription(YoloDetections, '/orange/back_image_yolo/detections', self.back_yolo_callback, qos_profile=self.qos)   # From Tim (YOLO)
+        self.left_yolo_sub = self.create_subscription(YoloDetections, '/orange/left_image_yolo/detections', self.left_yolo_callback, qos_profile=self.qos)   # From Tim (YOLO)
+        self.right_yolo_sub = self.create_subscription(YoloDetections, '/orange/right_image_yolo/detections', self.right_yolo_callback, qos_profile=self.qos)  # From Tim (YOLO)
+        self.odom_sub = self.create_subscription(Odometry, '/orange/odom', self.odom_callback, qos_profile=self.qos) # From Gazebo/car model
+        self.in_track_sub = self.create_subscription(Bool, '/in_track_status', self.in_track_callback, 10) # From Jarred
+        self.jarred_episode_over_sub = self.create_subscription(Float32, '/episode_rewards', self.jarred_episode_over_callback, 10) # From Jarred
+
+        # --- DQN Algorithm Components ---
+        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        self.get_logger().info(f"Using PyTorch device: {self.device}")
+        self.policy_net = DQNNetwork(self.OBSERVATION_SIZE, self.num_discrete_actions).to(self.device)
+        self.target_net = DQNNetwork(self.OBSERVATION_SIZE, self.num_discrete_actions).to(self.device)
+        self.optimizer = optim.AdamW(self.policy_net.parameters(), lr=self.LEARNING_RATE, amsgrad=True)
+        self.memory = ReplayBuffer(self.BUFFER_SIZE)
+        
+        self.total_agent_steps_taken = 0 # Global counter for training steps (epsilon decay, target updates)
+        self.current_ros_episode_num = 0 # Tracks official ROS episodes requested/run
+
+        self._load_checkpoint() # Attempt to load checkpoint after initializing networks and optimizer
+
+        self.total_rewards = 0
+        
+        # --- State variables for interaction and data storage ---
+        self.env_confirmed_ready_for_rl = False # Flag: Is rl_gym ready for this ROS episode?
+        self.processing_rl_step_active = False  # Mutex to prevent re-entrant RL steps if timer is too fast
+        self.is_in_track = True                 # Flag: Is car on track (from Jarred's /in_track_status)?
+        self.latest_odom = None                 # Stores latest Odometry message
+        self.latest_front_yolo_cones = []       # Stores filtered cone BoundingBoxes from front camera
+        self.latest_back_yolo_cones = []
+        self.latest_left_yolo_cones = []
+        self.latest_right_yolo_cones = []
+        self.latest_current_goal = None         # Stores current Point goal from Jarred
+
+        self.s_t_observation_buffer = None      # Stores s_t (previous observation) for replay buffer
+        self.a_t_action_idx_buffer = -1         # Stores a_t (last action index taken) for replay buffer
+        self.current_rl_trajectory_step_count = 0 # Steps within the current internal RL learning trajectory
+        
+        # --- Goal / termination helpers ---
+        self.GOAL_RADIUS_M        = 1.5      # distance at which we consider the goal “reached”
+        self.MAX_GOAL_DISTANCE_M  = 50.0     # > this ⇒ abort episode
+        self.ASSIST_PROB_START    = 0.8      # heuristic assistance at the beginning
+        self.ASSIST_PROB_END      = 0.0      # fades to 0 as training progresses
+        self.ASSIST_DECAY_STEPS   = 20_000   # how fast the assistance probability decays
+
+        # Timer for the main RL agent step (action selection, learning)
+        self.rl_step_timer = self.create_timer(0.1, self.perform_rl_step_and_learn) # Runs at 10Hz
+
+
+        self.goals_data = []
+        self.goal_index = 0
+        self.goal_reached_time = None
+
+        goal_file = os.path.expanduser("~/git/drive_to_survive/src/rl_rewards/goals/goals.json")
+        try:
+            with open(goal_file, 'r') as f:
+                self.goals_data = json.load(f)["goals"]
+                self.get_logger().info(f"Loaded {len(self.goals_data)} goals.")
+        except Exception as e:
+            self.get_logger().error(f"Failed to load goal JSON: {e}")
+
+        if self.use_env_manager:
+            self.get_logger().info("Initialization complete. Requesting first ROS episode from rl_gym.")
+            self.request_new_ros_episode_from_rl_gym()
+        else:
+            self.get_logger().info("Initialization complete. Running WITHOUT environment manager.")
+            self.env_confirmed_ready_for_rl = True
+
+
+    def _check_if_goal_reached(self, car_x: float, car_y: float) -> bool:
+        """Checks if current position is inside the current goal region (quad)."""
+        if not self.goals_data:
+            return False
+
+        def area(x1, y1, x2, y2, x3, y3):
+            return abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0)
+
+        quad = [(c['x'], c['y']) for c in self.goals_data[self.goal_index]['cones']]
+        px, py = car_x, car_y
+
+        x1, y1 = quad[0]
+        x2, y2 = quad[1]
+        x3, y3 = quad[2]
+        x4, y4 = quad[3]
+
+        A = area(x1, y1, x2, y2, x3, y3) + area(x1, y1, x3, y3, x4, y4)
+        A1 = area(px, py, x1, y1, x2, y2)
+        A2 = area(px, py, x2, y2, x3, y3)
+        A3 = area(px, py, x3, y3, x4, y4)
+        A4 = area(px, py, x4, y4, x1, y1)
+
+        
+        return abs(A - (A1 + A2 + A3 + A4)) < 1e-1
+
+    def publish_current_goal(self):
+        if not self.goals_data:
+            self.get_logger().warn("No goals loaded; cannot publish current goal.")
+            return
+        
+        goal = self.goals_data[self.goal_index]['centre']
+        goal_msg = Point()
+        goal_msg.x = goal['x']
+        goal_msg.y = goal['y']
+        goal_msg.z = 0.0  # z is unused
+
+        self.current_goal_pub.publish(goal_msg)
+        self.latest_current_goal = goal_msg  # Ensure internal obs processing has latest
+        self.get_logger().debug(f"📍 Published current goal: ({goal_msg.x:.2f}, {goal_msg.y:.2f})")
+
+    def _define_discrete_actions(self):
+        # Defines the mapping from discrete action indices to throttle, steering, and brake commands.
+        # NEEDS_TUNING: The specific values for throttle, steering, and brake levels might need adjustment
+        #               based on car physics and desired behavior.
+        THROTTLE_LEVELS = {"none": 0.0, "low": 0.35, "high": 0.7}
+        STEERING_LEVELS = {
+            "hard_left": -self.max_steering_angle_rad, "soft_left": -self.max_steering_angle_rad * 0.5,
+            "straight": 0.0,
+            "soft_right": self.max_steering_angle_rad * 0.5, "hard_right": self.max_steering_angle_rad
         }
+        BRAKE_LEVELS = {"none": 0.0, "moderate": self.max_brake_torque * 0.4}
 
-        # Define the size of one cone's feature set in the observation space
-        # norm_center_x, norm_center_y, norm_height, norm_width, present_flag, cam_front, cam_left, cam_right
-        self.cone_feature_size = 4 + 1 + 3 # (x,y,h,w) + present_flag + (one-hot cam type)
+        self.discrete_actions_map = [
+            # Braking Actions (Throttle OFF)
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["straight"],   'brake': BRAKE_LEVELS["moderate"], 'description': "Brake Straight"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["soft_left"], 'brake': BRAKE_LEVELS["moderate"], 'description': "Brake Soft Left"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["soft_right"],'brake': BRAKE_LEVELS["moderate"], 'description': "Brake Soft Right"},
+            # Coasting/Steering Only (Throttle OFF, Brake OFF)
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["hard_left"],  'brake': BRAKE_LEVELS["none"], 'description': "Coast Hard Left"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["soft_left"],  'brake': BRAKE_LEVELS["none"], 'description': "Coast Soft Left"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["straight"],   'brake': BRAKE_LEVELS["none"], 'description': "Coast Straight (No-Op)"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["soft_right"], 'brake': BRAKE_LEVELS["none"], 'description': "Coast Soft Right"},
+            {'throttle': THROTTLE_LEVELS["none"], 'steering': STEERING_LEVELS["hard_right"], 'brake': BRAKE_LEVELS["none"], 'description': "Coast Hard Right"},
+            # Forward Low Throttle (Brake OFF)
+            {'throttle': THROTTLE_LEVELS["low"],  'steering': STEERING_LEVELS["hard_left"],  'brake': BRAKE_LEVELS["none"], 'description': "LowThrottle Hard Left"},
+            {'throttle': THROTTLE_LEVELS["low"],  'steering': STEERING_LEVELS["soft_left"],  'brake': BRAKE_LEVELS["none"], 'description': "LowThrottle Soft Left"},
+            {'throttle': THROTTLE_LEVELS["low"],  'steering': STEERING_LEVELS["straight"],   'brake': BRAKE_LEVELS["none"], 'description': "LowThrottle Straight"},
+            {'throttle': THROTTLE_LEVELS["low"],  'steering': STEERING_LEVELS["soft_right"], 'brake': BRAKE_LEVELS["none"], 'description': "LowThrottle Soft Right"},
+            {'throttle': THROTTLE_LEVELS["low"],  'steering': STEERING_LEVELS["hard_right"], 'brake': BRAKE_LEVELS["none"], 'description': "LowThrottle Hard Right"},
+            # Forward High Throttle (Brake OFF)
+            {'throttle': THROTTLE_LEVELS["high"], 'steering': STEERING_LEVELS["hard_left"],  'brake': BRAKE_LEVELS["none"], 'description': "HighThrottle Hard Left"},
+            {'throttle': THROTTLE_LEVELS["high"], 'steering': STEERING_LEVELS["soft_left"],  'brake': BRAKE_LEVELS["none"], 'description': "HighThrottle Soft Left"},
+            {'throttle': THROTTLE_LEVELS["high"], 'steering': STEERING_LEVELS["straight"],   'brake': BRAKE_LEVELS["none"], 'description': "HighThrottle Straight"},
+            {'throttle': THROTTLE_LEVELS["high"], 'steering': STEERING_LEVELS["soft_right"], 'brake': BRAKE_LEVELS["none"], 'description': "HighThrottle Soft Right"},
+            {'throttle': THROTTLE_LEVELS["high"], 'steering': STEERING_LEVELS["hard_right"], 'brake': BRAKE_LEVELS["none"], 'description': "HighThrottle Hard Right"}
+        ]
+        self.num_discrete_actions = len(self.discrete_actions_map)
+        self.get_logger().info(f"Defined {self.num_discrete_actions} discrete actions.")
 
-        # Calculate total observation space size
-        # car_vel_x, car_yaw_rate, goal_dist, goal_angle_cos, goal_angle_sin + N * cone_feature_size
-        self.observation_size = 2 + 3 + (self.num_closest_cones * self.cone_feature_size)
-        self.get_logger().info(f"Observation space size: {self.observation_size}")
+    def _define_image_dimensions_and_obs_size(self):
+        # Defines image dimensions for normalization and calculates the total observation vector size.
+        # NEEDS_TUNING: Normalization constants (max_car_speed, etc.) should reflect realistic simulation values.
+        default_img_width = 640
+        default_img_height = 480
+        self.image_dimensions = {
+            CAM_FRONT: (self.declare_parameter('front_cam.image_width', default_img_width).value, self.declare_parameter('front_cam.image_height', default_img_height).value),
+            CAM_LEFT:  (self.declare_parameter('left_cam.image_width', default_img_width).value, self.declare_parameter('left_cam.image_height', default_img_height).value),
+            CAM_RIGHT: (self.declare_parameter('right_cam.image_width', default_img_width).value, self.declare_parameter('right_cam.image_height', default_img_height).value),
+            CAM_BACK:  (self.declare_parameter('back_cam.image_width', default_img_width).value, self.declare_parameter('back_cam.image_height', default_img_height).value),
+        }
+        self.max_car_speed = self.declare_parameter('max_car_speed_norm', 10.0).value # For observation normalization
+        self.max_car_yaw_rate = self.declare_parameter('max_car_yaw_rate_norm', math.radians(90)).value # For obs norm
+        self.max_goal_distance = self.declare_parameter('max_goal_distance_norm', 50.0).value # For obs norm
+
+        # Observation vector structure:
+        # [car_vel_x, car_yaw_rate] (2)
+        # + [goal_dist, goal_angle_cos, goal_angle_sin] (3)
+        # + N_cones * [cone_cx, cone_cy, cone_h, cone_w, present_flag, one_hot_cam (4 features)] (N_cones * 9)
+        self.cone_feature_size = 4 + 1 + 4 # cx,cy,h,w + present_flag + 4cam_one_hot
+        self.OBSERVATION_SIZE = 2 + 3 + (self.num_closest_cones * self.cone_feature_size)
+        self.get_logger().info(f"Calculated OBSERVATION_SIZE: {self.OBSERVATION_SIZE}")
+
+    def _load_checkpoint(self):
+        # Attempts to load a previously saved training checkpoint.
+        if os.path.exists(self.checkpoint_path):
+            try:
+                self.get_logger().info(f"Loading checkpoint from {self.checkpoint_path}...")
+                checkpoint = torch.load(self.checkpoint_path, map_location=self.device) # Load to current device
+                self.policy_net.load_state_dict(checkpoint['policy_net_state_dict'])
+                self.target_net.load_state_dict(checkpoint['target_net_state_dict'])
+                self.optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+                self.current_ros_episode_num = checkpoint['ros_episode_num']
+                self.total_agent_steps_taken = checkpoint['total_agent_steps_taken']
+                # Optional: Load replay buffer if saved (can be large)
+                # if 'replay_buffer' in checkpoint: self.memory.buffer = checkpoint['replay_buffer']
+                self.target_net.eval() # Ensure target net is in eval mode after loading
+                self.get_logger().info(f"Checkpoint loaded. Resuming from ROS episode {self.current_ros_episode_num + 1}, Total steps {self.total_agent_steps_taken}")
+            except Exception as e:
+                self.get_logger().error(f"Error loading checkpoint: {e}. Starting from scratch.", exc_info=True)
+                self.current_ros_episode_num = 0
+                self.total_agent_steps_taken = 0
+        else:
+            self.get_logger().info("No checkpoint found at specified path. Starting training from scratch.")
+            self.current_ros_episode_num = 0
+            self.total_agent_steps_taken = 0
+
+    def _save_checkpoint(self):
+        # Saves the current training state (networks, optimizer, progress) to a checkpoint file.
+        try:
+            checkpoint_data = {
+                'ros_episode_num': self.current_ros_episode_num, # Save the count of completed ROS episodes
+                'total_agent_steps_taken': self.total_agent_steps_taken,
+                'policy_net_state_dict': self.policy_net.state_dict(),
+                'target_net_state_dict': self.target_net.state_dict(),
+                'optimizer_state_dict': self.optimizer.state_dict(),
+                # 'replay_buffer': self.memory.buffer # Optional: Saving buffer can make files very large
+            }
+            torch.save(checkpoint_data, self.checkpoint_path)
+            self.get_logger().info(f"Checkpoint saved at ROS episode {self.current_ros_episode_num} (Total steps: {self.total_agent_steps_taken}) to {self.checkpoint_path}")
+        except Exception as e:
+            self.get_logger().error(f"Error saving checkpoint: {e}", exc_info=True)
+
+    # --- ROS Communication Logic ---
+    def request_new_ros_episode_from_rl_gym(self):
+        # Publishes a request to rl_gym to start/reset the Gazebo environment for a new episode.
+        # Also informs Jarred's rewards_node that a new episode is beginning.
+        # DEPENDS_ON_RL_GYM: rl_gym node must be running and listening to 'dqn_agent/start_episode_request'.
+        # DEPENDS_ON_REWARDS_PKG: Jarred's node must be listening to '/episode_status'.
+        
+        if not self.use_env_manager:
+            return
+
+        if self.current_ros_episode_num >= self.NUM_ROS_EPISODES_TO_RUN:
+            self.get_logger().info("Maximum training ROS episodes reached. Halting further episode requests.")
+            if self.rl_step_timer: self.rl_step_timer.cancel() # Stop the RL agent's step timer
+            return
+
+        self.get_logger().info(f"DQN Node: Requesting rl_gym to prepare for ROS episode {self.current_ros_episode_num + 1}.")
+
+        self.env_confirmed_ready_for_rl = False # Reset flag, wait for rl_gym confirmation
+        self.current_rl_trajectory_step_count = 0 # Reset steps for the new RL trajectory
+        self.s_t_observation_buffer = None      # Clear previous observation for the new episode
+        self.a_t_action_idx_buffer = -1         # Clear previous action
+
+        # reset goal
+        self.goal_index = 0
+        self.publish_current_goal()
+        
+        start_msg = Bool()
+        start_msg.data = True
+        self.env_start_request_pub.publish(start_msg)
 
 
-        # --- Publishers (for controlling the car) ---
-        self.throttle_pub = self.create_publisher(Float64, '/orange/throttle_cmd', 10)
-        self.steering_pub = self.create_publisher(Float64, '/orange/steering_cmd', 10)
-        self.brake_pub = self.create_publisher(Float64, '/orange/brake_cmd', 10)
+        
 
-        # --- Subscribers (for getting information from the environment) ---
-        self.front_yolo_sub = self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.front_yolo_callback, 10)
-        self.left_yolo_sub = self.create_subscription(YoloDetections, '/orange/left_image_yolo/detections', self.left_yolo_callback, 10)
-        self.right_yolo_sub = self.create_subscription(YoloDetections, '/orange/right_image_yolo/detections', self.right_yolo_callback, 10)
-        self.odom_sub = self.create_subscription(Odometry, '/odom', self.odom_callback, 10)
-        self.episode_status_sub = self.create_subscription(String, '/episode_status', self.episode_status_callback, 10)
+    def env_started_callback(self, msg: Bool):
+        # Callback for rl_gym's confirmation that the environment is ready.
+        # DEPENDS_ON_RL_GYM: Expects 'rl_gym/environment_started_confirm' topic.
+        if msg.data:
+            self.get_logger().info("✅ DQN Node: Received confirmation from rl_gym - environment IS READY.")
+            self.env_confirmed_ready_for_rl = True
+            # The perform_rl_step_and_learn timer will now be able to proceed fully once sensor data arrives.
+        else:
+            self.get_logger().error("❌ DQN Node: rl_gym indicated environment FAILED to start. Scheduling retry...")
+            self.env_confirmed_ready_for_rl = False
+            # Consider a more robust retry mechanism or error handling
+            rclpy.create_timer(5.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
 
-        self.agent_timer_period = 0.1
-        self.agent_timer = self.create_timer(self.agent_timer_period, self.agent_step)
+    # --- Raw Sensor Data Callbacks ---
+    # These callbacks simply store the latest received sensor data.
+    # Processing into the observation vector happens in process_observation_vector().
+    def current_goal_callback(self, msg: Point): 
+        self.latest_current_goal = msg
+        self.get_logger().info(f"✅ Received goal: ({msg.x:.2f}, {msg.y:.2f})")
 
-        # --- Internal State Variables ---
-        self.latest_odometry = None
-        self.front_traffic_cones_raw = [] # Stores raw BoundingBox objects
-        self.left_traffic_cones_raw = []
-        self.right_traffic_cones_raw = []
-        # self.back_traffic_cones_raw = []
+    def front_yolo_callback(self, msg: YoloDetections): self.latest_front_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
+    def back_yolo_callback(self, msg: YoloDetections): self.latest_back_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
+    def left_yolo_callback(self, msg: YoloDetections): self.latest_left_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
+    def right_yolo_callback(self, msg: YoloDetections): self.latest_right_yolo_cones = [b for b in msg.bounding_boxes if b.class_name == "traffic-cones"]
+    def odom_callback(self, msg: Odometry): 
+        self.latest_odom = msg
+        # self.get_logger().info(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
+        self.get_logger().debug(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
 
-        self.current_target_goal = None # Stores (x, y) of the current goal from Jarred's system
-        # YOUR_INPUT_REQUIRED: How will you get the list of goals and current_target_goal?
-        # Option A: Replicate Jarred's 'goals' parameter and logic for goal_index
-        # self.declare_parameter('track_goals', ['0.0,0.0']) # Example
-        # self.track_goals_str = self.get_parameter('track_goals').value
-        # self.track_goals = [self.parse_goal_str(g) for g in self.track_goals_str]
-        # self.current_goal_index = 0
-        # if self.track_goals:
-        #     self.current_target_goal = self.track_goals[self.current_goal_index]
+    def in_track_callback(self, msg: Bool):
+        # DEPENDS_ON_REWARDS_PKG: Expects '/in_track_status' from Jarred's node.
+        if self.is_in_track and not msg.data: self.get_logger().warn("Transitioned to OFF TRACK based on /in_track_status.")
+        self.is_in_track = msg.data
 
-        # Option B: Subscribe to a topic from Jarred's node that publishes the current target goal.
-        # self.current_goal_sub = self.create_subscription(Point, '/current_target_goal', self.current_goal_callback, 10)
-
-
-        self.episode_running = False
-        self.get_logger().info("RL Agent Node fully initialized.")
-
-    # def parse_goal_str(self, goal_str): # If using Option A for goals
-    #     try:
-    #         x_str, y_str = goal_str.split(',')
-    #         return float(x_str), float(y_str)
-    #     except ValueError:
-    #         self.get_logger().error(f"Invalid goal format in parameter: {goal_str}")
-    #         return 0.0, 0.0
-
-    # def current_goal_callback(self, msg): # If using Option B for goals
-    #    self.current_target_goal = (msg.x, msg.y)
-
-    def front_yolo_callback(self, msg: YoloDetections):
-        self.front_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-
-    def left_yolo_callback(self, msg: YoloDetections):
-        self.left_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-
-    def right_yolo_callback(self, msg: YoloDetections):
-        self.right_traffic_cones_raw = [box for box in msg.bounding_boxes if box.class_name == "traffic-cones"]
-
-    def odom_callback(self, msg: Odometry):
-        self.latest_odometry = msg
-
-    def episode_status_callback(self, msg: String):
-        status = msg.data.lower()
-        if status == 'start':
-            self.episode_running = True
-            self.get_logger().info("Episode started.")
-            # YOUR_INPUT_REQUIRED: Reset agent's internal episodic states if any
-            # For example, if using Option A for goals:
-            # self.current_goal_index = 0
-            # if self.track_goals:
-            #     self.current_target_goal = self.track_goals[self.current_goal_index]
-        elif status == 'end' or status == 'reset':
-            self.episode_running = False
-            self.get_logger().info(f"Episode ended/reset: {status}.")
-            self.publish_control_commands(steering=0.0, throttle=0.0, brake=1.0)
-
-
-    def _normalize_bounding_box(self, box: BoundingBox, camera_id: int):
-        img_width, img_height = self.image_dimensions.get(camera_id, (1.0, 1.0)) # Default to 1.0 to avoid division by zero if misconfigured
-        if img_width == 0: img_width = 1.0
-        if img_height == 0: img_height = 1.0
+    # --- Observation Processing ---
+    def _normalize_bounding_box(self, box: BoundingBox, camera_id: int) -> tuple:
+        # Normalizes bounding box coordinates and dimensions to the range [0, 1].
+        img_width, img_height = self.image_dimensions.get(camera_id, (640.0, 480.0)) # Default if not found
+        img_width = 1.0 if img_width == 0 else img_width # Avoid division by zero
+        img_height = 1.0 if img_height == 0 else img_height
 
         center_x = box.left + (box.right - box.left) / 2.0
         center_y = box.top + (box.bottom - box.top) / 2.0
         width = float(box.right - box.left)
         height = float(box.bottom - box.top)
 
-        # Normalize to [0, 1]
-        norm_center_x = center_x / img_width
-        norm_center_y = center_y / img_height
-        norm_width = width / img_width
-        norm_height = height / img_height
+        norm_cx = np.clip(center_x / img_width, 0.0, 1.0)
+        norm_cy = np.clip(center_y / img_height, 0.0, 1.0)
+        norm_w = np.clip(width / img_width, 0.0, 1.0)
+        norm_h = np.clip(height / img_height, 0.0, 1.0)
+        return norm_cx, norm_cy, norm_w, norm_h
+
+    def process_observation_vector(self) -> np.ndarray | None:
+        # Constructs the fixed-size observation vector from all latest sensor data.
+        # This is a critical part for the DQN agent's input.
+        # Returns None if essential data (odom, current_goal) is missing.
+        if not self.latest_odom or not self.goals_data:
+            self.get_logger().warn("Missing odometry or goal list; observation invalid.")
+            return None
+        # if not self.latest_odom:
+        #     self.get_logger().warn("Missing odometry data.")
+        # if not self.latest_current_goal:
+        #     self.get_logger().warn("Missing current goal data.")
+        # if not self.latest_odom or not self.latest_current_goal:
+        #     return None
+
+        # Car state part
+        lx = self.latest_odom.twist.twist.linear.x
+        az = self.latest_odom.twist.twist.angular.z
+        norm_lx = np.clip(lx / self.max_car_speed, -1.0, 1.0)
+        norm_az = np.clip(az / self.max_car_yaw_rate, -1.0, 1.0)
+        car_obs_part = [norm_lx, norm_az]
+
+        # Goal state part
+        goal_obs_part = [0.0, 0.0, 0.0] # Default: [dist_norm, cos(angle_rel), sin(angle_rel)]
+        car_x = self.latest_odom.pose.pose.position.x
+        car_y = self.latest_odom.pose.pose.position.y
+        q = self.latest_odom.pose.pose.orientation
+        try:
+            # Robust yaw calculation using tf_transformations
+            (roll, pitch, car_yaw) = euler_from_quaternion([q.x, q.y, q.z, q.w])
+        except NameError: # Fallback if tf_transformations is not imported (should not happen if setup correctly)
+            self.get_logger().error("tf_transformations.euler_from_quaternion not available! Yaw calculation will be incorrect if car pitches/rolls.")
+            car_yaw = 2.0 * math.atan2(q.z, q.w) # Simplified, less robust backup
+
+        # gx, gy = self.latest_current_goal.x, self.latest_current_goal.y
+        goal = self.goals_data[self.goal_index]['centre']  # centre from goals.json
+        gx, gy = goal['x'], goal['y']
+        dx, dy = gx - car_x, gy - car_y
+        dist_goal = math.sqrt(dx**2 + dy**2)
+        norm_dist_goal = np.clip(dist_goal / self.max_goal_distance, 0.0, 1.0)
+
+        self.get_logger().info(f'Distance to Goal: {dist_goal}')
         
-        # Clamping to ensure they are within [0,1] robustly, or [-0.5, 0.5] if you change normalization
-        norm_center_x = np.clip(norm_center_x, 0.0, 1.0)
-        norm_center_y = np.clip(norm_center_y, 0.0, 1.0)
-        norm_width = np.clip(norm_width, 0.0, 1.0)
-        norm_height = np.clip(norm_height, 0.0, 1.0)
-
-        return norm_center_x, norm_center_y, norm_width, norm_height
-    
-
-    '''
-You're at a crucial point: translating raw sensor data (YOLO bounding boxes) into a meaningful "observation" for your RL agent. The goal is to give the agent the information it needs to decide how to steer towards the center of the two closest cones.
-
-Here are several ideas for implementing the observation space, ranging from simpler to more complex. You'll likely need to experiment to see what works best.
-
-Core Idea: Relative Information is Key
-
-The RL agent doesn't necessarily need to know the absolute pixel coordinates of cones. It needs to know where the cones are relative to the car and relative to each other to find that midpoint.
-
-General Preprocessing for Bounding Boxes (BBs):
-
-For each detected cone (box from self.front_traffic_cones, etc.):
-
-Calculate Center:
-    bb_center_x = box.left + (box.right - box.left) / 2
-    bb_center_y = box.top + (box.bottom - box.top) / 2
-
-Calculate Size:
-    bb_width = box.right - box.left
-    bb_height = box.bottom - box.top
-
-Normalization (Highly Recommended): 
-
-Normalize these values to a consistent range (e.g., 0 to 1, or -1 to 1). This helps the neural network learn more effectively.
-You'll need the image dimensions (width, height) for each camera. Let's assume you have image_width and image_height.
-    norm_center_x = bb_center_x / image_width (range 0 to 1)
-    norm_center_y = bb_center_y / image_height (range 0 to 1)
-    norm_width = bb_width / image_width (range 0 to 1)
-    norm_height = bb_height / image_height (range 0 to 1)
-
-Alternatively, for norm_center_x, you might want it in the range -0.5 to 0.5 (by doing (bb_center_x / image_width) - 0.5) to represent left/right of the image center.
-
-Observation Space Ideas:
-
-Option 2: Fixed Number of "Closest" Cones
-
-This is often more robust than trying to explicitly find pairs.
-
-How it Works:
-
-    1) Gather All Cones: Collect all normalized cone features (center x, y, height, width) from all relevant cameras.
-
-    2) Sort by "Closeness": Use a heuristic like sort_key = (1 - norm_height) (prioritizing taller cones). You might also factor in norm_center_y (lower in image = closer).
-
-    3)Select Top N: Take the top N (e.g., N=4 or N=6) "closest" cones.
-
-Observation Vector Features:
-
-For each of the N selected cones:
-    cone_i_norm_center_x
-    cone_i_norm_center_y
-    cone_i_norm_height
-    cone_i_norm_width (optional, height might be a better distance proxy)
-    A flag indicating which camera detected it (e.g., one-hot encode: [1,0,0] for front, [0,1,0] for left, [0,0,1] for right). This can be important if normalization doesn't fully account for camera perspective differences.
-
-If fewer than N cones are detected, pad the remaining slots with special values (e.g., 0 or -1).
-
-Pros: Simpler to implement, more robust to noisy detections than explicit pairing. The RL agent learns to interpret the spatial arrangement of these N cones.
-
-Cons: The agent has to implicitly learn the "gate" concept. The order of cones in the observation vector matters (sorting is crucial).
-
-'''
-
-    def process_observations(self):
-        if not self.latest_odometry:
-            self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=5.0, msg="No odometry data yet.")
-            return np.zeros(self.observation_size, dtype=np.float32) # Return a default observation
-
-
-        # 1. Car's Kinematic State
-        linear_velocity_x = self.latest_odometry.twist.twist.linear.x
-        angular_velocity_z = self.latest_odometry.twist.twist.angular.z
-
-        norm_linear_velocity_x = np.clip(linear_velocity_x / self.max_car_speed, -1.0, 1.0)
-        norm_angular_velocity_z = np.clip(angular_velocity_z / self.max_car_yaw_rate, -1.0, 1.0)
-        
-        car_obs_part = [norm_linear_velocity_x, norm_angular_velocity_z]
-
-        # 2. Target Waypoint Information
-        goal_obs_part = [0.0, 0.0, 0.0] # dist, cos(angle), sin(angle) - default if no goal
-        if self.current_target_goal and self.latest_odometry:
-            car_pos_x = self.latest_odometry.pose.pose.position.x
-            car_pos_y = self.latest_odometry.pose.pose.position.y
-            
-            # Orientation of the car (quaternion to yaw)
-            orientation_q = self.latest_odometry.pose.pose.orientation
-            # Simple conversion assuming yaw is around Z axis
-            # For more robust conversion: from tf_transformations import euler_from_quaternion
-            # qx, qy, qz, qw = orientation_q.x, orientation_q.y, orientation_q.z, orientation_q.w
-            # _, _, car_yaw = euler_from_quaternion([qx, qy, qz, qw]) # Needs tf_transformations
-            # Temporary simpler yaw (less robust, assumes car is mostly flat)
-            car_yaw = 2.0 * math.atan2(orientation_q.z, orientation_q.w)
-
-
-            target_x, target_y = self.current_target_goal
-            
-            delta_x_world = target_x - car_pos_x
-            delta_y_world = target_y - car_pos_y
-            
-            distance_to_goal = math.sqrt(delta_x_world**2 + delta_y_world**2)
-            norm_distance_to_goal = np.clip(distance_to_goal / self.max_goal_distance, 0.0, 1.0)
-            
-            # Angle to goal in world frame
-            angle_to_goal_world = math.atan2(delta_y_world, delta_x_world)
-            # Angle to goal relative to car's heading
-            angle_to_goal_relative = angle_to_goal_world - car_yaw
-            # Normalize angle to be within -pi to pi
-            while angle_to_goal_relative > math.pi: angle_to_goal_relative -= 2 * math.pi
-            while angle_to_goal_relative < -math.pi: angle_to_goal_relative += 2 * math.pi
-            
-            # Using cos and sin is often better for NNs than raw angle
-            goal_angle_cos = math.cos(angle_to_goal_relative)
-            goal_angle_sin = math.sin(angle_to_goal_relative)
-            
-            goal_obs_part = [norm_distance_to_goal, goal_angle_cos, goal_angle_sin]
+        if dist_goal > self.MAX_GOAL_DISTANCE_M:
+            # Mark a special flag so the main loop knows to end trajectory/episode
+            self.too_far_from_goal = True
         else:
-            self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=5.0, msg="No current target goal set for observation.")
-
-
-        # 3. Cone Data
-        all_processed_cones = []
-        for cam_id, raw_cone_list in [
-            (CAM_FRONT, self.front_traffic_cones_raw),
-            (CAM_LEFT, self.left_traffic_cones_raw),
-            (CAM_RIGHT, self.right_traffic_cones_raw),
-            # (CAM_BACK, self.back_traffic_cones_raw) # If using back camera
-        ]:
-            for box in raw_cone_list:
-                norm_cx, norm_cy, norm_w, norm_h = self._normalize_bounding_box(box, cam_id)
-                # Closeness heuristic: taller cones are considered closer.
-                # You might want to refine this, e.g. cones lower in FRONT camera view.
-                closeness_score = norm_h # Larger height = closer
-                all_processed_cones.append({
-                    'cx': norm_cx, 'cy': norm_cy, 'w': norm_w, 'h': norm_h,
-                    'cam_id': cam_id, 'score': closeness_score
-                })
+            self.too_far_from_goal = False
         
-        # Sort cones by closeness_score (descending, so closest first)
-        all_processed_cones.sort(key=lambda c: c['score'], reverse=True)
+        angle_goal_world = math.atan2(dy, dx)
+        angle_goal_relative = angle_goal_world - car_yaw
+        # Normalize angle to [-pi, pi]
+        while angle_goal_relative > math.pi: angle_goal_relative -= 2.0 * math.pi
+        while angle_goal_relative < -math.pi: angle_goal_relative += 2.0 * math.pi
+        goal_obs_part = [norm_dist_goal, math.cos(angle_goal_relative), math.sin(angle_goal_relative)]
+
+        # Cone state part
+        all_cones_processed = []
+        yolo_sources = [
+            (CAM_FRONT, self.latest_front_yolo_cones), (CAM_LEFT, self.latest_left_yolo_cones),
+            (CAM_RIGHT, self.latest_right_yolo_cones), (CAM_BACK, self.latest_back_yolo_cones)
+        ]
+        for cam_id, cone_list in yolo_sources:
+            for box in cone_list: # box is a BoundingBox message from yolo_msg
+                ncx, ncy, ncw, nch = self._normalize_bounding_box(box, cam_id)
+                all_cones_processed.append({'cx': ncx, 'cy': ncy, 'w': ncw, 'h': nch,
+                                          'cam_id': cam_id, 'closeness': nch}) # Use normalized height as closeness proxy
         
+        all_cones_processed.sort(key=lambda c: c['closeness'], reverse=True) # Sort by closeness (largest height first)
+
         cone_obs_part = []
         for i in range(self.num_closest_cones):
-            if i < len(all_processed_cones):
-                cone = all_processed_cones[i]
+            if i < len(all_cones_processed):
+                cone = all_cones_processed[i]
                 present_flag = 1.0
-                cam_one_hot = [0.0, 0.0, 0.0] # For Front, Left, Right
-                if cone['cam_id'] == CAM_FRONT: cam_one_hot[0] = 1.0
-                elif cone['cam_id'] == CAM_LEFT: cam_one_hot[1] = 1.0
-                elif cone['cam_id'] == CAM_RIGHT: cam_one_hot[2] = 1.0
-                #elif cone['cam_id'] == CAM_BACK: # Add if using back camera
-                
+                cam_one_hot = [0.0]*4 # For CAM_FRONT, LEFT, RIGHT, BACK
+                if cone['cam_id'] < 4 : cam_one_hot[cone['cam_id']] = 1.0 # Ensure cam_id is a valid index
                 cone_features = [cone['cx'], cone['cy'], cone['h'], cone['w'], present_flag] + cam_one_hot
                 cone_obs_part.extend(cone_features)
             else:
                 # Pad with zeros if fewer than num_closest_cones are detected
                 cone_obs_part.extend([0.0] * self.cone_feature_size)
-                
-        # Combine all parts into a single observation vector
-        observation = np.array(car_obs_part + goal_obs_part + cone_obs_part, dtype=np.float32)
         
-        if len(observation) != self.observation_size:
-            self.get_logger().error(f"Observation length mismatch! Expected {self.observation_size}, Got {len(observation)}")
-            # Return a correctly sized zero array to prevent PPO errors, but log the issue.
-            return np.zeros(self.observation_size, dtype=np.float32)
+        observation_list = car_obs_part + goal_obs_part + cone_obs_part
+        final_observation_vector = np.array(observation_list, dtype=np.float32)
+
+        if len(final_observation_vector) != self.OBSERVATION_SIZE:
+            self.get_logger().error(f"Observation vector length mismatch! Expected {self.OBSERVATION_SIZE}, got {len(final_observation_vector)}. Check processing logic.")
+            return None # Return None if size is incorrect
+        return final_observation_vector
+    
+    def _heuristic_action_toward_goal(self, obs: np.ndarray) -> int:
+        """
+        Very rough steering heuristic just to bootstrap learning:
+        - chooses throttle 'low'
+        - picks steering bucket based on goal angle (relative).
+        """
+        _, _, dist_norm, cos_ang, sin_ang = obs[0], obs[1], obs[2], obs[3], obs[4]
+        angle = math.atan2(sin_ang, cos_ang)  # [-pi, pi]
+        # Choose a steering bucket
+        if angle > 0.4:    steering = "hard_left"
+        elif angle > 0.15: steering = "soft_left"
+        elif angle < -0.4: steering = "hard_right"
+        elif angle < -0.15:steering = "soft_right"
+        else:              steering = "straight"
+        # Find the matching discrete action with 'low' throttle & no brake
+        for idx, a in enumerate(self.discrete_actions_map):
+            if a['throttle'] > 0 and a['throttle'] <= 0.4 and a['description'].startswith("LowThrottle") and steering in a['description']:
+                return idx
+        return random.randrange(self.num_discrete_actions)
+
+
+    # --- DQN Action Selection (Epsilon-Greedy) ---
+    def select_dqn_action(self, state_np_array: np.ndarray) -> int:
+        """
+        1)   Heuristic assist (probability decays with training steps)
+        2)   Standard ε-greedy over the learned Q-network
+        """
+        # ---------- assisted-driving probability ----------
+        assist_p = self.ASSIST_PROB_END + (self.ASSIST_PROB_START - self.ASSIST_PROB_END) * \
+                math.exp(-1.0 * self.total_agent_steps_taken / self.ASSIST_DECAY_STEPS)
+
+        if random.random() < assist_p:
+            return self._heuristic_action_toward_goal(state_np_array)
+        # --------------------------------------------------
+
+        # ---------- ε-greedy selection --------------------
+        eps_threshold = self.EPS_END + (self.EPS_START - self.EPS_END) * \
+                        math.exp(-1.0 * self.total_agent_steps_taken / self.EPS_DECAY)
+
+        if random.random() > eps_threshold:
+            # exploit
+            with torch.no_grad():
+                q_vals = self.policy_net(
+                    torch.tensor(state_np_array, dtype=torch.float32, device=self.device).unsqueeze(0)
+                )
+            return int(q_vals.argmax().item())
+        else:
+            # explore
+            return random.randrange(self.num_discrete_actions)
+    # --------------------------------------------------
+
+
+    # --- Car Command Publishing ---
+    def publish_car_commands(self, discrete_action_index: int):
+        # Maps the chosen discrete action index to actual throttle, steering, and brake commands.
+        if 0 <= discrete_action_index < self.num_discrete_actions:
+            action_def = self.discrete_actions_map[discrete_action_index]
+            throttle = float(action_def['throttle'])
+            steering = float(action_def['steering']) # Assumes map values are already in radians
+            brake = float(action_def['brake'])       # Assumes map values are already in Nm (or scaled appropriately)
+
+            self.throttle_pub.publish(Float64(data=throttle))
+            self.steering_pub.publish(Float64(data=steering))
+            self.brake_pub.publish(Float64(data=brake))
+        else:
+            self.get_logger().error(f"Invalid action index: {discrete_action_index} received in publish_car_commands. Sending safe brake command.")
+            # Fallback safe action
+            self.throttle_pub.publish(Float64(data=0.0))
+            self.steering_pub.publish(Float64(data=0.0))
+            self.brake_pub.publish(Float64(data=self.max_brake_torque * 0.5)) # Moderate brake
+
+    # --- Dense Reward Calculation (CRUCIAL FOR DQN LEARNING) ---
+    def calculate_dense_reward(
+        self,
+        s_t_obs_vec: np.ndarray | None,
+        a_t_idx: int,
+        s_t1_obs_vec: np.ndarray | None,
+        is_rl_trajectory_done: bool
+    ) -> float:
+        """
+        Dense shaping signal used every step.
+        Positive ≈ “you’re making progress & driving well”.
+        Negative ≈ “you’re off-track or moving away from the goal”.
+        """
+
+        # --------------------------------------------------
+        reward = 0.0                       # ← always start with zero
+        # --------------------------------------------------
+
+        # 1.  Big penalty if the car has left the track
+        if not self.is_in_track:
+            return -50.0                   # early-exit (nothing else matters)
+
+        # 2.  Tiny survival reward keeps the agent alive & exploring
+        reward += 0.05
+
+        # 3.  Forward-speed reward (encourage motion, but only forward)
+        if s_t1_obs_vec is not None and len(s_t1_obs_vec) > 0:
+            norm_speed = max(0.0, s_t1_obs_vec[0])   # clip reverse
+            reward += norm_speed * 1.0               # 1 pt per 0-1 normalised speed
+
+        # 4.  *Progress* towards the active goal (dominant term!)
+        if s_t_obs_vec is not None and s_t1_obs_vec is not None:
+            d_prev = s_t_obs_vec[2]  * self.max_goal_distance   # metres
+            d_curr = s_t1_obs_vec[2] * self.max_goal_distance
+            delta  = d_prev - d_curr                            # +ve ⇒ closer
+            reward += 5.0 * delta                               # 5 pts per metre
+
+        # 5.  Alignment bonus (points car in the right direction)
+        if s_t1_obs_vec is not None and len(s_t1_obs_vec) > 3:
+            cos_rel = s_t1_obs_vec[3]                           # already cos(angle)
+            if cos_rel > 0.7:                                   # ≈ <45°
+                reward += cos_rel                               # up to +1
+
+        # 6.  Bonus for actually entering the goal quad
+        if self.latest_odom and self.goals_data:
+            p = self.latest_odom.pose.pose.position
+            if self._check_if_goal_reached(p.x, p.y):
+                now = self.get_clock().now().nanoseconds / 1e9
+                if self.goal_reached_time is None or (now - self.goal_reached_time) > 2.0:
+                    reward += 50.0                               # big bonus
+                    self.goal_reached_time = now
+                    self.goal_index = (self.goal_index + 1) % len(self.goals_data)
+                    self.publish_current_goal()
+
+        # 7.  Small “trajectory survived” bonus
+        if is_rl_trajectory_done and self.is_in_track:
+            reward += 10.0
+
+        return float(reward)
+
+
+    # --- DQN Model Optimization (Adapted from train_agent.py) ---
+    def optimize_dqn_model(self):
+        # Performs one step of learning on the policy_net using a batch from the replay_buffer.
+        if len(self.memory) < self.BATCH_SIZE: # Don't learn until buffer has enough experiences
+            return None 
+        
+        # Sample a batch of experiences
+        states_np, actions_np, rewards_np, next_states_np, dones_np_float = self.memory.sample(self.BATCH_SIZE)
+        
+        # Convert numpy arrays to PyTorch tensors and move to the designated device
+        states_tensor = torch.tensor(states_np, dtype=torch.float32, device=self.device)
+        actions_tensor = torch.tensor(actions_np, dtype=torch.long, device=self.device).unsqueeze(-1) # Actions are indices
+        rewards_tensor = torch.tensor(rewards_np, dtype=torch.float32, device=self.device).unsqueeze(-1)
+        next_states_tensor = torch.tensor(next_states_np, dtype=torch.float32, device=self.device)
+        dones_tensor = torch.tensor(dones_np_float, dtype=torch.float32, device=self.device).unsqueeze(-1) # Mask for terminal states
+
+        # --- Calculate Q(s_t, a_t) ---
+        # Get Q-values from policy_net for actions that were actually taken
+        self.policy_net.train() # Set policy_net to training mode (affects layers like Dropout, BatchNorm)
+        q_predicted = self.policy_net(states_tensor).gather(1, actions_tensor) # Gathers Q-values for chosen actions
+        
+        # --- Calculate Target Q-value: r_t + gamma * max_a' Q_target(s_t+1, a') ---
+        self.target_net.eval() # Target network in evaluation mode
+        with torch.no_grad(): # No gradients needed for target computation
+            # Get Q-values for next_states from target_net and select max Q-value for each next_state
+            q_next_target_values = self.target_net(next_states_tensor).max(1)[0].unsqueeze(-1)
+            # Compute the target Q-value using the Bellman equation
+            # If a state is terminal (done), its target Q-value is just the reward received.
+            q_target = rewards_tensor + (self.GAMMA * q_next_target_values * (1.0 - dones_tensor))
             
-        return observation
-
-
-    def select_action(self, observation):
-        # YOUR_INPUT_REQUIRED: This is where your PPO model's predict() method will go
-        # action, _states = self.model.predict(observation, deterministic=True)
-        # steering_action = action[0]
-        # throttle_action = action[1]
-        # brake_action = 0.0 # Or action[2] if brake is part of PPO output
+        # --- Compute Loss ---
+        loss_fn = nn.SmoothL1Loss() # Huber loss, less sensitive to outliers than MSE
+        loss = loss_fn(q_predicted, q_target)
         
-        # Placeholder: simple forward action
-        steering_action = 0.0
-        throttle_action = 0.1 # Gentle throttle for testing
-        brake_action = 0.0
-        return steering_action, throttle_action, brake_action
-
-    def publish_control_commands(self, steering, throttle, brake):
-        # YOUR_INPUT_REQUIRED: Add clipping or scaling if PPO outputs actions in a different range
-        # e.g., PPO might output steering in [-1, 1], which is fine.
-        # PPO might output throttle in [-1, 1], needs scaling to [0, 1] or [0, MAX_THROTTLE]
+        # --- Optimize the policy_net ---
+        self.optimizer.zero_grad() # Clear previous gradients
+        loss.backward()           # Compute gradients of the loss w.r.t. policy_net parameters
+        torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), max_norm=1.0) # Optional: Gradient clipping
+        self.optimizer.step()     # Update policy_net weights
         
-        steer_msg = Float64()
-        steer_msg.data = float(steering)
-        self.steering_pub.publish(steer_msg)
+        return loss.item() # Return scalar loss value for logging
 
-        throttle_msg = Float64()
-        # Example: scale throttle if PPO outputs [-1,1] and you want [0,1]
-        # throttle_msg.data = float((throttle + 1.0) / 2.0) 
-        throttle_msg.data = float(throttle) # Assuming PPO outputs throttle in desired range for now
-        self.throttle_pub.publish(throttle_msg)
+    # --- Main RL Step (called by timer) ---
+    def perform_rl_step_and_learn(self):
+        # This method is called periodically by self.rl_step_timer.
+        # It orchestrates observation processing, action selection, experience storing, and learning.
+        self.get_logger().debug("🔁 perform_rl_step_and_learn called")
 
-        brake_msg = Float64()
-        brake_msg.data = float(brake)
-        self.brake_pub.publish(brake_msg)
+        # Ensure environment is ready and not already processing a step
+        if not self.env_confirmed_ready_for_rl or self.processing_rl_step_active:
+            self.get_logger().debug("RL step skipped: Env not ready or already processing step.")
+            return
+        
+        self.processing_rl_step_active = True # Set mutex to prevent re-entry
 
-    def calculate_reward(self, observation, action, next_observation):
-        # YOUR_INPUT_REQUIRED: Implement your reward function here.
-        # This is a placeholder.
-        reward = 0.0
-        # Example: reward for forward speed
-        # if self.latest_odometry:
-        #    reward += self.latest_odometry.twist.twist.linear.x * 0.01 # Small reward
-        return reward
+        # 1. Get current observation (s_t+1 for the previous action)
+        s_t1_current_observation_vec = self.process_observation_vector()
 
-    def agent_step(self):
-        if not self.episode_running:
+        if s_t1_current_observation_vec is None:
+            rclpy.logging.get_logger('audibot_rl_driver_dqn_node').warn("Observation data incomplete, cannot perform RL step.")
+            self.processing_rl_step_active = False
+            return
+    
+        # Abort entire ROS episode if > 50 m from goal
+        if getattr(self, "too_far_from_goal", False):
+            self.get_logger().info("🚫 Too far from goal – ending episode early.")
+            self.publish_car_commands(self.discrete_actions_map.index(
+                next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
+            # Pretend rewards-node sent an end-of-episode signal:
+            self.jarred_episode_over_callback(Float32(data=0.0))
+            self.processing_rl_step_active = False
             return
 
-        current_observation = self.process_observations()
-        if current_observation is None or current_observation.shape[0] != self.observation_size : # check for valid observation
-             self.get_logger().warn_throttle(throttle_skip_first=True, throttle_time_source_type=rclpy.clock.ClockType.ROS_TIME, duration=1.0, msg="Invalid observation received in agent_step, skipping.")
-             return
+        # --- If there's a previous state and action, form an experience tuple and learn ---
+        if self.s_t_observation_buffer is not None and self.a_t_action_idx_buffer != -1:
+            # s_t1_current_observation_vec is s_t+1 for the (s_t, a_t) pair stored in buffers.
+            
+            # Determine if the RL trajectory ended at s_t+1 due to internal conditions
+            # This "done" is for the Bellman equation and replay buffer.
+            rl_trajectory_done_at_s_t1 = not self.is_in_track or \
+                                         self.current_rl_trajectory_step_count >= self.MAX_STEPS_PER_RL_TRAJECTORY
+            
+            # Calculate dense reward (r_t) for the transition (s_t, a_t) -> s_t+1
+            r_t_dense_reward = self.calculate_dense_reward(
+                self.s_t_observation_buffer,    # s_t
+                self.a_t_action_idx_buffer,     # a_t
+                s_t1_current_observation_vec,   # s_t+1
+                rl_trajectory_done_at_s_t1      # done_t (for this transition)
+            )
+            # Store the experience (s_t, a_t, r_t, s_t+1, done_t)
+            self.memory.push(self.s_t_observation_buffer, self.a_t_action_idx_buffer, r_t_dense_reward, s_t1_current_observation_vec, rl_trajectory_done_at_s_t1)
+            
+            self.total_rewards = self.total_rewards + r_t_dense_reward
 
+            # Perform model optimization periodically
+            if self.total_agent_steps_taken > self.BATCH_SIZE and \
+               self.total_agent_steps_taken % self.OPTIMIZE_MODEL_FREQUENCY == 0:
+                loss = self.optimize_dqn_model()
+                # if loss is not None: self.get_logger().debug(f"DQN Optim Loss: {loss:.4f}")
+            
+            # Update target network periodically
+            if self.total_agent_steps_taken > 0 and self.total_agent_steps_taken % self.TARGET_UPDATE_FREQUENCY == 0:
+                self.target_net.load_state_dict(self.policy_net.state_dict())
+                self.get_logger().info(f"Updated Target Network at total_agent_step {self.total_agent_steps_taken}.")
 
-        steering, throttle, brake = self.select_action(current_observation)
-        self.publish_control_commands(steering, throttle, brake)
+            # If the RL trajectory ended for s_t (leading to s_t+1 which is terminal for this trajectory)
+            if rl_trajectory_done_at_s_t1: # This variable name was from previous logic, should be rl_trajectory_done_at_s_t1
+                self.get_logger().info(f"RL Trajectory ended (InTrack: {self.is_in_track}, Steps: {self.current_rl_trajectory_step_count}). Waiting for Jarred's official ROS episode end signal.")
+                # Stop the car if RL trajectory is done.
+                self.publish_car_commands(self.discrete_actions_map.index(next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
+                self.s_t_observation_buffer = None # Clear buffer as this trajectory is done for learning
+                self.a_t_action_idx_buffer = -1    # Clear buffer
+                # current_rl_trajectory_step_count is reset when new ROS episode starts (via request_new_ros_episode_from_rl_gym)
+                self.processing_rl_step_active = False
+
+                # self.shutdown_environment()
+
+                return # Wait for Jarred's signal before starting new trajectory logic within a new ROS episode
+
+        # --- Action Selection for current state s_t1_current_observation_vec (which becomes s_t for next step) ---
+        # This action will be a_t for the s_t stored in self.s_t_observation_buffer in the next call.
+        action_to_take_idx = self.select_dqn_action(s_t1_current_observation_vec)
+        self.publish_car_commands(action_to_take_idx)
+
+        # Store current observation and action for the *next* iteration's replay buffer push
+        self.s_t_observation_buffer = s_t1_current_observation_vec # This is s_t for the next step
+        self.a_t_action_idx_buffer = action_to_take_idx            # This is a_t for the next step
         
-        # For a full RL loop, you would also:
-        # 1. Get the `next_observation` after the action has taken effect.
-        #    (In ROS, this happens asynchronously via callbacks; you might need to wait briefly or use the next `agent_step`'s `current_observation` as the `next_observation` for the previous step's experience tuple)
-        # 2. Call `reward = self.calculate_reward(current_observation, (steering, throttle, brake), next_observation)`
-        # 3. Determine if the episode is `done` (e.g., from `episode_status_callback` or other conditions).
-        # 4. Store the experience `(current_observation, action, reward, next_observation, done)` for PPO training.
-        # 5. Periodically trigger `model.learn()` if using SB3, or your custom PPO update logic.
+        self.current_rl_trajectory_step_count += 1
+        self.total_agent_steps_taken += 1 # Increment global training step counter
 
-        # self.get_logger().debug(f"Agent Step: Action Pub -> S:{steering:.2f} T:{throttle:.2f} B:{brake:.2f}")
+        self.processing_rl_step_active = False
 
+
+    def jarred_episode_over_callback(self, msg: Float32):
+        # Callback for when Jarred's rewards_node signals the end of the official ROS episode.
+        # DEPENDS_ON_REWARDS_PKG: Expects '/episode_rewards' topic.
+        final_reward_from_jarred = msg.data
+        self.get_logger().info(f"DQN Node: OFFICIAL ROS EPISODE END Cumulative reward: {self.total_rewards:.2f}")
+        
+        # Save reward to file
+        rewards_file = os.path.expanduser("~/git/drive_to_survive/resources/rl_information/episode_rewards.csv")
+        try:
+            with open(rewards_file, "a") as f:
+                f.write(f"{self.current_ros_episode_num},{self.total_rewards}\n")
+        except Exception as e:
+            self.get_logger().error(f"Failed to write reward: {e}")
+
+        # This is the primary signal that the ROS-level episode has ended.
+        # If the RL trajectory was still ongoing (i.e., not internally "done"),
+        # store the final transition with done=True because the ROS episode ended.
+        if self.s_t_observation_buffer is not None and self.a_t_action_idx_buffer != -1 and \
+           not (not self.is_in_track or self.current_rl_trajectory_step_count >= self.MAX_STEPS_PER_RL_TRAJECTORY):
+            
+            s_t1_final_obs_at_jarred_end = self.process_observation_vector() # Get the very final state if possible
+            if s_t1_final_obs_at_jarred_end is None: # If sensor data is stale, use previous obs as next_state
+                s_t1_final_obs_at_jarred_end = self.s_t_observation_buffer 
+            
+            final_dense_reward_for_buffer = self.calculate_dense_reward(
+                self.s_t_observation_buffer, self.a_t_action_idx_buffer, 
+                s_t1_final_obs_at_jarred_end, True # Definitely done from ROS episode perspective
+            )
+            self.memory.push(self.s_t_observation_buffer, self.a_t_action_idx_buffer, final_dense_reward_for_buffer, s_t1_final_obs_at_jarred_end, True)
+            self.get_logger().info(f"Pushed final experience due to Jarred's episode end. Dense Reward: {final_dense_reward_for_buffer:.2f}")
+            # Potentially one last optimization call if desired
+            # self.optimize_dqn_model()
+
+        self.env_confirmed_ready_for_rl = False # Mark env as not ready until rl_gym confirms for next episode
+        self.current_ros_episode_num += 1    # Increment official ROS episode counter
+        
+        # Reset buffers for the next ROS episode's RL trajectory
+        self.s_t_observation_buffer = None 
+        self.a_t_action_idx_buffer = -1    
+        self.current_rl_trajectory_step_count = 0 # Reset for the new ROS episode
+
+        self.total_rewards = 0
+
+        # Save checkpoint periodically based on ROS episodes completed
+        if self.current_ros_episode_num > 0 and self.current_ros_episode_num % self.checkpoint_save_frequency == 0:
+            self._save_checkpoint()
+
+        self.get_logger().info("Scheduling request for new ROS episode from rl_gym...")
+        # Ensure car is stopped before requesting new episode
+        self.publish_car_commands(self.discrete_actions_map.index(next(a for a in self.discrete_actions_map if a['description'] == "Brake Straight")))
+        # Request rl_gym to prepare for a new ROS episode after a short delay
+        # rclpy.create_timer(2.0, self.request_new_ros_episode_from_rl_gym, self.get_clock(), oneshot=True)
+        # self.shutdown_environment()
+        self.request_new_ros_episode_from_rl_gym()
+
+    def shutdown_environment(self):
+        end_msg = Bool()
+        end_msg.data = True
+        self.env_end_request_pub.publish(end_msg)
 
 def main(args=None):
     rclpy.init(args=args)
-    rl_agent_node = RLAgentNode()
+    dqn_node = AudibotRLDriverDQNNode()
     try:
-        rclpy.spin(rl_agent_node)
+        rclpy.spin(dqn_node)
     except KeyboardInterrupt:
-        rl_agent_node.get_logger().info('Keyboard interrupt, shutting down RL Agent Node.')
+        dqn_node.get_logger().info("Keyboard interrupt received by DQN Node.")
+        dqn_node.shutdown_environment()
+    except Exception as e:
+        dqn_node.get_logger().error(f"Unhandled exception in DQN Node: {e}")
     finally:
-        rl_agent_node.get_logger().info('Destroying RL Agent Node.')
-        if hasattr(rl_agent_node, 'episode_running') and rl_agent_node.episode_running:
-             rl_agent_node.publish_control_commands(0.0, 0.0, 1.0)
-        rl_agent_node.destroy_node()
-        rclpy.shutdown()
+        dqn_node.get_logger().info("Shutting down DQN Node...")
+        if hasattr(dqn_node, 'throttle_pub') and dqn_node.throttle_pub is not None: # Check if publishers are initialized
+            try:
+                # Send a brake command on shutdown
+                dqn_node.throttle_pub.publish(Float64(data=0.0))
+                dqn_node.steering_pub.publish(Float64(data=0.0))
+                dqn_node.brake_pub.publish(Float64(data=dqn_node.max_brake_torque)) # Apply significant brake
+                dqn_node.get_logger().info("Sent final brake command.")
+            except Exception as e_shutdown:
+                dqn_node.get_logger().error(f"Error sending brake command on shutdown: {e_shutdown}")
+        
+        # Save final model
+        if hasattr(dqn_node, 'policy_net') and dqn_node.policy_net is not None:
+            try:
+                final_save_path = os.path.join(dqn_node.save_dir, dqn_node.final_model_filename)
+                torch.save(dqn_node.policy_net.state_dict(), final_save_path)
+                dqn_node.get_logger().info(f"Saved final policy network to {final_save_path}")
+            except Exception as e_save:
+                dqn_node.get_logger().error(f"Error saving final model: {e_save}", exc_info=True)
+
+        if rclpy.ok():
+            dqn_node.destroy_node()
+            rclpy.shutdown()
+        dqn_node.get_logger().info("DQN Node shutdown complete.")
 
 if __name__ == '__main__':
     main()
+
