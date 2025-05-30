@@ -382,13 +382,17 @@
 
       <!-- Matting. -->
       <div class="column">
-        <h2 class="title is-3">DQN training SAMPLE STILL</h2>
+        <h2 class="title is-3">RL Training</h2>
         <div class="columns is-centered">
           <div class="column content">
             <p>
-              Sample of the reward convergence plot of the DQN training.
+              The project was trained use a DQN model and a discrete action space. 
+              The graph below shows our training rewards over the episodes, which jumped over the place, 
+              which indicated that we needed to change our reward function for more consistent learning. 
+              The car was able to drive towards goals, however it crashed into the cones which affected how the 
+              car moved.
             </p>
-            <img src="./static/images/results/reward_convergence_plot.png"
+            <img src="./static/images/dqn_training_rewards.png"
             class="teaser-image"
             alt="Teaser."/>
           </div>
@@ -416,6 +420,34 @@
             consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
             cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
             non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          <p>
+            Tim's dot points:
+            <p>Challenges with RL</p>
+            <ul>
+              <li>
+                We had trouble getting the gazebo to reset after each episode. It ended up needing a full shutdown and restart with subprocesses which caused problems.
+                <ul>
+                  <li>Subprocesses didn't work nicely with gzserver and took a while to figure out.</li>
+                </ul>
+              </li>
+              <li>
+                We started out going for just goals in training, which caused it to crash into the cones. It also stopped since we didn't give it less rewards for staying still. This led to erratic training rewards, as seen in the DQN training graph.
+              </li>
+              <li>
+                We didn't have time to make the rewards system more expansive (like staying in track and not hitting cones, etc) so this is what we would do in the future.
+              </li>
+            </ul>
+
+            <p>YOLO Successes</p>
+            <ul>
+              <li>
+                Had to manually label 200 images to train the YOLO to detect cones and firetrucks so we could put it in the observation space for the car. It worked really well after training at getting the objects relatively close to the car. It was less successful for the cones further away since in some cases they were only around 4 pixels.
+              </li>
+              <li>
+                All four cameras get all the close cones bounding boxes surrounding the car.
+              </li>
+            </ul>
           </p>
         </div>
       </div>
