@@ -51,7 +51,6 @@ class EnvironmentManager(Node):
 
     def odom_callback(self, msg):
         self.latest_odom = msg
-        # self.get_logger().info(f"✅ Received odom: pos=({msg.pose.pose.position.x:.2f}, {msg.pose.pose.position.y:.2f})")
 
     def start_callback(self, msg):
         if msg.data:

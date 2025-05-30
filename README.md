@@ -74,3 +74,11 @@ ros2 launch gazebo_tf drive_to_survive.launch.py gui:=true use_rviz:=false
 # to launch rviz and no gazebo:
 ros2 launch gazebo_tf drive_to_survive.launch.py gui:=false use_rviz:=true 
 ```
+
+To train the environment:
+```bash
+# default launch config is RVIZ only, no gazebo:
+ros2 run rl_gym environment_manager use_rviz:=false # true if you would like to visually show the training.
+
+ros2 run audibot_rl_driver rl_agent_node
+```

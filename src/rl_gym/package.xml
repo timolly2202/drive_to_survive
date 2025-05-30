@@ -3,7 +3,7 @@
 <package format="3">
   <name>rl_gym</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Node to start up and shut down gazebo envrinoment for RL training.</description>
   <maintainer email="Timothy.J.Ollerton@student.uts.edu.au">Tim</maintainer>
   <license>TODO: License declaration</license>
 

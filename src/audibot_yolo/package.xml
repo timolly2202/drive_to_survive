@@ -3,7 +3,7 @@
 <package format="3">
   <name>audibot_yolo</name>
   <version>0.0.0</version>
-  <description>TODO: Package description</description>
+  <description>Yolo package which takes images and draws bounding boxes around traffic cones and fire engines in the Drive to Survive Gazebo environment</description>
   <maintainer email="Timothy.J.Ollerton@student.uts.edu.au">Tim</maintainer>
   <license>TODO: License declaration</license>
 
