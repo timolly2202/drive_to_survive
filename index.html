@@ -306,62 +306,40 @@
 <section class="section">
   <div class="container is-max-desktop">
 
-    <div class="columns is-centered">
-
-      <!-- Visual Effects. -->
-      <div class="column">
+    <div class="columns">
+  
+      <!-- Visual Effects -->
+      <div class="column is-half">
         <div class="content">
-          <h2 class="title is-3">CNN evaluation SAMPLE STILL</h2>
-          <p>
-            Confusion matrix of the CNN evaluation on the test set.
-          </p>
-
+          <h2 class="title is-3">CNN Evaluation SAMPLE STILL</h2>
+          <p>Confusion matrix of the CNN evaluation on the test set.</p>
           <img src="./static/images/results/confusion_matrix_seaborn.png"
-            class="teaser-image"
-            alt="Teaser."/>
+               class="teaser-image"
+               alt="Confusion Matrix"/>
         </div>
       </div>
-      <!--/ Visual Effects. -->
-
-      <!-- Matting. -->
-      <div class="column">
-        <h2 class="title is-3">Lidar Processing</h2>
-        <div class="columns is-centered">
-          <div class="column content">
-            <p>
-              Sample of the reward convergence plot of the DQN training.
-            </p>
-            <img src="./static/images/results/reward_convergence_plot.png"
-            class="teaser-image"
-            alt="Teaser."/>
-          </div>
-        </div>
-      </div>
-      <!--/ Matting. -->
-    </div>
-
-    <!-- Lidar Processing -->
-    <div class="column">
-      <h2 class="title is-3">Lidar Processing</h2>
-      <div class="columns is-centered">
-        <div class="column content">
+      
+      <!-- Lidar Processing -->
+      <div class="column is-half">
+        <div class="content">
+          <h2 class="title is-3">Lidar Processing</h2>
           <p>
             <strong>cluster_puck</strong> is a ROS 2 package for detecting, classifying, and visualizing clustered objects (e.g., cones) from 2D LiDAR and odometry data. It estimates clusters via spatial gaps, applies KMeans and PCA, and classifies them using an SVM. Confirmed cones are tracked live in a dynamic ConeMap and visualized in RViz using green scan points, blue cluster centers, purple PCA ellipsoids, and orange cones. It supports real-time labeling, training, and export, and is extensible for planning integration.
           </p>
           <video class="teaser-image" controls>
-            <source src="/home/jarred/git/drive_to_survive/static/videos/LidarConeDiscoveryMode.mp4" type="video/mp4">
+            <source src="./static/videos/LidarConeDiscoveryMode.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
           <p><em>Video 1: Cluster detection and PCA ellipsoids in discovery-mode</em></p>
           <video class="teaser-image" controls>
-            <source src="/home/jarred/git/drive_to_survive/static/videos/SVMConeDetection.mp4" type="video/mp4">
+            <source src="./static/videos/SVMConeDetection.mp4" type="video/mp4">
             Your browser does not support the video tag.
           </video>
           <p><em>Video 2: SVM-based cone classification and ConeMap visualization in real-time</em></p>
         </div>
       </div>
-    </div>
-    <!--/ Lidar Processing -->
+    
+    </div>       
     
     <div class="columns is-centered">
       <!-- YOLO. -->
