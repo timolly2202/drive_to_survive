@@ -136,9 +136,9 @@ class LidarProcessing(Node):
                     # Log + process cone
                     if is_cone:
                         self.cone_map.process_cone(center_global, extent_x, extent_y, aspect_ratio, area)
-                        self.get_logger().info(f"🎯 Cone detected at {center_global[:2]}")
+                        self.get_logger().info(f"Cone detected at {center_global[:2]}")
                     else:
-                        self.get_logger().info(f"❌ Not a cone.")
+                        self.get_logger().info(f"Not a cone.")
 
                     # Highlight ellipsoid if recording this one
                     if self.recording_enabled and not self.processing_cluster:
@@ -167,7 +167,7 @@ class LidarProcessing(Node):
                     writer.writerow(self.current_cluster_features + [label])
                 self.get_logger().info(f"✅ Saved label from topic: {label}")
             else:
-                self.get_logger().info("❌ Invalid label, must be 0 or 1")
+                self.get_logger().info("Invalid label, must be 0 or 1")
             self.clear_highlight()
             self.waiting_for_label = False
             self.processing_cluster = False
@@ -279,7 +279,7 @@ class LidarProcessing(Node):
         self.get_logger().info(f"Publishing {len(cones)} cones from ConeMap")
 
         if not cones:
-            self.get_logger().warn("🟠 No cones available to publish.")
+            self.get_logger().warn("No cones available to publish.")
             return
 
         # Cone ellipsoids (visualized as SPHERE_LIST)
@@ -314,7 +314,7 @@ class LidarProcessing(Node):
             pose.position = pt
             centres_msg.poses.append(pose)
 
-            self.get_logger().debug(f"🟠 Cone {i}: {cone}")
+            self.get_logger().debug(f"Cone {i}: {cone}")
 
         self.cone_ellipsoids_pub.publish(marker)
         self.cone_centres_pub.publish(centres_msg)

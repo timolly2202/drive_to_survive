@@ -35,7 +35,7 @@ class ConeClassifierSVM:
 
         # Save entire pipeline
         joblib.dump(pipeline, self.model_path)
-        print(f"📦 Model saved to {self.model_path}")
+        print(f"Model saved to {self.model_path}")
 
     def load(self):
         """Load a previously trained model."""

@@ -27,20 +27,20 @@ class RLRewardsNode(Node):
         self.episode_active = False
         self.episode_start_time = None
         self.last_goal_time = None
-        self.total_reward = 0.0
-        self.in_track = True
-        self.image_width = 640
+        self.total_reward = 0.0 # Init rewards value
+        self.in_track = True # In track starts as true
+        self.image_width = 640 # Image width
 
         self.declare_parameter('min_bbox_height', 20.0)
         self.min_bbox_height = self.get_parameter('min_bbox_height').get_parameter_value().double_value
 
         # --- Subscribers ---
-        self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.yolo_callback_front, 10)
+        self.create_subscription(YoloDetections, '/orange/front_image_yolo/detections', self.yolo_callback_front, 10) # Yolo tensors
         self.create_subscription(YoloDetections, '/orange/back_image_yolo/detections', self.yolo_callback_back, 10)
         self.create_subscription(YoloDetections, '/orange/left_image_yolo/detections', self.yolo_callback_left, 10)
         self.create_subscription(YoloDetections, '/orange/right_image_yolo/detections', self.yolo_callback_right, 10)
-        self.create_subscription(Odometry, '/orange/odom', self.odom_callback, 10)
-        self.create_subscription(String, '/episode_status', self.episode_status_callback, 10)
+        self.create_subscription(Odometry, '/orange/odom', self.odom_callback, 10) # Odometry
+        self.create_subscription(String, '/episode_status', self.episode_status_callback, 10) # Listen for episode start signal
 
         # --- Publishers ---
         self.in_track_pub = self.create_publisher(Bool, '/in_track_status', 10)
