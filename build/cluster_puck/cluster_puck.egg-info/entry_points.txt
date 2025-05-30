@@ -1,3 +1,0 @@
-[console_scripts]
-lidar_processing = cluster_puck.lidar_processing:main
-

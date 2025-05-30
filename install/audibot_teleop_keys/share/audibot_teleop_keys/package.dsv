@@ -1,9 +1,0 @@
-source;share/audibot_teleop_keys/hook/pythonpath.ps1
-source;share/audibot_teleop_keys/hook/pythonpath.dsv
-source;share/audibot_teleop_keys/hook/pythonpath.sh
-source;share/audibot_teleop_keys/hook/ament_prefix_path.ps1
-source;share/audibot_teleop_keys/hook/ament_prefix_path.dsv
-source;share/audibot_teleop_keys/hook/ament_prefix_path.sh
-source;../../build/audibot_teleop_keys/share/audibot_teleop_keys/hook/pythonpath_develop.ps1
-source;../../build/audibot_teleop_keys/share/audibot_teleop_keys/hook/pythonpath_develop.dsv
-source;../../build/audibot_teleop_keys/share/audibot_teleop_keys/hook/pythonpath_develop.sh

@@ -1,4 +1,0 @@
-source;share/yolo_msg/environment/ament_prefix_path.sh
-source;share/yolo_msg/environment/library_path.sh
-source;share/yolo_msg/environment/path.sh
-source;share/yolo_msg/environment/pythonpath.sh

@@ -1,3 +1,0 @@
-[console_scripts]
-environment_manager = rl_gym.environment_manager_node:main
-

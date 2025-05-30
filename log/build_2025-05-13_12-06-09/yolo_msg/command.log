@@ -1,1 +1,0 @@
-Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/yolo_msg': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/tejas_bhuta/git/drive_to_survive/src/yolo_msg -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg

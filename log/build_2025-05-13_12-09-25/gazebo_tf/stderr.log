@@ -1,4 +1,0 @@
-[01m[K/home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf/src/reach.cpp:[m[K In member function ‘[01m[Kvoid Reach::checkGoals(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)[m[K’:
-[01m[K/home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf/src/reach.cpp:72:72:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Krequest[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-parameter-Wunused-parameter]8;;[m[K]
-   72 | void checkGoals([01;35m[Kconst std::shared_ptr<std_srvs::srv::Trigger::Request> request[m[K,
-      |                 [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~[m[K

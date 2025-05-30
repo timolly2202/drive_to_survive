@@ -1,9 +1,0 @@
-source;share/cluster_puck/hook/pythonpath.ps1
-source;share/cluster_puck/hook/pythonpath.dsv
-source;share/cluster_puck/hook/pythonpath.sh
-source;share/cluster_puck/hook/ament_prefix_path.ps1
-source;share/cluster_puck/hook/ament_prefix_path.dsv
-source;share/cluster_puck/hook/ament_prefix_path.sh
-source;../../build/cluster_puck/share/cluster_puck/hook/pythonpath_develop.ps1
-source;../../build/cluster_puck/share/cluster_puck/hook/pythonpath_develop.dsv
-source;../../build/cluster_puck/share/cluster_puck/hook/pythonpath_develop.sh

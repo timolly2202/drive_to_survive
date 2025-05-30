@@ -1,1 +1,0 @@
-/home/tejas_bhuta/git/drive_to_survive/build/yolo_msg/rosidl_typesupport_fastrtps_c/yolo_msg/msg/detail/bounding_box__rosidl_typesupport_fastrtps_c.h

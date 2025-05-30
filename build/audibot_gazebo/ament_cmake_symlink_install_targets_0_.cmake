@@ -1,1 +1,0 @@
-ament_cmake_symlink_install_targets("TARGET_FILES" "/home/tejas_bhuta/git/drive_to_survive/build/audibot_gazebo/libaudibot_interface_plugin.so" "TARGETS" "audibot_interface_plugin" "ARCHIVE_DESTINATION" "lib" "LIBRARY_DESTINATION" "lib" "RUNTIME_DESTINATION" "bin")

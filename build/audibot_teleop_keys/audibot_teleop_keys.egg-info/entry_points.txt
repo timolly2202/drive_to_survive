@@ -1,3 +1,0 @@
-[console_scripts]
-teleop_keys = audibot_teleop_keys.teleop_keys:main
-

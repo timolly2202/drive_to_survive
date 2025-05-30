@@ -1,9 +1,0 @@
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/uninstall.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/audibot_uninstall.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/test.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/edit_cache.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/rebuild_cache.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/list_install_components.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/install.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/install/local.dir
-/home/tejas_bhuta/git/drive_to_survive/build/audibot/CMakeFiles/install/strip.dir

@@ -1,4 +1,0 @@
-Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf -- -j16 -l16
-Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf -- -j16 -l16
-Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf
-Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf
