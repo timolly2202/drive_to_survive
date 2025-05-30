@@ -1,0 +1,23 @@
+[9.148s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/build --no-deps symlink_data
+[10.356s] running develop
+[10.381s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[10.381s]   warnings.warn(
+[11.379s] running egg_info
+[11.381s] writing audibot_yolo.egg-info/PKG-INFO
+[11.382s] writing dependency_links to audibot_yolo.egg-info/dependency_links.txt
+[11.384s] writing entry points to audibot_yolo.egg-info/entry_points.txt
+[11.386s] writing requirements to audibot_yolo.egg-info/requires.txt
+[11.393s] writing top-level names to audibot_yolo.egg-info/top_level.txt
+[11.398s] reading manifest file 'audibot_yolo.egg-info/SOURCES.txt'
+[11.413s] writing manifest file 'audibot_yolo.egg-info/SOURCES.txt'
+[11.418s] running build_ext
+[11.419s] Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages/audibot-yolo.egg-link (link to .)
+[11.421s] Installing audibot_yolo script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[11.423s] Installing back_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[11.427s] Installing front_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[11.429s] Installing left_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[11.432s] Installing right_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[11.435s] 
+[11.435s] Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo
+[11.436s] running symlink_data
+[12.667s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/build --no-deps symlink_data

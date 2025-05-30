@@ -1,0 +1,19 @@
+[3.100s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/build --no-deps symlink_data
+[3.644s] running develop
+[3.646s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[3.646s]   warnings.warn(
+[3.891s] running egg_info
+[3.891s] writing cluster_puck.egg-info/PKG-INFO
+[3.892s] writing dependency_links to cluster_puck.egg-info/dependency_links.txt
+[3.892s] writing entry points to cluster_puck.egg-info/entry_points.txt
+[3.893s] writing requirements to cluster_puck.egg-info/requires.txt
+[3.893s] writing top-level names to cluster_puck.egg-info/top_level.txt
+[3.895s] reading manifest file 'cluster_puck.egg-info/SOURCES.txt'
+[3.897s] writing manifest file 'cluster_puck.egg-info/SOURCES.txt'
+[3.901s] running build_ext
+[3.901s] Creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages/cluster-puck.egg-link (link to .)
+[3.903s] Installing lidar_processing script to /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/cluster_puck
+[3.904s] 
+[3.904s] Installed /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck
+[3.904s] running symlink_data
+[3.951s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/build --no-deps symlink_data

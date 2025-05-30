@@ -1,0 +1,25 @@
+[2.103s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/build --no-deps symlink_data
+[2.570s] running develop
+[2.570s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[2.571s]   warnings.warn(
+[2.878s] running egg_info
+[2.880s] creating cluster_puck.egg-info
+[2.880s] writing cluster_puck.egg-info/PKG-INFO
+[2.881s] writing dependency_links to cluster_puck.egg-info/dependency_links.txt
+[2.881s] writing entry points to cluster_puck.egg-info/entry_points.txt
+[2.882s] writing requirements to cluster_puck.egg-info/requires.txt
+[2.882s] writing top-level names to cluster_puck.egg-info/top_level.txt
+[2.883s] writing manifest file 'cluster_puck.egg-info/SOURCES.txt'
+[2.883s] reading manifest file 'cluster_puck.egg-info/SOURCES.txt'
+[2.885s] writing manifest file 'cluster_puck.egg-info/SOURCES.txt'
+[2.888s] running build_ext
+[2.888s] Creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages/cluster-puck.egg-link (link to .)
+[2.888s] Installing lidar_processing script to /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/cluster_puck
+[2.889s] 
+[2.889s] Installed /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck
+[2.889s] running symlink_data
+[2.889s] creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index
+[2.889s] creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index
+[2.889s] creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index/packages
+[2.889s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/resource/cluster_puck -> /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index/packages
+[2.889s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/cluster_puck

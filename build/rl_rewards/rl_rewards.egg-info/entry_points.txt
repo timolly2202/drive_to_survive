@@ -1,0 +1,3 @@
+[console_scripts]
+rl_rewards = rl_rewards.rl_rewards_node:main
+

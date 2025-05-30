@@ -1,0 +1,4 @@
+[console_scripts]
+rl_agent_node = audibot_rl_driver.rl_agent_node:main
+rl_agent_test = audibot_rl_driver.rl_agent_test:main
+

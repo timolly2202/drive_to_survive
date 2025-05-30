@@ -1,0 +1,25 @@
+[2.158s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/build --no-deps symlink_data
+[2.570s] running develop
+[2.570s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[2.571s]   warnings.warn(
+[2.862s] running egg_info
+[2.863s] creating audibot_teleop_keys.egg-info
+[2.863s] writing audibot_teleop_keys.egg-info/PKG-INFO
+[2.864s] writing dependency_links to audibot_teleop_keys.egg-info/dependency_links.txt
+[2.864s] writing entry points to audibot_teleop_keys.egg-info/entry_points.txt
+[2.864s] writing requirements to audibot_teleop_keys.egg-info/requires.txt
+[2.865s] writing top-level names to audibot_teleop_keys.egg-info/top_level.txt
+[2.865s] writing manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'
+[2.869s] reading manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'
+[2.870s] writing manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'
+[2.874s] running build_ext
+[2.874s] Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/python3.10/site-packages/audibot-teleop-keys.egg-link (link to .)
+[2.876s] Installing teleop_keys script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/audibot_teleop_keys
+[2.877s] 
+[2.877s] Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys
+[2.877s] running symlink_data
+[2.878s] creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index
+[2.878s] creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index
+[2.878s] creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index/packages
+[2.878s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/resource/audibot_teleop_keys -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index/packages
+[2.878s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/audibot_teleop_keys

@@ -1,0 +1,65 @@
+[0.046s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_gazebo': AMENT_PREFIX_PATH=/home/tejas_bhuta/git/drive_to_survive/install/audibot_description:${AMENT_PREFIX_PATH} CMAKE_PREFIX_PATH=/home/tejas_bhuta/git/drive_to_survive/install/audibot_description:/opt/ros/humble /usr/bin/cmake /home/tejas_bhuta/git/drive_to_survive/resources/audibot/audibot_gazebo -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo
+[0.198s] -- The C compiler identification is GNU 11.4.0
+[0.521s] -- The CXX compiler identification is GNU 11.4.0
+[0.987s] -- Detecting C compiler ABI info
+[1.186s] -- Detecting C compiler ABI info - done
+[1.199s] -- Check for working C compiler: /usr/bin/cc - skipped
+[1.199s] -- Detecting C compile features
+[1.200s] -- Detecting C compile features - done
+[1.205s] -- Detecting CXX compiler ABI info
+[1.338s] -- Detecting CXX compiler ABI info - done
+[1.348s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[1.348s] -- Detecting CXX compile features
+[1.349s] -- Detecting CXX compile features - done
+[1.351s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[1.491s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[1.549s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[1.578s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[1.824s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[1.828s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[1.836s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[1.846s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[1.861s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[1.905s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[1.907s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[10.269s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[19.910s] -- Found FastRTPS: /opt/ros/humble/include  
+[31.462s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[31.476s] -- Looking for pthread.h
+[31.773s] -- Looking for pthread.h - found
+[31.773s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[32.368s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[32.371s] -- Found Threads: TRUE  
+[32.445s] -- Found gazebo_ros: 3.7.0 (/opt/ros/humble/share/gazebo_ros/cmake)
+[32.484s] -- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") 
+[32.486s] -- Checking for module 'bullet>=2.82'
+[32.505s] --   Found bullet, version 3.05
+[32.852s] -- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") 
+[32.923s] -- Found assimp: /usr/include (found version "5.2.0") 
+[32.989s] -- Found DART: /usr/include (Required is at least version "6.6") found components: dart 
+[33.064s] -- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time 
+[34.553s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") 
+[34.568s] -- Looking for ignition-math6 -- found version 6.15.1
+[34.594s] -- Searching for dependencies of ignition-math6
+[34.601s] -- Looking for OGRE...
+[34.602s] -- OGRE_PREFIX_WATCH changed.
+[34.609s] -- Checking for module 'OGRE'
+[34.624s] --   Found OGRE, version 1.9.0
+[34.659s] -- Found Ogre Ghadamon (1.9.0)
+[36.367s] -- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so
+[36.384s] -- Looking for OGRE_Paging...
+[37.986s] -- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so
+[37.986s] -- Looking for OGRE_Terrain...
+[39.740s] -- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so
+[39.740s] -- Looking for OGRE_Property...
+[40.058s] -- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so
+[40.058s] -- Looking for OGRE_RTShaderSystem...
+[40.301s] -- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so
+[40.301s] -- Looking for OGRE_Volume...
+[40.520s] -- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so
+[40.520s] -- Looking for OGRE_Overlay...
+[40.739s] -- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so
+[133.058s] -- Looking for ignition-math6 -- found version 6.15.1
+[133.065s] -- Looking for ignition-transport8 -- found version 8.2.1
+[133.066s] -- Searching for dependencies of ignition-transport8
+[135.474s] -- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") 

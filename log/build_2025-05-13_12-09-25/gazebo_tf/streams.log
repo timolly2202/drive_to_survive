@@ -1,0 +1,112 @@
+[0.990s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf -- -j16 -l16
+[1.057s] [ 25%] [32mBuilding CXX object CMakeFiles/reach.dir/src/reach.cpp.o[0m
+[1.059s] [ 50%] [32mBuilding CXX object CMakeFiles/gazebo_connect.dir/src/gazebo_connect.cpp.o[0m
+[5.341s] [01m[K/home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf/src/reach.cpp:[m[K In member function ‘[01m[Kvoid Reach::checkGoals(std::shared_ptr<std_srvs::srv::Trigger_Request_<std::allocator<void> > >, std::shared_ptr<std_srvs::srv::Trigger_Response_<std::allocator<void> > >)[m[K’:
+[5.342s] [01m[K/home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf/src/reach.cpp:72:72:[m[K [01;35m[Kwarning: [m[Kunused parameter ‘[01m[Krequest[m[K’ [[01;35m[K]8;;https://gcc.gnu.org/onlinedocs/gcc/Warning-Options.html#index-Wunused-parameter-Wunused-parameter]8;;[m[K]
+[5.342s]    72 | void checkGoals([01;35m[Kconst std::shared_ptr<std_srvs::srv::Trigger::Request> request[m[K,
+[5.342s]       |                 [01;35m[K~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~[m[K
+[14.294s] [ 75%] [32m[1mLinking CXX executable gazebo_connect[0m
+[15.125s] [ 75%] Built target gazebo_connect
+[18.178s] [100%] [32m[1mLinking CXX executable reach[0m
+[19.048s] [100%] Built target reach
+[19.060s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --build /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf -- -j16 -l16
+[19.097s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf
+[19.104s] -- Install configuration: ""
+[19.105s] -- Execute custom install script
+[19.106s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/lib/gazebo_tf/gazebo_connect
+[19.116s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/lib/gazebo_tf/reach
+[19.125s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/.gitignore
+[19.135s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/a2.launch.py
+[19.144s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/a3_audi.launch.py
+[19.154s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/a3_drone.launch.py
+[19.164s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/a3_project3.launch.py
+[19.179s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/audi.launch.py
+[19.196s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/audi_a2.launch.py
+[19.211s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/audi_husky.launch.py
+[19.230s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/audi_track.launch.py
+[19.251s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/controllers.launch.py
+[19.275s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/drive_to_survive.launch.py
+[19.297s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/husky.launch.py
+[19.318s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/quiz4.launch.py
+[19.337s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/two_cars.launch.py
+[19.356s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/two_quads.launch
+[19.379s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/launch/ugv_goals.launch
+[19.407s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/closed_green_wall/model.config
+[19.431s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/closed_green_wall/model.sdf
+[19.456s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/materials/textures/Construction_Cone_Diffuse.png
+[19.479s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/meshes/construction_cone.dae
+[19.502s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/model-1_3.sdf
+[19.526s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/model-1_4.sdf
+[19.549s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/model.config
+[19.568s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/construction_cone/model.sdf
+[19.585s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/database.config
+[19.599s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/b6.png
+[19.618s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/new_snow_low.png
+[19.639s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/new_snow_mid.png
+[19.665s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/new_snow_top.png
+[19.694s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/new_snow_white.png
+[19.725s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/snow_low.png
+[19.748s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/snow_mid.png
+[19.771s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/snow_top.png
+[19.793s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/materials/textures/snow_white.png
+[19.815s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/model.config
+[19.835s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/ice_mt_ground/model.sdf
+[19.851s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/eyebrow001-unmodified.png
+[19.867s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/eyebrow001.png
+[19.889s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/green_eye.png
+[19.906s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/jeans01_normals.png
+[19.926s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/jeans_basic_diffuse.png
+[19.942s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/male02_diffuse_black-unmodified.png
+[19.956s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/male02_diffuse_black.png
+[19.977s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/teeth.png
+[19.999s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/tshirt02_normals.png
+[20.019s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/tshirt02_texture.png
+[20.041s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/materials/textures/young_lightskinned_male_diffuse.png
+[20.064s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/meshes/standing.dae
+[20.088s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/model.config
+[20.112s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/person_standing/model.sdf
+[20.134s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/terrain_1/media/Textures/Grass.png
+[20.151s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/terrain_1/media/scripts/repeated.material
+[20.169s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/terrain_1/media/terrain_1.dae
+[20.189s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/terrain_1/model.config
+[20.210s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/terrain_1/model.sdf
+[20.231s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/tower/model.config
+[20.249s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/models/tower/model.sdf
+[20.268s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/a2.rviz
+[20.287s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/a3_drone.rviz
+[20.311s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/audi.rviz
+[20.332s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/audi_husky.rviz
+[20.353s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/husky.rviz
+[20.370s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/husky_s2_3.rviz
+[20.390s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/multi.rviz
+[20.410s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/quiz4.rviz
+[20.428s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/two_cars.rviz
+[20.445s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/two_quads.rviz
+[20.456s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/uav.rviz
+[20.465s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/uav_a3.rviz
+[20.481s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/ugv.rviz
+[20.495s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/ugv_a3.rviz
+[20.507s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/rviz/ugv_race.rviz
+[20.538s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/a2.world
+[20.550s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/demo.world
+[20.559s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/ice_mts.world
+[20.568s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/race_track.world
+[20.577s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/search_and_rescue.world
+[20.586s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/terrain_1.world
+[20.594s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/worlds/tower_search_and_rescue.world
+[20.604s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/ament_index/resource_index/package_run_dependencies/gazebo_tf
+[20.616s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/ament_index/resource_index/parent_prefix_path/gazebo_tf
+[20.629s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/environment/ament_prefix_path.sh
+[20.641s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/environment/ament_prefix_path.dsv
+[20.654s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/environment/path.sh
+[20.666s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/environment/path.dsv
+[20.677s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/local_setup.bash
+[20.689s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/local_setup.sh
+[20.702s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/local_setup.zsh
+[20.715s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/local_setup.dsv
+[20.727s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/package.dsv
+[20.741s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/ament_index/resource_index/packages/gazebo_tf
+[20.756s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/cmake/gazebo_tfConfig.cmake
+[20.771s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/cmake/gazebo_tfConfig-version.cmake
+[20.786s] -- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf/share/gazebo_tf/package.xml
+[20.811s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf' returned '0': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake --install /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf

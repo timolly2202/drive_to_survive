@@ -1,0 +1,7 @@
+{
+  "package_name": "yolo_msg",
+  "non_idl_tuples": [
+    "/home/tejas_bhuta/git/drive_to_survive/src/yolo_msg:msg/BoundingBox.msg",
+    "/home/tejas_bhuta/git/drive_to_survive/src/yolo_msg:msg/YoloDetections.msg"
+  ]
+}

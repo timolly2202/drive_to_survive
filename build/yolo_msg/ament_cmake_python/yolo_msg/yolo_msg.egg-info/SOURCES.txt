@@ -1,0 +1,9 @@
+setup.py
+yolo_msg/__init__.py
+yolo_msg.egg-info/PKG-INFO
+yolo_msg.egg-info/SOURCES.txt
+yolo_msg.egg-info/dependency_links.txt
+yolo_msg.egg-info/top_level.txt
+yolo_msg/msg/__init__.py
+yolo_msg/msg/_bounding_box.py
+yolo_msg/msg/_yolo_detections.py

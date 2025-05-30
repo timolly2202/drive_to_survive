@@ -1,0 +1,23 @@
+[8.874s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_gym': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_gym/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_gym/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_gym/build --no-deps symlink_data
+[9.981s] running develop
+[9.983s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[9.983s]   warnings.warn(
+[10.919s] running egg_info
+[10.950s] creating rl_gym.egg-info
+[10.951s] writing rl_gym.egg-info/PKG-INFO
+[10.952s] writing dependency_links to rl_gym.egg-info/dependency_links.txt
+[10.953s] writing entry points to rl_gym.egg-info/entry_points.txt
+[10.956s] writing requirements to rl_gym.egg-info/requires.txt
+[10.957s] writing top-level names to rl_gym.egg-info/top_level.txt
+[10.958s] writing manifest file 'rl_gym.egg-info/SOURCES.txt'
+[10.961s] reading manifest file 'rl_gym.egg-info/SOURCES.txt'
+[10.963s] writing manifest file 'rl_gym.egg-info/SOURCES.txt'
+[10.983s] running build_ext
+[11.000s] Creating /home/tejas_bhuta/git/drive_to_survive/install/rl_gym/lib/python3.10/site-packages/rl-gym.egg-link (link to .)
+[11.002s] Installing environment_manager script to /home/tejas_bhuta/git/drive_to_survive/install/rl_gym/lib/rl_gym
+[11.004s] 
+[11.004s] Installed /home/tejas_bhuta/git/drive_to_survive/build/rl_gym
+[11.005s] running symlink_data
+[11.006s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/rl_gym/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/rl_gym/share/rl_gym
+[11.007s] creating /home/tejas_bhuta/git/drive_to_survive/install/rl_gym/share/rl_gym/launch
+[12.520s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_gym' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_gym/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_gym/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_gym/build --no-deps symlink_data

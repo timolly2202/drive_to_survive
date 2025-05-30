@@ -1,0 +1,24 @@
+[5.295s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/src/audibot_rl_driver': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/audibot_rl_driver build --build-base /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build install --record /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/install.log --single-version-externally-managed install_data
+[6.727s] running egg_info
+[6.747s] writing ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/PKG-INFO
+[6.747s] writing dependency_links to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/dependency_links.txt
+[6.748s] writing entry points to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/entry_points.txt
+[6.748s] writing requirements to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/requires.txt
+[6.748s] writing top-level names to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/top_level.txt
+[6.750s] reading manifest file '../../build/audibot_rl_driver/audibot_rl_driver.egg-info/SOURCES.txt'
+[6.751s] writing manifest file '../../build/audibot_rl_driver/audibot_rl_driver.egg-info/SOURCES.txt'
+[6.752s] running build
+[6.752s] running build_py
+[6.752s] copying audibot_rl_driver/rl_agent_node.py -> /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build/lib/audibot_rl_driver
+[6.755s] running install
+[6.755s] running install_lib
+[6.755s] copying /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build/lib/audibot_rl_driver/rl_agent_node.py -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver
+[6.765s] byte-compiling /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver/rl_agent_node.py to rl_agent_node.cpython-310.pyc
+[6.777s] running install_data
+[6.805s] running install_egg_info
+[6.811s] removing '/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver-0.0.0-py3.10.egg-info' (and everything under it)
+[6.814s] Copying ../../build/audibot_rl_driver/audibot_rl_driver.egg-info to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver-0.0.0-py3.10.egg-info
+[6.834s] running install_scripts
+[6.903s] Installing rl_agent_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/audibot_rl_driver
+[6.926s] writing list of installed files to '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/install.log'
+[7.132s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/src/audibot_rl_driver' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py egg_info --egg-base ../../build/audibot_rl_driver build --build-base /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build install --record /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/install.log --single-version-externally-managed install_data

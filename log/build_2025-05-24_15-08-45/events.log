@@ -1,0 +1,108 @@
+[0.000000] (-) TimerEvent: {}
+[0.004943] (-) JobUnselected: {'identifier': 'audibot'}
+[0.005088] (-) JobUnselected: {'identifier': 'audibot_description'}
+[0.005155] (-) JobUnselected: {'identifier': 'audibot_gazebo'}
+[0.005210] (-) JobUnselected: {'identifier': 'audibot_teleop_keys'}
+[0.005258] (-) JobUnselected: {'identifier': 'audibot_yolo'}
+[0.005304] (-) JobUnselected: {'identifier': 'cluster_puck'}
+[0.005346] (-) JobUnselected: {'identifier': 'gazebo_tf'}
+[0.005389] (-) JobUnselected: {'identifier': 'rl_gym'}
+[0.005431] (-) JobUnselected: {'identifier': 'rl_rewards'}
+[0.005472] (-) JobUnselected: {'identifier': 'yolo_msg'}
+[0.005679] (audibot_rl_driver) JobQueued: {'identifier': 'audibot_rl_driver', 'dependencies': OrderedDict([('yolo_msg', '/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg')])}
+[0.005986] (audibot_rl_driver) JobStarted: {'identifier': 'audibot_rl_driver'}
+[0.088927] (-) TimerEvent: {}
+[0.189805] (-) TimerEvent: {}
+[0.291313] (-) TimerEvent: {}
+[0.393220] (-) TimerEvent: {}
+[0.495081] (-) TimerEvent: {}
+[0.595522] (-) TimerEvent: {}
+[0.696238] (-) TimerEvent: {}
+[0.796779] (-) TimerEvent: {}
+[0.897348] (-) TimerEvent: {}
+[0.997992] (-) TimerEvent: {}
+[1.098469] (-) TimerEvent: {}
+[1.198932] (-) TimerEvent: {}
+[1.299603] (-) TimerEvent: {}
+[1.403708] (-) TimerEvent: {}
+[1.504180] (-) TimerEvent: {}
+[1.604925] (-) TimerEvent: {}
+[1.705491] (-) TimerEvent: {}
+[1.807931] (-) TimerEvent: {}
+[1.908473] (-) TimerEvent: {}
+[2.009025] (-) TimerEvent: {}
+[2.109553] (-) TimerEvent: {}
+[2.210053] (-) TimerEvent: {}
+[2.310556] (-) TimerEvent: {}
+[2.412485] (-) TimerEvent: {}
+[2.513703] (-) TimerEvent: {}
+[2.614226] (-) TimerEvent: {}
+[2.714735] (-) TimerEvent: {}
+[2.815243] (-) TimerEvent: {}
+[2.915810] (-) TimerEvent: {}
+[3.016745] (-) TimerEvent: {}
+[3.117188] (-) TimerEvent: {}
+[3.217571] (-) TimerEvent: {}
+[3.319532] (-) TimerEvent: {}
+[3.419977] (-) TimerEvent: {}
+[3.520639] (-) TimerEvent: {}
+[3.621212] (-) TimerEvent: {}
+[3.724272] (-) TimerEvent: {}
+[3.824785] (-) TimerEvent: {}
+[3.925319] (-) TimerEvent: {}
+[4.027948] (-) TimerEvent: {}
+[4.128683] (-) TimerEvent: {}
+[4.229180] (-) TimerEvent: {}
+[4.330015] (-) TimerEvent: {}
+[4.430633] (-) TimerEvent: {}
+[4.531294] (-) TimerEvent: {}
+[4.632052] (-) TimerEvent: {}
+[4.732506] (-) TimerEvent: {}
+[4.833156] (-) TimerEvent: {}
+[4.897140] (audibot_rl_driver) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'egg_info', '--egg-base', '../../build/audibot_rl_driver', 'build', '--build-base', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build', 'install', '--record', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/install.log', '--single-version-externally-managed', 'install_data'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/src/audibot_rl_driver', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tejas_bhuta', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg/lib:/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib', 'WT_PROFILE_ID': '{4ff56d04-d9cf-57ea-bae2-ad396374e7e3}', 'HOME': '/home/tejas_bhuta', 'OLDPWD': '/home/tejas_bhuta', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'COLCON_PREFIX_PATH': '/home/tejas_bhuta/git/drive_to_survive/install', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tejas_bhuta', 'NAME': 'TejasDell', 'WSL_INTEROP': '/run/WSL/257567_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'GAZEBO_MODEL_PATH': ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/bin:/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin', 'WT_SESSION': 'dc035ab1-457a-43d9-87d9-606705c94d34', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver:/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards:/home/tejas_bhuta/git/drive_to_survive/install/rl_gym:/home/tejas_bhuta/git/drive_to_survive/install/observation_space:/home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo:/home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys:/home/tejas_bhuta/git/drive_to_survive/install/audibot:/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo:/home/tejas_bhuta/git/drive_to_survive/install/audibot_description:/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GAZEBO_RESOURCE_PATH': '/home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description:/usr/share/gazebo-11/', 'PWD': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver', 'GAZEBO_PLUGIN_PATH': ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg/local/lib/python3.10/dist-packages:/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/build/rl_gym:/home/tejas_bhuta/git/drive_to_survive/install/rl_gym/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/install/observation_space/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages:/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys:/home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'CMAKE_PREFIX_PATH': '/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg:/home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf:/home/tejas_bhuta/git/drive_to_survive/install/audibot:/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo:/home/tejas_bhuta/git/drive_to_survive/install/audibot_description', 'WSLENV': 'WT_SESSION:WT_PROFILE_ID:'}, 'shell': False}
+[4.933285] (-) TimerEvent: {}
+[5.033766] (-) TimerEvent: {}
+[5.134292] (-) TimerEvent: {}
+[5.234917] (-) TimerEvent: {}
+[5.335452] (-) TimerEvent: {}
+[5.435996] (-) TimerEvent: {}
+[5.536552] (-) TimerEvent: {}
+[5.637180] (-) TimerEvent: {}
+[5.737721] (-) TimerEvent: {}
+[5.838251] (-) TimerEvent: {}
+[5.939028] (-) TimerEvent: {}
+[6.039583] (-) TimerEvent: {}
+[6.140133] (-) TimerEvent: {}
+[6.240686] (-) TimerEvent: {}
+[6.271861] (audibot_rl_driver) StdoutLine: {'line': b'running egg_info\n'}
+[6.275872] (audibot_rl_driver) StdoutLine: {'line': b'writing ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/PKG-INFO\n'}
+[6.276209] (audibot_rl_driver) StdoutLine: {'line': b'writing dependency_links to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/dependency_links.txt\n'}
+[6.276343] (audibot_rl_driver) StdoutLine: {'line': b'writing entry points to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/entry_points.txt\n'}
+[6.276507] (audibot_rl_driver) StdoutLine: {'line': b'writing requirements to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/requires.txt\n'}
+[6.276811] (audibot_rl_driver) StdoutLine: {'line': b'writing top-level names to ../../build/audibot_rl_driver/audibot_rl_driver.egg-info/top_level.txt\n'}
+[6.282141] (audibot_rl_driver) StdoutLine: {'line': b"reading manifest file '../../build/audibot_rl_driver/audibot_rl_driver.egg-info/SOURCES.txt'\n"}
+[6.284031] (audibot_rl_driver) StdoutLine: {'line': b"writing manifest file '../../build/audibot_rl_driver/audibot_rl_driver.egg-info/SOURCES.txt'\n"}
+[6.284504] (audibot_rl_driver) StdoutLine: {'line': b'running build\n'}
+[6.284791] (audibot_rl_driver) StdoutLine: {'line': b'running build_py\n'}
+[6.284998] (audibot_rl_driver) StdoutLine: {'line': b'copying audibot_rl_driver/rl_agent_node.py -> /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build/lib/audibot_rl_driver\n'}
+[6.285639] (audibot_rl_driver) StdoutLine: {'line': b'running install\n'}
+[6.323947] (audibot_rl_driver) StdoutLine: {'line': b'running install_lib\n'}
+[6.327177] (audibot_rl_driver) StdoutLine: {'line': b'copying /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build/lib/audibot_rl_driver/rl_agent_node.py -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver\n'}
+[6.328871] (audibot_rl_driver) StdoutLine: {'line': b'byte-compiling /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver/rl_agent_node.py to rl_agent_node.cpython-310.pyc\n'}
+[6.340818] (-) TimerEvent: {}
+[6.414084] (audibot_rl_driver) StdoutLine: {'line': b'running install_data\n'}
+[6.415636] (audibot_rl_driver) StdoutLine: {'line': b'running install_egg_info\n'}
+[6.422650] (audibot_rl_driver) StdoutLine: {'line': b"removing '/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver-0.0.0-py3.10.egg-info' (and everything under it)\n"}
+[6.433550] (audibot_rl_driver) StdoutLine: {'line': b'Copying ../../build/audibot_rl_driver/audibot_rl_driver.egg-info to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot_rl_driver-0.0.0-py3.10.egg-info\n'}
+[6.440802] (audibot_rl_driver) StdoutLine: {'line': b'running install_scripts\n'}
+[6.441141] (-) TimerEvent: {}
+[6.542509] (-) TimerEvent: {}
+[6.628123] (audibot_rl_driver) StdoutLine: {'line': b'Installing rl_agent_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/audibot_rl_driver\n'}
+[6.630650] (audibot_rl_driver) StdoutLine: {'line': b"writing list of installed files to '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/install.log'\n"}
+[6.642634] (-) TimerEvent: {}
+[6.743181] (-) TimerEvent: {}
+[6.796286] (audibot_rl_driver) CommandEnded: {'returncode': 0}
+[6.843432] (-) TimerEvent: {}
+[6.944075] (-) TimerEvent: {}
+[6.947472] (audibot_rl_driver) JobEnded: {'identifier': 'audibot_rl_driver', 'rc': 0}
+[6.950325] (-) EventReactorShutdown: {}

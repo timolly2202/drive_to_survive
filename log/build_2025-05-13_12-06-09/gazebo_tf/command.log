@@ -1,0 +1,1 @@
+Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf

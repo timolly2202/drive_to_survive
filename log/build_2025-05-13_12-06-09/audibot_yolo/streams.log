@@ -1,0 +1,27 @@
+[2.124s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/build --no-deps symlink_data
+[2.547s] running develop
+[2.548s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[2.548s]   warnings.warn(
+[2.838s] running egg_info
+[2.838s] creating audibot_yolo.egg-info
+[2.839s] writing audibot_yolo.egg-info/PKG-INFO
+[2.839s] writing dependency_links to audibot_yolo.egg-info/dependency_links.txt
+[2.840s] writing entry points to audibot_yolo.egg-info/entry_points.txt
+[2.840s] writing requirements to audibot_yolo.egg-info/requires.txt
+[2.840s] writing top-level names to audibot_yolo.egg-info/top_level.txt
+[2.840s] writing manifest file 'audibot_yolo.egg-info/SOURCES.txt'
+[2.844s] reading manifest file 'audibot_yolo.egg-info/SOURCES.txt'
+[2.844s] writing manifest file 'audibot_yolo.egg-info/SOURCES.txt'
+[2.847s] running build_ext
+[2.847s] Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages/audibot-yolo.egg-link (link to .)
+[2.849s] Installing audibot_yolo script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[2.849s] Installing back_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[2.850s] Installing front_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[2.850s] Installing left_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[2.850s] Installing right_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo
+[2.851s] 
+[2.851s] Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo
+[2.852s] running symlink_data
+[2.852s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo
+[2.853s] creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo/launch
+[2.853s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/launch/multi_camera.launch.py -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo/launch

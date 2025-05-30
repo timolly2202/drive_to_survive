@@ -1,0 +1,1700 @@
+[0.000000] (-) TimerEvent: {}
+[0.001166] (audibot_description) JobQueued: {'identifier': 'audibot_description', 'dependencies': OrderedDict()}
+[0.001269] (audibot_teleop_keys) JobQueued: {'identifier': 'audibot_teleop_keys', 'dependencies': OrderedDict()}
+[0.001338] (audibot_yolo) JobQueued: {'identifier': 'audibot_yolo', 'dependencies': OrderedDict()}
+[0.001402] (cluster_puck) JobQueued: {'identifier': 'cluster_puck', 'dependencies': OrderedDict()}
+[0.001455] (gazebo_tf) JobQueued: {'identifier': 'gazebo_tf', 'dependencies': OrderedDict()}
+[0.001483] (rl_rewards) JobQueued: {'identifier': 'rl_rewards', 'dependencies': OrderedDict()}
+[0.001500] (yolo_msg) JobQueued: {'identifier': 'yolo_msg', 'dependencies': OrderedDict()}
+[0.001516] (audibot_gazebo) JobQueued: {'identifier': 'audibot_gazebo', 'dependencies': OrderedDict([('audibot_description', '/home/tejas_bhuta/git/drive_to_survive/install/audibot_description')])}
+[0.001545] (audibot) JobQueued: {'identifier': 'audibot', 'dependencies': OrderedDict([('audibot_description', '/home/tejas_bhuta/git/drive_to_survive/install/audibot_description'), ('audibot_gazebo', '/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo')])}
+[0.001602] (audibot_description) JobStarted: {'identifier': 'audibot_description'}
+[0.011191] (audibot_teleop_keys) JobStarted: {'identifier': 'audibot_teleop_keys'}
+[0.018630] (audibot_yolo) JobStarted: {'identifier': 'audibot_yolo'}
+[0.025018] (cluster_puck) JobStarted: {'identifier': 'cluster_puck'}
+[0.033221] (gazebo_tf) JobStarted: {'identifier': 'gazebo_tf'}
+[0.038154] (rl_rewards) JobStarted: {'identifier': 'rl_rewards'}
+[0.052278] (yolo_msg) JobStarted: {'identifier': 'yolo_msg'}
+[0.062419] (audibot_description) JobProgress: {'identifier': 'audibot_description', 'progress': 'cmake'}
+[0.063202] (audibot_description) Command: {'cmd': ['/usr/bin/cmake', '/home/tejas_bhuta/git/drive_to_survive/resources/audibot/audibot_description', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/audibot_description'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[0.098689] (-) TimerEvent: {}
+[0.199173] (-) TimerEvent: {}
+[0.299674] (-) TimerEvent: {}
+[0.400304] (-) TimerEvent: {}
+[0.500701] (-) TimerEvent: {}
+[0.601144] (-) TimerEvent: {}
+[0.701775] (-) TimerEvent: {}
+[0.802352] (-) TimerEvent: {}
+[0.902996] (-) TimerEvent: {}
+[1.003494] (-) TimerEvent: {}
+[1.059402] (gazebo_tf) JobProgress: {'identifier': 'gazebo_tf', 'progress': 'cmake'}
+[1.060740] (gazebo_tf) Command: {'cmd': ['/usr/bin/cmake', '/home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.103691] (-) TimerEvent: {}
+[1.204104] (-) TimerEvent: {}
+[1.304579] (-) TimerEvent: {}
+[1.399559] (yolo_msg) JobProgress: {'identifier': 'yolo_msg', 'progress': 'cmake'}
+[1.400950] (yolo_msg) Command: {'cmd': ['/usr/bin/cmake', '/home/tejas_bhuta/git/drive_to_survive/src/yolo_msg', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/yolo_msg'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/yolo_msg', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/yolo_msg'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.408699] (-) TimerEvent: {}
+[1.410500] (audibot_description) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[1.410755] (audibot_description) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[1.410939] (audibot_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[1.411129] (audibot_description) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[1.411322] (audibot_description) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[1.411527] (audibot_description) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[1.411742] (audibot_description) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[1.411959] (audibot_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[1.412145] (audibot_description) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[1.412302] (audibot_description) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[1.413199] (audibot_description) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[1.413391] (audibot_description) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[1.413546] (audibot_description) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[1.413699] (audibot_description) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[1.413893] (audibot_description) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[1.414193] (audibot_description) StdoutLine: {'line': b'-- Extracting file: meshes.tar.xz\n'}
+[1.414392] (audibot_description) StdoutLine: {'line': b'-- Configuring done\n'}
+[1.414573] (audibot_description) StdoutLine: {'line': b'-- Generating done\n'}
+[1.414778] (audibot_description) StdoutLine: {'line': b'-- Build files have been written to: /home/tejas_bhuta/git/drive_to_survive/build/audibot_description\n'}
+[1.415123] (gazebo_tf) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[1.416392] (audibot_description) CommandEnded: {'returncode': 0}
+[1.416895] (audibot_description) JobProgress: {'identifier': 'audibot_description', 'progress': 'build'}
+[1.416965] (audibot_description) Command: {'cmd': ['/usr/bin/cmake', '--build', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description', '--', '-j16', '-l16'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.464495] (audibot_description) CommandEnded: {'returncode': 0}
+[1.503365] (audibot_description) JobProgress: {'identifier': 'audibot_description', 'progress': 'install'}
+[1.509001] (-) TimerEvent: {}
+[1.516658] (audibot_description) Command: {'cmd': ['/usr/bin/cmake', '--install', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_description'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/opt/ros/humble')]), 'shell': False}
+[1.525057] (audibot_description) StdoutLine: {'line': b'-- Install configuration: ""\n'}
+[1.525752] (audibot_description) StdoutLine: {'line': b'-- Execute custom install script\n'}
+[1.527451] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/meshes/blue_body.dae\n'}
+[1.537899] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/meshes/body_collision.stl\n'}
+[1.545106] (gazebo_tf) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[1.549096] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/meshes/orange_body.dae\n'}
+[1.563453] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/meshes/wheel.dae\n'}
+[1.576930] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/urdf/audibot.urdf.xacro\n'}
+[1.590034] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/environment/audibot_description.dsv\n'}
+[1.604477] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/ament_index/resource_index/package_run_dependencies/audibot_description\n'}
+[1.605084] (yolo_msg) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[1.609170] (-) TimerEvent: {}
+[1.616390] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/ament_index/resource_index/parent_prefix_path/audibot_description\n'}
+[1.626946] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/environment/ament_prefix_path.sh\n'}
+[1.637928] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/environment/ament_prefix_path.dsv\n'}
+[1.649480] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/environment/path.sh\n'}
+[1.658944] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/environment/path.dsv\n'}
+[1.669106] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/local_setup.bash\n'}
+[1.677379] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/local_setup.sh\n'}
+[1.685238] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/local_setup.zsh\n'}
+[1.695125] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/local_setup.dsv\n'}
+[1.703285] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/package.dsv\n'}
+[1.709335] (-) TimerEvent: {}
+[1.714741] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/ament_index/resource_index/packages/audibot_description\n'}
+[1.725358] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/cmake/audibot_descriptionConfig.cmake\n'}
+[1.733251] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/cmake/audibot_descriptionConfig-version.cmake\n'}
+[1.743569] (audibot_description) StdoutLine: {'line': b'-- Symlinking: /home/tejas_bhuta/git/drive_to_survive/install/audibot_description/share/audibot_description/package.xml\n'}
+[1.755965] (audibot_description) CommandEnded: {'returncode': 0}
+[1.809458] (-) TimerEvent: {}
+[1.818788] (audibot_description) JobEnded: {'identifier': 'audibot_description', 'rc': 0}
+[1.821881] (audibot_gazebo) JobStarted: {'identifier': 'audibot_gazebo'}
+[1.863274] (audibot_gazebo) JobProgress: {'identifier': 'audibot_gazebo', 'progress': 'cmake'}
+[1.863746] (audibot_gazebo) Command: {'cmd': ['/usr/bin/cmake', '/home/tejas_bhuta/git/drive_to_survive/resources/audibot/audibot_gazebo', '-DAMENT_CMAKE_SYMLINK_INSTALL=1', '-DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/audibot_gazebo'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_gazebo', 'env': OrderedDict([('LESSOPEN', '| /usr/bin/lesspipe %s'), ('USER', 'tejas_bhuta'), ('SHLVL', '1'), ('LD_LIBRARY_PATH', '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib'), ('HOME', '/home/tejas_bhuta'), ('OLDPWD', '/home/tejas_bhuta/git'), ('ROS_PYTHON_VERSION', '3'), ('DBUS_SESSION_BUS_ADDRESS', 'unix:path=/run/user/1000/bus'), ('WSL_DISTRO_NAME', 'Ubuntu-22.04'), ('WAYLAND_DISPLAY', 'wayland-0'), ('ROS_DISTRO', 'humble'), ('LOGNAME', 'tejas_bhuta'), ('NAME', 'TejasDell'), ('WSL_INTEROP', '/run/WSL/651_interop'), ('PULSE_SERVER', 'unix:/mnt/wslg/PulseServer'), ('_', '/usr/bin/colcon'), ('ROS_VERSION', '2'), ('TERM', 'xterm-256color'), ('GAZEBO_MODEL_PATH', ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models'), ('ROS_LOCALHOST_ONLY', '0'), ('PATH', '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin'), ('XDG_RUNTIME_DIR', '/run/user/1000/'), ('DISPLAY', ':0'), ('LANG', 'en_US.UTF-8'), ('LS_COLORS', 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:'), ('ROS_DOMAIN_ID', '30'), ('AMENT_PREFIX_PATH', '/home/tejas_bhuta/git/drive_to_survive/install/audibot_description:/opt/ros/humble'), ('SHELL', '/bin/bash'), ('LESSCLOSE', '/usr/bin/lesspipe %s %s'), ('GAZEBO_RESOURCE_PATH', '/usr/share/gazebo-11/'), ('PWD', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_gazebo'), ('GAZEBO_PLUGIN_PATH', ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'), ('XDG_DATA_DIRS', '/usr/local/share:/usr/share:/var/lib/snapd/desktop'), ('PYTHONPATH', '/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages'), ('COLCON', '1'), ('WSL2_GUI_APPS_ENABLED', '1'), ('HOSTTYPE', 'x86_64'), ('WSLENV', ''), ('CMAKE_PREFIX_PATH', '/home/tejas_bhuta/git/drive_to_survive/install/audibot_description:/opt/ros/humble')]), 'shell': False}
+[1.909668] (-) TimerEvent: {}
+[1.911626] (gazebo_tf) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[2.009883] (-) TimerEvent: {}
+[2.019632] (audibot_gazebo) StdoutLine: {'line': b'-- The C compiler identification is GNU 11.4.0\n'}
+[2.074451] (gazebo_tf) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[2.083332] (gazebo_tf) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[2.083948] (gazebo_tf) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[2.084636] (gazebo_tf) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[2.088238] (gazebo_tf) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[2.107604] (yolo_msg) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[2.110014] (-) TimerEvent: {}
+[2.111914] (rl_rewards) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/build', '--no-deps', 'symlink_data'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tejas_bhuta', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib', 'HOME': '/home/tejas_bhuta', 'OLDPWD': '/home/tejas_bhuta/git', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tejas_bhuta', 'NAME': 'TejasDell', 'WSL_INTEROP': '/run/WSL/651_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'GAZEBO_MODEL_PATH': ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GAZEBO_RESOURCE_PATH': '/usr/share/gazebo-11/', 'PWD': '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards', 'GAZEBO_PLUGIN_PATH': ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[2.126220] (cluster_puck) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/build', '--no-deps', 'symlink_data'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tejas_bhuta', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib', 'HOME': '/home/tejas_bhuta', 'OLDPWD': '/home/tejas_bhuta/git', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tejas_bhuta', 'NAME': 'TejasDell', 'WSL_INTEROP': '/run/WSL/651_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'GAZEBO_MODEL_PATH': ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GAZEBO_RESOURCE_PATH': '/usr/share/gazebo-11/', 'PWD': '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck', 'GAZEBO_PLUGIN_PATH': ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[2.137570] (audibot_yolo) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/build', '--no-deps', 'symlink_data'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tejas_bhuta', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib', 'HOME': '/home/tejas_bhuta', 'OLDPWD': '/home/tejas_bhuta/git', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tejas_bhuta', 'NAME': 'TejasDell', 'WSL_INTEROP': '/run/WSL/651_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'GAZEBO_MODEL_PATH': ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GAZEBO_RESOURCE_PATH': '/usr/share/gazebo-11/', 'PWD': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo', 'GAZEBO_PLUGIN_PATH': ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[2.164438] (audibot_teleop_keys) Command: {'cmd': ['/usr/bin/python3', '-W', 'ignore:setup.py install is deprecated', 'setup.py', 'develop', '--editable', '--build-directory', '/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/build', '--no-deps', 'symlink_data'], 'cwd': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys', 'env': {'LESSOPEN': '| /usr/bin/lesspipe %s', 'USER': 'tejas_bhuta', 'SHLVL': '1', 'LD_LIBRARY_PATH': '/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/opt/rviz_ogre_vendor/lib:/opt/ros/humble/lib/x86_64-linux-gnu:/opt/ros/humble/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins:/opt/ros/humble/lib', 'HOME': '/home/tejas_bhuta', 'OLDPWD': '/home/tejas_bhuta/git', 'ROS_PYTHON_VERSION': '3', 'DBUS_SESSION_BUS_ADDRESS': 'unix:path=/run/user/1000/bus', 'WSL_DISTRO_NAME': 'Ubuntu-22.04', 'WAYLAND_DISPLAY': 'wayland-0', 'ROS_DISTRO': 'humble', 'LOGNAME': 'tejas_bhuta', 'NAME': 'TejasDell', 'WSL_INTEROP': '/run/WSL/651_interop', 'PULSE_SERVER': 'unix:/mnt/wslg/PulseServer', '_': '/usr/bin/colcon', 'ROS_VERSION': '2', 'TERM': 'xterm-256color', 'GAZEBO_MODEL_PATH': ':/home/tejas_bhuta/ros2_ws/install/sjtu_drone_description/share/sjtu_drone_description/models:/home/tejas_bhuta/ros2_ws/src/sjtu_drone/sjtu_drone_description/models', 'ROS_LOCALHOST_ONLY': '0', 'PATH': '/home/tejas_bhuta/.local/bin:/home/tejas_bhuta/.local/bin:/opt/ros/humble/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/WindowsApps/MicrosoftCorporationII.WindowsSubsystemForLinux_2.4.11.0_x64__8wekyb3d8bbwe:/mnt/c/WINDOWS/system32:/mnt/c/WINDOWS:/mnt/c/WINDOWS/System32/Wbem:/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/:/mnt/c/WINDOWS/System32/OpenSSH/:/mnt/c/Program Files/dotnet/:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/MATLAB/R2024a/bin:/mnt/c/Program Files/usbipd-win/:/mnt/c/Users/tejas/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/tejas/AppData/Local/Programs/Microsoft VS Code/bin:/snap/bin', 'XDG_RUNTIME_DIR': '/run/user/1000/', 'DISPLAY': ':0', 'LANG': 'en_US.UTF-8', 'LS_COLORS': 'rs=0:di=01;34:ln=01;36:mh=00:pi=40;33:so=01;35:do=01;35:bd=40;33;01:cd=40;33;01:or=40;31;01:mi=00:su=37;41:sg=30;43:ca=30;41:tw=30;42:ow=34;42:st=37;44:ex=01;32:*.tar=01;31:*.tgz=01;31:*.arc=01;31:*.arj=01;31:*.taz=01;31:*.lha=01;31:*.lz4=01;31:*.lzh=01;31:*.lzma=01;31:*.tlz=01;31:*.txz=01;31:*.tzo=01;31:*.t7z=01;31:*.zip=01;31:*.z=01;31:*.dz=01;31:*.gz=01;31:*.lrz=01;31:*.lz=01;31:*.lzo=01;31:*.xz=01;31:*.zst=01;31:*.tzst=01;31:*.bz2=01;31:*.bz=01;31:*.tbz=01;31:*.tbz2=01;31:*.tz=01;31:*.deb=01;31:*.rpm=01;31:*.jar=01;31:*.war=01;31:*.ear=01;31:*.sar=01;31:*.rar=01;31:*.alz=01;31:*.ace=01;31:*.zoo=01;31:*.cpio=01;31:*.7z=01;31:*.rz=01;31:*.cab=01;31:*.wim=01;31:*.swm=01;31:*.dwm=01;31:*.esd=01;31:*.jpg=01;35:*.jpeg=01;35:*.mjpg=01;35:*.mjpeg=01;35:*.gif=01;35:*.bmp=01;35:*.pbm=01;35:*.pgm=01;35:*.ppm=01;35:*.tga=01;35:*.xbm=01;35:*.xpm=01;35:*.tif=01;35:*.tiff=01;35:*.png=01;35:*.svg=01;35:*.svgz=01;35:*.mng=01;35:*.pcx=01;35:*.mov=01;35:*.mpg=01;35:*.mpeg=01;35:*.m2v=01;35:*.mkv=01;35:*.webm=01;35:*.webp=01;35:*.ogm=01;35:*.mp4=01;35:*.m4v=01;35:*.mp4v=01;35:*.vob=01;35:*.qt=01;35:*.nuv=01;35:*.wmv=01;35:*.asf=01;35:*.rm=01;35:*.rmvb=01;35:*.flc=01;35:*.avi=01;35:*.fli=01;35:*.flv=01;35:*.gl=01;35:*.dl=01;35:*.xcf=01;35:*.xwd=01;35:*.yuv=01;35:*.cgm=01;35:*.emf=01;35:*.ogv=01;35:*.ogx=01;35:*.aac=00;36:*.au=00;36:*.flac=00;36:*.m4a=00;36:*.mid=00;36:*.midi=00;36:*.mka=00;36:*.mp3=00;36:*.mpc=00;36:*.ogg=00;36:*.ra=00;36:*.wav=00;36:*.oga=00;36:*.opus=00;36:*.spx=00;36:*.xspf=00;36:', 'ROS_DOMAIN_ID': '30', 'AMENT_PREFIX_PATH': '/opt/ros/humble', 'SHELL': '/bin/bash', 'LESSCLOSE': '/usr/bin/lesspipe %s %s', 'GAZEBO_RESOURCE_PATH': '/usr/share/gazebo-11/', 'PWD': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys', 'GAZEBO_PLUGIN_PATH': ':/usr/lib/x86_64-linux-gnu/gazebo-11/plugins', 'XDG_DATA_DIRS': '/usr/local/share:/usr/share:/var/lib/snapd/desktop', 'PYTHONPATH': '/home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/python3.10/site-packages:/opt/ros/humble/lib/python3.10/site-packages:/opt/ros/humble/local/lib/python3.10/dist-packages', 'COLCON': '1', 'WSL2_GUI_APPS_ENABLED': '1', 'HOSTTYPE': 'x86_64', 'WSLENV': ''}, 'shell': False}
+[2.210189] (-) TimerEvent: {}
+[2.280296] (gazebo_tf) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[2.289028] (gazebo_tf) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[2.289500] (gazebo_tf) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[2.290106] (gazebo_tf) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[2.292616] (gazebo_tf) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[2.301324] (yolo_msg) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[2.310384] (-) TimerEvent: {}
+[2.342639] (audibot_gazebo) StdoutLine: {'line': b'-- The CXX compiler identification is GNU 11.4.0\n'}
+[2.410566] (-) TimerEvent: {}
+[2.490991] (yolo_msg) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[2.504713] (yolo_msg) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[2.505651] (yolo_msg) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[2.505910] (yolo_msg) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[2.510559] (yolo_msg) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[2.510828] (-) TimerEvent: {}
+[2.523283] (rl_rewards) StdoutLine: {'line': b'running develop\n'}
+[2.524208] (rl_rewards) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.\n'}
+[2.524436] (rl_rewards) StderrLine: {'line': b'  warnings.warn(\n'}
+[2.536646] (gazebo_tf) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[2.565283] (audibot_yolo) StdoutLine: {'line': b'running develop\n'}
+[2.566324] (audibot_yolo) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.\n'}
+[2.566562] (audibot_yolo) StderrLine: {'line': b'  warnings.warn(\n'}
+[2.581129] (audibot_teleop_keys) StdoutLine: {'line': b'running develop\n'}
+[2.581597] (audibot_teleop_keys) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.\n'}
+[2.581789] (audibot_teleop_keys) StderrLine: {'line': b'  warnings.warn(\n'}
+[2.594952] (cluster_puck) StdoutLine: {'line': b'running develop\n'}
+[2.595402] (cluster_puck) StderrLine: {'line': b'/usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.\n'}
+[2.595566] (cluster_puck) StderrLine: {'line': b'  warnings.warn(\n'}
+[2.611010] (-) TimerEvent: {}
+[2.659237] (gazebo_tf) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[2.701910] (gazebo_tf) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[2.711213] (-) TimerEvent: {}
+[2.763662] (yolo_msg) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[2.780577] (yolo_msg) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[2.781094] (yolo_msg) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[2.781714] (yolo_msg) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[2.785785] (yolo_msg) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[2.809100] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting C compiler ABI info\n'}
+[2.811428] (-) TimerEvent: {}
+[2.830031] (rl_rewards) StdoutLine: {'line': b'running egg_info\n'}
+[2.830450] (rl_rewards) StdoutLine: {'line': b'creating rl_rewards.egg-info\n'}
+[2.831078] (rl_rewards) StdoutLine: {'line': b'writing rl_rewards.egg-info/PKG-INFO\n'}
+[2.831270] (rl_rewards) StdoutLine: {'line': b'writing dependency_links to rl_rewards.egg-info/dependency_links.txt\n'}
+[2.831485] (rl_rewards) StdoutLine: {'line': b'writing entry points to rl_rewards.egg-info/entry_points.txt\n'}
+[2.832005] (rl_rewards) StdoutLine: {'line': b'writing requirements to rl_rewards.egg-info/requires.txt\n'}
+[2.832134] (rl_rewards) StdoutLine: {'line': b'writing top-level names to rl_rewards.egg-info/top_level.txt\n'}
+[2.832217] (rl_rewards) StdoutLine: {'line': b"writing manifest file 'rl_rewards.egg-info/SOURCES.txt'\n"}
+[2.836270] (rl_rewards) StdoutLine: {'line': b"reading manifest file 'rl_rewards.egg-info/SOURCES.txt'\n"}
+[2.837659] (rl_rewards) StdoutLine: {'line': b"writing manifest file 'rl_rewards.egg-info/SOURCES.txt'\n"}
+[2.841249] (rl_rewards) StdoutLine: {'line': b'running build_ext\n'}
+[2.842079] (rl_rewards) StdoutLine: {'line': b'Creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages/rl-rewards.egg-link (link to .)\n'}
+[2.844203] (rl_rewards) StdoutLine: {'line': b'Installing rl_rewards script to /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/observation_space\n'}
+[2.845140] (rl_rewards) StdoutLine: {'line': b'\n'}
+[2.845722] (rl_rewards) StdoutLine: {'line': b'Installed /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards\n'}
+[2.845921] (rl_rewards) StdoutLine: {'line': b'running symlink_data\n'}
+[2.846188] (rl_rewards) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/share/ament_index\n'}
+[2.846673] (rl_rewards) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/share/ament_index/resource_index\n'}
+[2.847565] (rl_rewards) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/share/ament_index/resource_index/packages\n'}
+[2.847891] (rl_rewards) StderrLine: {'line': b"error: can't copy '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/resource/rl_rewards': doesn't exist or not a regular file\n"}
+[2.856294] (audibot_yolo) StdoutLine: {'line': b'running egg_info\n'}
+[2.856627] (audibot_yolo) StdoutLine: {'line': b'creating audibot_yolo.egg-info\n'}
+[2.857274] (audibot_yolo) StdoutLine: {'line': b'writing audibot_yolo.egg-info/PKG-INFO\n'}
+[2.857457] (audibot_yolo) StdoutLine: {'line': b'writing dependency_links to audibot_yolo.egg-info/dependency_links.txt\n'}
+[2.857950] (audibot_yolo) StdoutLine: {'line': b'writing entry points to audibot_yolo.egg-info/entry_points.txt\n'}
+[2.858295] (audibot_yolo) StdoutLine: {'line': b'writing requirements to audibot_yolo.egg-info/requires.txt\n'}
+[2.858762] (audibot_yolo) StdoutLine: {'line': b'writing top-level names to audibot_yolo.egg-info/top_level.txt\n'}
+[2.859082] (audibot_yolo) StdoutLine: {'line': b"writing manifest file 'audibot_yolo.egg-info/SOURCES.txt'\n"}
+[2.862246] (audibot_yolo) StdoutLine: {'line': b"reading manifest file 'audibot_yolo.egg-info/SOURCES.txt'\n"}
+[2.862912] (audibot_yolo) StdoutLine: {'line': b"writing manifest file 'audibot_yolo.egg-info/SOURCES.txt'\n"}
+[2.865483] (audibot_yolo) StdoutLine: {'line': b'running build_ext\n'}
+[2.865865] (audibot_yolo) StdoutLine: {'line': b'Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/python3.10/site-packages/audibot-yolo.egg-link (link to .)\n'}
+[2.867094] (audibot_yolo) StdoutLine: {'line': b'Installing audibot_yolo script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo\n'}
+[2.867461] (audibot_yolo) StdoutLine: {'line': b'Installing back_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo\n'}
+[2.868040] (audibot_yolo) StdoutLine: {'line': b'Installing front_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo\n'}
+[2.868302] (audibot_yolo) StdoutLine: {'line': b'Installing left_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo\n'}
+[2.868790] (audibot_yolo) StdoutLine: {'line': b'Installing right_camera_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/lib/audibot_yolo\n'}
+[2.869203] (audibot_yolo) StdoutLine: {'line': b'\n'}
+[2.869780] (audibot_yolo) StdoutLine: {'line': b'Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo\n'}
+[2.870334] (audibot_yolo) StdoutLine: {'line': b'running symlink_data\n'}
+[2.870739] (audibot_yolo) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo\n'}
+[2.871153] (audibot_yolo) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo/launch\n'}
+[2.871321] (audibot_yolo) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_yolo/launch/multi_camera.launch.py -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_yolo/share/audibot_yolo/launch\n'}
+[2.873460] (audibot_teleop_keys) StdoutLine: {'line': b'running egg_info\n'}
+[2.873823] (audibot_teleop_keys) StdoutLine: {'line': b'creating audibot_teleop_keys.egg-info\n'}
+[2.874274] (audibot_teleop_keys) StdoutLine: {'line': b'writing audibot_teleop_keys.egg-info/PKG-INFO\n'}
+[2.874828] (audibot_teleop_keys) StdoutLine: {'line': b'writing dependency_links to audibot_teleop_keys.egg-info/dependency_links.txt\n'}
+[2.875368] (audibot_teleop_keys) StdoutLine: {'line': b'writing entry points to audibot_teleop_keys.egg-info/entry_points.txt\n'}
+[2.875520] (audibot_teleop_keys) StdoutLine: {'line': b'writing requirements to audibot_teleop_keys.egg-info/requires.txt\n'}
+[2.875753] (audibot_teleop_keys) StdoutLine: {'line': b'writing top-level names to audibot_teleop_keys.egg-info/top_level.txt\n'}
+[2.876411] (audibot_teleop_keys) StdoutLine: {'line': b"writing manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'\n"}
+[2.880040] (audibot_teleop_keys) StdoutLine: {'line': b"reading manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'\n"}
+[2.881048] (audibot_teleop_keys) StdoutLine: {'line': b"writing manifest file 'audibot_teleop_keys.egg-info/SOURCES.txt'\n"}
+[2.884866] (audibot_teleop_keys) StdoutLine: {'line': b'running build_ext\n'}
+[2.885413] (audibot_teleop_keys) StdoutLine: {'line': b'Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/python3.10/site-packages/audibot-teleop-keys.egg-link (link to .)\n'}
+[2.886737] (audibot_teleop_keys) StdoutLine: {'line': b'Installing teleop_keys script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/lib/audibot_teleop_keys\n'}
+[2.887409] (audibot_teleop_keys) StdoutLine: {'line': b'\n'}
+[2.887971] (audibot_teleop_keys) StdoutLine: {'line': b'Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys\n'}
+[2.888301] (audibot_teleop_keys) StdoutLine: {'line': b'running symlink_data\n'}
+[2.888709] (audibot_teleop_keys) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index\n'}
+[2.889108] (audibot_teleop_keys) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index\n'}
+[2.889285] (audibot_teleop_keys) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index/packages\n'}
+[2.889445] (audibot_teleop_keys) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/resource/audibot_teleop_keys -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/ament_index/resource_index/packages\n'}
+[2.889661] (audibot_teleop_keys) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_teleop_keys/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_teleop_keys/share/audibot_teleop_keys\n'}
+[2.900677] (cluster_puck) StdoutLine: {'line': b'running egg_info\n'}
+[2.903369] (cluster_puck) StdoutLine: {'line': b'creating cluster_puck.egg-info\n'}
+[2.904979] (cluster_puck) StdoutLine: {'line': b'writing cluster_puck.egg-info/PKG-INFO\n'}
+[2.905523] (cluster_puck) StdoutLine: {'line': b'writing dependency_links to cluster_puck.egg-info/dependency_links.txt\n'}
+[2.906018] (cluster_puck) StdoutLine: {'line': b'writing entry points to cluster_puck.egg-info/entry_points.txt\n'}
+[2.906545] (cluster_puck) StdoutLine: {'line': b'writing requirements to cluster_puck.egg-info/requires.txt\n'}
+[2.907027] (cluster_puck) StdoutLine: {'line': b'writing top-level names to cluster_puck.egg-info/top_level.txt\n'}
+[2.907486] (cluster_puck) StdoutLine: {'line': b"writing manifest file 'cluster_puck.egg-info/SOURCES.txt'\n"}
+[2.907981] (cluster_puck) StdoutLine: {'line': b"reading manifest file 'cluster_puck.egg-info/SOURCES.txt'\n"}
+[2.909194] (cluster_puck) StdoutLine: {'line': b"writing manifest file 'cluster_puck.egg-info/SOURCES.txt'\n"}
+[2.911414] (rl_rewards) CommandEnded: {'returncode': 1}
+[2.912033] (-) TimerEvent: {}
+[2.912354] (rl_rewards) JobEnded: {'identifier': 'rl_rewards', 'rc': 1}
+[2.913062] (cluster_puck) StdoutLine: {'line': b'running build_ext\n'}
+[2.913300] (cluster_puck) StdoutLine: {'line': b'Creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/python3.10/site-packages/cluster-puck.egg-link (link to .)\n'}
+[2.913443] (cluster_puck) StdoutLine: {'line': b'Installing lidar_processing script to /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/lib/cluster_puck\n'}
+[2.913581] (cluster_puck) StdoutLine: {'line': b'\n'}
+[2.913708] (cluster_puck) StdoutLine: {'line': b'Installed /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck\n'}
+[2.913810] (cluster_puck) StdoutLine: {'line': b'running symlink_data\n'}
+[2.913916] (cluster_puck) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index\n'}
+[2.914051] (cluster_puck) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index\n'}
+[2.914166] (cluster_puck) StdoutLine: {'line': b'creating /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index/packages\n'}
+[2.914265] (cluster_puck) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/resource/cluster_puck -> /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/ament_index/resource_index/packages\n'}
+[2.914368] (cluster_puck) StdoutLine: {'line': b'symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/cluster_puck/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/cluster_puck/share/cluster_puck\n'}
+[2.924330] (audibot_yolo) JobEnded: {'identifier': 'audibot_yolo', 'rc': 'SIGINT'}
+[2.937037] (audibot_teleop_keys) JobEnded: {'identifier': 'audibot_teleop_keys', 'rc': 'SIGINT'}
+[2.953462] (gazebo_tf) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[2.959609] (cluster_puck) JobEnded: {'identifier': 'cluster_puck', 'rc': 'SIGINT'}
+[2.960736] (gazebo_tf) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[2.969644] (gazebo_tf) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[2.982795] (gazebo_tf) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[2.999475] (gazebo_tf) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.007709] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting C compiler ABI info - done\n'}
+[3.012278] (-) TimerEvent: {}
+[3.013794] (yolo_msg) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[3.020738] (audibot_gazebo) StdoutLine: {'line': b'-- Check for working C compiler: /usr/bin/cc - skipped\n'}
+[3.021124] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting C compile features\n'}
+[3.021781] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting C compile features - done\n'}
+[3.026742] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info\n'}
+[3.056887] (gazebo_tf) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[3.061215] (gazebo_tf) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.097969] (yolo_msg) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[3.112540] (-) TimerEvent: {}
+[3.125619] (yolo_msg) StdoutLine: {'line': b'-- Found std_msgs: 4.2.4 (/opt/ros/humble/share/std_msgs/cmake)\n'}
+[3.160300] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting CXX compiler ABI info - done\n'}
+[3.169900] (audibot_gazebo) StdoutLine: {'line': b'-- Check for working CXX compiler: /usr/bin/c++ - skipped\n'}
+[3.170220] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting CXX compile features\n'}
+[3.170790] (audibot_gazebo) StdoutLine: {'line': b'-- Detecting CXX compile features - done\n'}
+[3.173181] (audibot_gazebo) StdoutLine: {'line': b'-- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)\n'}
+[3.212701] (-) TimerEvent: {}
+[3.312762] (audibot_gazebo) StdoutLine: {'line': b'-- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter \n'}
+[3.312945] (-) TimerEvent: {}
+[3.329471] (yolo_msg) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[3.333831] (yolo_msg) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[3.341174] (yolo_msg) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[3.353974] (yolo_msg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[3.369028] (yolo_msg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.371240] (audibot_gazebo) StdoutLine: {'line': b'-- Override CMake install command with custom implementation using symlinks instead of copying resources\n'}
+[3.398018] (yolo_msg) StdoutLine: {'line': b'-- Found rosidl_default_generators: 1.2.0 (/opt/ros/humble/share/rosidl_default_generators/cmake)\n'}
+[3.399488] (audibot_gazebo) StdoutLine: {'line': b'-- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)\n'}
+[3.413082] (-) TimerEvent: {}
+[3.513415] (-) TimerEvent: {}
+[3.613798] (-) TimerEvent: {}
+[3.646048] (audibot_gazebo) StdoutLine: {'line': b'-- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)\n'}
+[3.650291] (audibot_gazebo) StdoutLine: {'line': b'-- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)\n'}
+[3.657685] (audibot_gazebo) StdoutLine: {'line': b'-- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)\n'}
+[3.666241] (yolo_msg) StdoutLine: {'line': b'-- Found ament_cmake_ros: 0.10.0 (/opt/ros/humble/share/ament_cmake_ros/cmake)\n'}
+[3.668084] (audibot_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[3.682682] (audibot_gazebo) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[3.713947] (-) TimerEvent: {}
+[3.726471] (audibot_gazebo) StdoutLine: {'line': b'-- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)\n'}
+[3.728664] (audibot_gazebo) StdoutLine: {'line': b'-- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)\n'}
+[3.814099] (-) TimerEvent: {}
+[3.914541] (-) TimerEvent: {}
+[4.004733] (yolo_msg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c\n'}
+[4.014788] (-) TimerEvent: {}
+[4.115338] (-) TimerEvent: {}
+[4.164823] (yolo_msg) StdoutLine: {'line': b'-- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp\n'}
+[4.215632] (-) TimerEvent: {}
+[4.316263] (-) TimerEvent: {}
+[4.416844] (-) TimerEvent: {}
+[4.517566] (-) TimerEvent: {}
+[4.618471] (-) TimerEvent: {}
+[4.719223] (-) TimerEvent: {}
+[4.795561] (yolo_msg) StdoutLine: {'line': b'-- Found PythonInterp: /usr/bin/python3 (found suitable version "3.10.12", minimum required is "3.6") \n'}
+[4.798064] (yolo_msg) StdoutLine: {'line': b'-- Found python_cmake_module: 0.10.0 (/opt/ros/humble/share/python_cmake_module/cmake)\n'}
+[4.819415] (-) TimerEvent: {}
+[4.919971] (-) TimerEvent: {}
+[4.986840] (yolo_msg) StdoutLine: {'line': b'-- Found PythonLibs: /usr/lib/x86_64-linux-gnu/libpython3.10.so (found suitable version "3.10.12", minimum required is "3.5") \n'}
+[4.987269] (yolo_msg) StdoutLine: {'line': b'-- Using PYTHON_EXECUTABLE: /usr/bin/python3\n'}
+[4.987392] (yolo_msg) StdoutLine: {'line': b'-- Using PYTHON_INCLUDE_DIRS: /usr/include/python3.10\n'}
+[4.987481] (yolo_msg) StdoutLine: {'line': b'-- Using PYTHON_LIBRARIES: /usr/lib/x86_64-linux-gnu/libpython3.10.so\n'}
+[5.012301] (yolo_msg) StdoutLine: {'line': b'-- Found PythonExtra: .so  \n'}
+[5.020101] (-) TimerEvent: {}
+[5.120714] (-) TimerEvent: {}
+[5.221481] (yolo_msg) StdoutLine: {'line': b'-- Configuring done\n'}
+[5.221924] (-) TimerEvent: {}
+[5.272371] (yolo_msg) StdoutLine: {'line': b'-- Generating done\n'}
+[5.274990] (yolo_msg) StdoutLine: {'line': b'-- Build files have been written to: /home/tejas_bhuta/git/drive_to_survive/build/yolo_msg\n'}
+[5.281909] (yolo_msg) JobEnded: {'identifier': 'yolo_msg', 'rc': 'SIGINT'}
+[5.322187] (-) TimerEvent: {}
+[5.422847] (-) TimerEvent: {}
+[5.523477] (-) TimerEvent: {}
+[5.624309] (-) TimerEvent: {}
+[5.725054] (-) TimerEvent: {}
+[5.825823] (-) TimerEvent: {}
+[5.926454] (-) TimerEvent: {}
+[6.027209] (-) TimerEvent: {}
+[6.127911] (-) TimerEvent: {}
+[6.228648] (-) TimerEvent: {}
+[6.329402] (-) TimerEvent: {}
+[6.430077] (-) TimerEvent: {}
+[6.530806] (-) TimerEvent: {}
+[6.631620] (-) TimerEvent: {}
+[6.732293] (-) TimerEvent: {}
+[6.833050] (-) TimerEvent: {}
+[6.933822] (-) TimerEvent: {}
+[7.034573] (-) TimerEvent: {}
+[7.135264] (-) TimerEvent: {}
+[7.236138] (-) TimerEvent: {}
+[7.336903] (-) TimerEvent: {}
+[7.437520] (-) TimerEvent: {}
+[7.538255] (-) TimerEvent: {}
+[7.638858] (-) TimerEvent: {}
+[7.739477] (-) TimerEvent: {}
+[7.840166] (-) TimerEvent: {}
+[7.940755] (-) TimerEvent: {}
+[8.041371] (-) TimerEvent: {}
+[8.142017] (-) TimerEvent: {}
+[8.242713] (-) TimerEvent: {}
+[8.343404] (-) TimerEvent: {}
+[8.444324] (-) TimerEvent: {}
+[8.545112] (-) TimerEvent: {}
+[8.645871] (-) TimerEvent: {}
+[8.746641] (-) TimerEvent: {}
+[8.847391] (-) TimerEvent: {}
+[8.948417] (-) TimerEvent: {}
+[8.958517] (gazebo_tf) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[9.048900] (-) TimerEvent: {}
+[9.150091] (-) TimerEvent: {}
+[9.251018] (-) TimerEvent: {}
+[9.352037] (-) TimerEvent: {}
+[9.452939] (-) TimerEvent: {}
+[9.553730] (-) TimerEvent: {}
+[9.654403] (-) TimerEvent: {}
+[9.755173] (-) TimerEvent: {}
+[9.856034] (-) TimerEvent: {}
+[9.956798] (-) TimerEvent: {}
+[10.057569] (-) TimerEvent: {}
+[10.158382] (-) TimerEvent: {}
+[10.259018] (-) TimerEvent: {}
+[10.359800] (-) TimerEvent: {}
+[10.460383] (-) TimerEvent: {}
+[10.561083] (-) TimerEvent: {}
+[10.661826] (-) TimerEvent: {}
+[10.762608] (-) TimerEvent: {}
+[10.863426] (-) TimerEvent: {}
+[10.964143] (-) TimerEvent: {}
+[11.064961] (-) TimerEvent: {}
+[11.165478] (-) TimerEvent: {}
+[11.266214] (-) TimerEvent: {}
+[11.366905] (-) TimerEvent: {}
+[11.467697] (-) TimerEvent: {}
+[11.568530] (-) TimerEvent: {}
+[11.669139] (-) TimerEvent: {}
+[11.769862] (-) TimerEvent: {}
+[11.870514] (-) TimerEvent: {}
+[11.971325] (-) TimerEvent: {}
+[12.072031] (-) TimerEvent: {}
+[12.090878] (audibot_gazebo) StdoutLine: {'line': b'-- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  \n'}
+[12.172251] (-) TimerEvent: {}
+[12.273106] (-) TimerEvent: {}
+[12.373848] (-) TimerEvent: {}
+[12.474710] (-) TimerEvent: {}
+[12.575641] (-) TimerEvent: {}
+[12.676287] (-) TimerEvent: {}
+[12.776883] (-) TimerEvent: {}
+[12.877629] (-) TimerEvent: {}
+[12.978273] (-) TimerEvent: {}
+[13.078893] (-) TimerEvent: {}
+[13.179441] (-) TimerEvent: {}
+[13.280474] (-) TimerEvent: {}
+[13.381308] (-) TimerEvent: {}
+[13.482050] (-) TimerEvent: {}
+[13.582709] (-) TimerEvent: {}
+[13.683479] (-) TimerEvent: {}
+[13.784153] (-) TimerEvent: {}
+[13.884782] (-) TimerEvent: {}
+[13.985501] (-) TimerEvent: {}
+[14.086289] (-) TimerEvent: {}
+[14.187014] (-) TimerEvent: {}
+[14.287605] (-) TimerEvent: {}
+[14.388342] (-) TimerEvent: {}
+[14.489172] (-) TimerEvent: {}
+[14.589985] (-) TimerEvent: {}
+[14.690672] (-) TimerEvent: {}
+[14.791379] (-) TimerEvent: {}
+[14.892012] (-) TimerEvent: {}
+[14.992654] (-) TimerEvent: {}
+[15.093359] (-) TimerEvent: {}
+[15.194279] (-) TimerEvent: {}
+[15.295132] (-) TimerEvent: {}
+[15.396146] (-) TimerEvent: {}
+[15.496722] (-) TimerEvent: {}
+[15.597646] (-) TimerEvent: {}
+[15.698316] (-) TimerEvent: {}
+[15.798981] (-) TimerEvent: {}
+[15.899628] (-) TimerEvent: {}
+[16.000237] (-) TimerEvent: {}
+[16.101117] (-) TimerEvent: {}
+[16.201679] (-) TimerEvent: {}
+[16.302476] (-) TimerEvent: {}
+[16.403263] (-) TimerEvent: {}
+[16.504056] (-) TimerEvent: {}
+[16.604551] (-) TimerEvent: {}
+[16.705256] (-) TimerEvent: {}
+[16.805928] (-) TimerEvent: {}
+[16.906714] (-) TimerEvent: {}
+[17.007416] (-) TimerEvent: {}
+[17.108063] (-) TimerEvent: {}
+[17.208829] (-) TimerEvent: {}
+[17.309578] (-) TimerEvent: {}
+[17.410517] (-) TimerEvent: {}
+[17.511403] (-) TimerEvent: {}
+[17.612259] (-) TimerEvent: {}
+[17.713110] (-) TimerEvent: {}
+[17.813779] (-) TimerEvent: {}
+[17.914446] (-) TimerEvent: {}
+[18.015182] (-) TimerEvent: {}
+[18.115821] (-) TimerEvent: {}
+[18.216421] (-) TimerEvent: {}
+[18.317085] (-) TimerEvent: {}
+[18.417692] (-) TimerEvent: {}
+[18.518430] (-) TimerEvent: {}
+[18.619493] (-) TimerEvent: {}
+[18.720611] (-) TimerEvent: {}
+[18.821735] (-) TimerEvent: {}
+[18.922478] (-) TimerEvent: {}
+[19.023418] (-) TimerEvent: {}
+[19.124131] (-) TimerEvent: {}
+[19.224842] (-) TimerEvent: {}
+[19.325362] (-) TimerEvent: {}
+[19.426105] (-) TimerEvent: {}
+[19.526868] (-) TimerEvent: {}
+[19.627742] (-) TimerEvent: {}
+[19.728446] (-) TimerEvent: {}
+[19.829340] (-) TimerEvent: {}
+[19.930006] (-) TimerEvent: {}
+[20.030645] (-) TimerEvent: {}
+[20.131138] (-) TimerEvent: {}
+[20.221389] (gazebo_tf) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[20.231350] (-) TimerEvent: {}
+[20.331996] (-) TimerEvent: {}
+[20.432607] (-) TimerEvent: {}
+[20.533734] (-) TimerEvent: {}
+[20.634791] (-) TimerEvent: {}
+[20.735575] (-) TimerEvent: {}
+[20.836388] (-) TimerEvent: {}
+[20.936829] (-) TimerEvent: {}
+[21.037542] (-) TimerEvent: {}
+[21.138310] (-) TimerEvent: {}
+[21.239178] (-) TimerEvent: {}
+[21.340214] (-) TimerEvent: {}
+[21.440842] (-) TimerEvent: {}
+[21.541523] (-) TimerEvent: {}
+[21.642620] (-) TimerEvent: {}
+[21.732159] (audibot_gazebo) StdoutLine: {'line': b'-- Found FastRTPS: /opt/ros/humble/include  \n'}
+[21.742767] (-) TimerEvent: {}
+[21.843540] (-) TimerEvent: {}
+[21.944233] (-) TimerEvent: {}
+[22.045002] (-) TimerEvent: {}
+[22.145753] (-) TimerEvent: {}
+[22.246281] (-) TimerEvent: {}
+[22.346877] (-) TimerEvent: {}
+[22.447654] (-) TimerEvent: {}
+[22.548417] (-) TimerEvent: {}
+[22.649291] (-) TimerEvent: {}
+[22.750023] (-) TimerEvent: {}
+[22.850791] (-) TimerEvent: {}
+[22.951363] (-) TimerEvent: {}
+[23.052062] (-) TimerEvent: {}
+[23.152610] (-) TimerEvent: {}
+[23.253471] (-) TimerEvent: {}
+[23.354301] (-) TimerEvent: {}
+[23.455121] (-) TimerEvent: {}
+[23.555833] (-) TimerEvent: {}
+[23.656599] (-) TimerEvent: {}
+[23.757284] (-) TimerEvent: {}
+[23.857842] (-) TimerEvent: {}
+[23.958456] (-) TimerEvent: {}
+[24.059022] (-) TimerEvent: {}
+[24.159717] (-) TimerEvent: {}
+[24.260277] (-) TimerEvent: {}
+[24.361054] (-) TimerEvent: {}
+[24.462207] (-) TimerEvent: {}
+[24.562949] (-) TimerEvent: {}
+[24.663762] (-) TimerEvent: {}
+[24.764325] (-) TimerEvent: {}
+[24.865099] (-) TimerEvent: {}
+[24.965830] (-) TimerEvent: {}
+[25.066559] (-) TimerEvent: {}
+[25.167151] (-) TimerEvent: {}
+[25.267886] (-) TimerEvent: {}
+[25.368650] (-) TimerEvent: {}
+[25.469342] (-) TimerEvent: {}
+[25.570160] (-) TimerEvent: {}
+[25.670691] (-) TimerEvent: {}
+[25.771413] (-) TimerEvent: {}
+[25.872255] (-) TimerEvent: {}
+[25.973002] (-) TimerEvent: {}
+[26.074068] (-) TimerEvent: {}
+[26.174786] (-) TimerEvent: {}
+[26.275582] (-) TimerEvent: {}
+[26.376383] (-) TimerEvent: {}
+[26.477145] (-) TimerEvent: {}
+[26.577871] (-) TimerEvent: {}
+[26.678525] (-) TimerEvent: {}
+[26.779302] (-) TimerEvent: {}
+[26.880044] (-) TimerEvent: {}
+[26.980889] (-) TimerEvent: {}
+[27.081561] (-) TimerEvent: {}
+[27.182385] (-) TimerEvent: {}
+[27.283064] (-) TimerEvent: {}
+[27.383977] (-) TimerEvent: {}
+[27.485084] (-) TimerEvent: {}
+[27.585893] (-) TimerEvent: {}
+[27.686860] (-) TimerEvent: {}
+[27.787655] (-) TimerEvent: {}
+[27.888367] (-) TimerEvent: {}
+[27.988951] (-) TimerEvent: {}
+[28.089627] (-) TimerEvent: {}
+[28.190614] (-) TimerEvent: {}
+[28.291562] (-) TimerEvent: {}
+[28.392104] (-) TimerEvent: {}
+[28.492733] (-) TimerEvent: {}
+[28.593397] (-) TimerEvent: {}
+[28.694107] (-) TimerEvent: {}
+[28.794808] (-) TimerEvent: {}
+[28.895632] (-) TimerEvent: {}
+[28.996359] (-) TimerEvent: {}
+[29.096896] (-) TimerEvent: {}
+[29.197645] (-) TimerEvent: {}
+[29.298372] (-) TimerEvent: {}
+[29.399174] (-) TimerEvent: {}
+[29.500244] (-) TimerEvent: {}
+[29.600984] (-) TimerEvent: {}
+[29.701661] (-) TimerEvent: {}
+[29.802276] (-) TimerEvent: {}
+[29.903102] (-) TimerEvent: {}
+[30.003762] (-) TimerEvent: {}
+[30.104428] (-) TimerEvent: {}
+[30.205155] (-) TimerEvent: {}
+[30.305897] (-) TimerEvent: {}
+[30.406618] (-) TimerEvent: {}
+[30.507339] (-) TimerEvent: {}
+[30.607871] (-) TimerEvent: {}
+[30.703571] (gazebo_tf) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[30.708236] (-) TimerEvent: {}
+[30.716579] (gazebo_tf) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[30.808604] (-) TimerEvent: {}
+[30.909309] (-) TimerEvent: {}
+[30.998213] (gazebo_tf) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[30.999029] (gazebo_tf) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[31.009535] (-) TimerEvent: {}
+[31.110241] (-) TimerEvent: {}
+[31.210894] (-) TimerEvent: {}
+[31.311612] (-) TimerEvent: {}
+[31.380030] (gazebo_tf) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[31.381968] (gazebo_tf) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[31.411958] (-) TimerEvent: {}
+[31.476091] (gazebo_tf) StdoutLine: {'line': b'-- Found rclcpp_components: 16.0.10 (/opt/ros/humble/share/rclcpp_components/cmake)\n'}
+[31.504784] (gazebo_tf) StdoutLine: {'line': b'-- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)\n'}
+[31.512187] (-) TimerEvent: {}
+[31.521955] (gazebo_tf) StdoutLine: {'line': b'-- Found geometry_msgs: 4.2.4 (/opt/ros/humble/share/geometry_msgs/cmake)\n'}
+[31.540737] (gazebo_tf) StdoutLine: {'line': b'-- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)\n'}
+[31.558520] (gazebo_tf) StdoutLine: {'line': b'-- Found gazebo_msgs: 3.7.0 (/opt/ros/humble/share/gazebo_msgs/cmake)\n'}
+[31.603094] (gazebo_tf) StdoutLine: {'line': b'-- Found tf2: 0.25.8 (/opt/ros/humble/share/tf2/cmake)\n'}
+[31.608198] (gazebo_tf) StdoutLine: {'line': b'-- Found tf2_ros: 0.25.8 (/opt/ros/humble/share/tf2_ros/cmake)\n'}
+[31.612519] (-) TimerEvent: {}
+[31.687481] (gazebo_tf) StdoutLine: {'line': b'-- Found tf2_geometry_msgs: 0.25.8 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)\n'}
+[31.712868] (-) TimerEvent: {}
+[31.757172] (gazebo_tf) StdoutLine: {'line': b'-- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)\n'}
+[31.759856] (gazebo_tf) StdoutLine: {'line': b'-- Found Eigen3: TRUE (found version "3.4.0") \n'}
+[31.760146] (gazebo_tf) StdoutLine: {'line': b'-- Ensuring Eigen3 include directory is part of orocos-kdl CMake target\n'}
+[31.813133] (-) TimerEvent: {}
+[31.861036] (gazebo_tf) StdoutLine: {'line': b'-- Configuring done\n'}
+[31.887075] (gazebo_tf) StdoutLine: {'line': b'-- Generating done\n'}
+[31.890032] (gazebo_tf) StdoutLine: {'line': b'-- Build files have been written to: /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf\n'}
+[31.903916] (gazebo_tf) JobEnded: {'identifier': 'gazebo_tf', 'rc': 'SIGINT'}
+[31.913355] (-) TimerEvent: {}
+[32.014036] (-) TimerEvent: {}
+[32.114739] (-) TimerEvent: {}
+[32.215306] (-) TimerEvent: {}
+[32.315974] (-) TimerEvent: {}
+[32.416580] (-) TimerEvent: {}
+[32.517548] (-) TimerEvent: {}
+[32.618132] (-) TimerEvent: {}
+[32.718823] (-) TimerEvent: {}
+[32.819408] (-) TimerEvent: {}
+[32.919922] (-) TimerEvent: {}
+[33.020581] (-) TimerEvent: {}
+[33.121185] (-) TimerEvent: {}
+[33.221820] (-) TimerEvent: {}
+[33.284134] (audibot_gazebo) StdoutLine: {'line': b"-- Using RMW implementation 'rmw_fastrtps_cpp' as default\n"}
+[33.297446] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for pthread.h\n'}
+[33.322064] (-) TimerEvent: {}
+[33.422588] (-) TimerEvent: {}
+[33.523296] (-) TimerEvent: {}
+[33.594450] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for pthread.h - found\n'}
+[33.595231] (audibot_gazebo) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD\n'}
+[33.623549] (-) TimerEvent: {}
+[33.724185] (-) TimerEvent: {}
+[33.824960] (-) TimerEvent: {}
+[33.925802] (-) TimerEvent: {}
+[34.026636] (-) TimerEvent: {}
+[34.127194] (-) TimerEvent: {}
+[34.190168] (audibot_gazebo) StdoutLine: {'line': b'-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success\n'}
+[34.192865] (audibot_gazebo) StdoutLine: {'line': b'-- Found Threads: TRUE  \n'}
+[34.227472] (-) TimerEvent: {}
+[34.267075] (audibot_gazebo) StdoutLine: {'line': b'-- Found gazebo_ros: 3.7.0 (/opt/ros/humble/share/gazebo_ros/cmake)\n'}
+[34.306043] (audibot_gazebo) StdoutLine: {'line': b'-- Found PkgConfig: /usr/bin/pkg-config (found version "0.29.2") \n'}
+[34.307815] (audibot_gazebo) StdoutLine: {'line': b"-- Checking for module 'bullet>=2.82'\n"}
+[34.327210] (audibot_gazebo) StdoutLine: {'line': b'--   Found bullet, version 3.05\n'}
+[34.327512] (-) TimerEvent: {}
+[34.428171] (-) TimerEvent: {}
+[34.528834] (-) TimerEvent: {}
+[34.629471] (-) TimerEvent: {}
+[34.673860] (audibot_gazebo) StdoutLine: {'line': b'-- Found fcl: /usr/include (found suitable version "0.7.0", minimum required is "0.5.0") \n'}
+[34.729693] (-) TimerEvent: {}
+[34.745109] (audibot_gazebo) StdoutLine: {'line': b'-- Found assimp: /usr/include (found version "5.2.0") \n'}
+[34.810906] (audibot_gazebo) StdoutLine: {'line': b'-- Found DART: /usr/include (Required is at least version "6.6") found components: dart \n'}
+[34.830001] (-) TimerEvent: {}
+[34.886223] (audibot_gazebo) StdoutLine: {'line': b'-- Found Boost: /usr/lib/x86_64-linux-gnu/cmake/Boost-1.74.0/BoostConfig.cmake (found suitable version "1.74.0", minimum required is "1.40.0") found components: thread system filesystem program_options regex iostreams date_time \n'}
+[34.930699] (-) TimerEvent: {}
+[35.031326] (-) TimerEvent: {}
+[35.132134] (-) TimerEvent: {}
+[35.232785] (-) TimerEvent: {}
+[35.333652] (-) TimerEvent: {}
+[35.434310] (-) TimerEvent: {}
+[35.535010] (-) TimerEvent: {}
+[35.635658] (-) TimerEvent: {}
+[35.736499] (-) TimerEvent: {}
+[35.837231] (-) TimerEvent: {}
+[35.937839] (-) TimerEvent: {}
+[36.038563] (-) TimerEvent: {}
+[36.139255] (-) TimerEvent: {}
+[36.239902] (-) TimerEvent: {}
+[36.340564] (-) TimerEvent: {}
+[36.375246] (audibot_gazebo) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found version "3.12.4") \n'}
+[36.389653] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[36.415738] (audibot_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-math6\n'}
+[36.422855] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE...\n'}
+[36.423623] (audibot_gazebo) StdoutLine: {'line': b'-- OGRE_PREFIX_WATCH changed.\n'}
+[36.431165] (audibot_gazebo) StdoutLine: {'line': b"-- Checking for module 'OGRE'\n"}
+[36.440824] (-) TimerEvent: {}
+[36.445871] (audibot_gazebo) StdoutLine: {'line': b'--   Found OGRE, version 1.9.0\n'}
+[36.481194] (audibot_gazebo) StdoutLine: {'line': b'-- Found Ogre Ghadamon (1.9.0)\n'}
+[36.541147] (-) TimerEvent: {}
+[36.641757] (-) TimerEvent: {}
+[36.742397] (-) TimerEvent: {}
+[36.843079] (-) TimerEvent: {}
+[36.943619] (-) TimerEvent: {}
+[37.044275] (-) TimerEvent: {}
+[37.144925] (-) TimerEvent: {}
+[37.245628] (-) TimerEvent: {}
+[37.346339] (-) TimerEvent: {}
+[37.447078] (-) TimerEvent: {}
+[37.547933] (-) TimerEvent: {}
+[37.648590] (-) TimerEvent: {}
+[37.749231] (-) TimerEvent: {}
+[37.849836] (-) TimerEvent: {}
+[37.950455] (-) TimerEvent: {}
+[38.050966] (-) TimerEvent: {}
+[38.151716] (-) TimerEvent: {}
+[38.189128] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE: optimized;/usr/lib/x86_64-linux-gnu/libOgreMain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreMain.so\n'}
+[38.206200] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Paging...\n'}
+[38.251910] (-) TimerEvent: {}
+[38.352481] (-) TimerEvent: {}
+[38.453014] (-) TimerEvent: {}
+[38.553623] (-) TimerEvent: {}
+[38.654249] (-) TimerEvent: {}
+[38.754781] (-) TimerEvent: {}
+[38.855310] (-) TimerEvent: {}
+[38.956072] (-) TimerEvent: {}
+[39.056656] (-) TimerEvent: {}
+[39.157222] (-) TimerEvent: {}
+[39.257970] (-) TimerEvent: {}
+[39.358627] (-) TimerEvent: {}
+[39.459244] (-) TimerEvent: {}
+[39.560565] (-) TimerEvent: {}
+[39.661235] (-) TimerEvent: {}
+[39.761976] (-) TimerEvent: {}
+[39.807827] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_Paging: optimized;/usr/lib/x86_64-linux-gnu/libOgrePaging.so;debug;/usr/lib/x86_64-linux-gnu/libOgrePaging.so\n'}
+[39.808202] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Terrain...\n'}
+[39.862320] (-) TimerEvent: {}
+[39.962940] (-) TimerEvent: {}
+[40.063641] (-) TimerEvent: {}
+[40.164518] (-) TimerEvent: {}
+[40.265258] (-) TimerEvent: {}
+[40.366110] (-) TimerEvent: {}
+[40.466872] (-) TimerEvent: {}
+[40.567677] (-) TimerEvent: {}
+[40.669019] (-) TimerEvent: {}
+[40.769712] (-) TimerEvent: {}
+[40.870237] (-) TimerEvent: {}
+[40.970875] (-) TimerEvent: {}
+[41.071409] (-) TimerEvent: {}
+[41.172586] (-) TimerEvent: {}
+[41.273178] (-) TimerEvent: {}
+[41.373780] (-) TimerEvent: {}
+[41.474547] (-) TimerEvent: {}
+[41.561375] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_Terrain: optimized;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so;debug;/usr/lib/x86_64-linux-gnu/libOgreTerrain.so\n'}
+[41.561625] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Property...\n'}
+[41.574683] (-) TimerEvent: {}
+[41.675194] (-) TimerEvent: {}
+[41.775680] (-) TimerEvent: {}
+[41.876073] (-) TimerEvent: {}
+[41.879803] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_Property: optimized;/usr/lib/x86_64-linux-gnu/libOgreProperty.so;debug;/usr/lib/x86_64-linux-gnu/libOgreProperty.so\n'}
+[41.879985] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_RTShaderSystem...\n'}
+[41.976249] (-) TimerEvent: {}
+[42.076990] (-) TimerEvent: {}
+[42.122775] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_RTShaderSystem: optimized;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so;debug;/usr/lib/x86_64-linux-gnu/libOgreRTShaderSystem.so\n'}
+[42.123015] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Volume...\n'}
+[42.177426] (-) TimerEvent: {}
+[42.277874] (-) TimerEvent: {}
+[42.341434] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_Volume: optimized;/usr/lib/x86_64-linux-gnu/libOgreVolume.so;debug;/usr/lib/x86_64-linux-gnu/libOgreVolume.so\n'}
+[42.341698] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for OGRE_Overlay...\n'}
+[42.378036] (-) TimerEvent: {}
+[42.478458] (-) TimerEvent: {}
+[42.560751] (audibot_gazebo) StdoutLine: {'line': b'-- Found OGRE_Overlay: optimized;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so;debug;/usr/lib/x86_64-linux-gnu/libOgreOverlay.so\n'}
+[42.578591] (-) TimerEvent: {}
+[42.679109] (-) TimerEvent: {}
+[42.779608] (-) TimerEvent: {}
+[42.880118] (-) TimerEvent: {}
+[42.980604] (-) TimerEvent: {}
+[43.081151] (-) TimerEvent: {}
+[43.181555] (-) TimerEvent: {}
+[43.282031] (-) TimerEvent: {}
+[43.382498] (-) TimerEvent: {}
+[43.483176] (-) TimerEvent: {}
+[43.583665] (-) TimerEvent: {}
+[43.684329] (-) TimerEvent: {}
+[43.784998] (-) TimerEvent: {}
+[43.885610] (-) TimerEvent: {}
+[43.986282] (-) TimerEvent: {}
+[44.087027] (-) TimerEvent: {}
+[44.187661] (-) TimerEvent: {}
+[44.288157] (-) TimerEvent: {}
+[44.389152] (-) TimerEvent: {}
+[44.489740] (-) TimerEvent: {}
+[44.590270] (-) TimerEvent: {}
+[44.690815] (-) TimerEvent: {}
+[44.791357] (-) TimerEvent: {}
+[44.892103] (-) TimerEvent: {}
+[44.993395] (-) TimerEvent: {}
+[45.094867] (-) TimerEvent: {}
+[45.195471] (-) TimerEvent: {}
+[45.296144] (-) TimerEvent: {}
+[45.396840] (-) TimerEvent: {}
+[45.497474] (-) TimerEvent: {}
+[45.597968] (-) TimerEvent: {}
+[45.698620] (-) TimerEvent: {}
+[45.799314] (-) TimerEvent: {}
+[45.900032] (-) TimerEvent: {}
+[46.000592] (-) TimerEvent: {}
+[46.101348] (-) TimerEvent: {}
+[46.201922] (-) TimerEvent: {}
+[46.302708] (-) TimerEvent: {}
+[46.403680] (-) TimerEvent: {}
+[46.504318] (-) TimerEvent: {}
+[46.604932] (-) TimerEvent: {}
+[46.705724] (-) TimerEvent: {}
+[46.806525] (-) TimerEvent: {}
+[46.907129] (-) TimerEvent: {}
+[47.007824] (-) TimerEvent: {}
+[47.108437] (-) TimerEvent: {}
+[47.209057] (-) TimerEvent: {}
+[47.309698] (-) TimerEvent: {}
+[47.410302] (-) TimerEvent: {}
+[47.510882] (-) TimerEvent: {}
+[47.611797] (-) TimerEvent: {}
+[47.712543] (-) TimerEvent: {}
+[47.813288] (-) TimerEvent: {}
+[47.914180] (-) TimerEvent: {}
+[48.014836] (-) TimerEvent: {}
+[48.115547] (-) TimerEvent: {}
+[48.216164] (-) TimerEvent: {}
+[48.316749] (-) TimerEvent: {}
+[48.417418] (-) TimerEvent: {}
+[48.518068] (-) TimerEvent: {}
+[48.618672] (-) TimerEvent: {}
+[48.719351] (-) TimerEvent: {}
+[48.819899] (-) TimerEvent: {}
+[48.920747] (-) TimerEvent: {}
+[49.021575] (-) TimerEvent: {}
+[49.122265] (-) TimerEvent: {}
+[49.223066] (-) TimerEvent: {}
+[49.323793] (-) TimerEvent: {}
+[49.424449] (-) TimerEvent: {}
+[49.525150] (-) TimerEvent: {}
+[49.625769] (-) TimerEvent: {}
+[49.726568] (-) TimerEvent: {}
+[49.827334] (-) TimerEvent: {}
+[49.928062] (-) TimerEvent: {}
+[50.028704] (-) TimerEvent: {}
+[50.129655] (-) TimerEvent: {}
+[50.230555] (-) TimerEvent: {}
+[50.331533] (-) TimerEvent: {}
+[50.432951] (-) TimerEvent: {}
+[50.533771] (-) TimerEvent: {}
+[50.634355] (-) TimerEvent: {}
+[50.735095] (-) TimerEvent: {}
+[50.836069] (-) TimerEvent: {}
+[50.936869] (-) TimerEvent: {}
+[51.037566] (-) TimerEvent: {}
+[51.138241] (-) TimerEvent: {}
+[51.238938] (-) TimerEvent: {}
+[51.339495] (-) TimerEvent: {}
+[51.440157] (-) TimerEvent: {}
+[51.540994] (-) TimerEvent: {}
+[51.641841] (-) TimerEvent: {}
+[51.744860] (-) TimerEvent: {}
+[51.845635] (-) TimerEvent: {}
+[51.946197] (-) TimerEvent: {}
+[52.046789] (-) TimerEvent: {}
+[52.147458] (-) TimerEvent: {}
+[52.248081] (-) TimerEvent: {}
+[52.348810] (-) TimerEvent: {}
+[52.449576] (-) TimerEvent: {}
+[52.550099] (-) TimerEvent: {}
+[52.650837] (-) TimerEvent: {}
+[52.751542] (-) TimerEvent: {}
+[52.852191] (-) TimerEvent: {}
+[52.952865] (-) TimerEvent: {}
+[53.053503] (-) TimerEvent: {}
+[53.154043] (-) TimerEvent: {}
+[53.254522] (-) TimerEvent: {}
+[53.355164] (-) TimerEvent: {}
+[53.455967] (-) TimerEvent: {}
+[53.556656] (-) TimerEvent: {}
+[53.657559] (-) TimerEvent: {}
+[53.758292] (-) TimerEvent: {}
+[53.859036] (-) TimerEvent: {}
+[53.959708] (-) TimerEvent: {}
+[54.060424] (-) TimerEvent: {}
+[54.161137] (-) TimerEvent: {}
+[54.261900] (-) TimerEvent: {}
+[54.362632] (-) TimerEvent: {}
+[54.463277] (-) TimerEvent: {}
+[54.563965] (-) TimerEvent: {}
+[54.664488] (-) TimerEvent: {}
+[54.765103] (-) TimerEvent: {}
+[54.865852] (-) TimerEvent: {}
+[54.966491] (-) TimerEvent: {}
+[55.067252] (-) TimerEvent: {}
+[55.167922] (-) TimerEvent: {}
+[55.268613] (-) TimerEvent: {}
+[55.369345] (-) TimerEvent: {}
+[55.469986] (-) TimerEvent: {}
+[55.570729] (-) TimerEvent: {}
+[55.671315] (-) TimerEvent: {}
+[55.771919] (-) TimerEvent: {}
+[55.872656] (-) TimerEvent: {}
+[55.973458] (-) TimerEvent: {}
+[56.074104] (-) TimerEvent: {}
+[56.174650] (-) TimerEvent: {}
+[56.275225] (-) TimerEvent: {}
+[56.375864] (-) TimerEvent: {}
+[56.476463] (-) TimerEvent: {}
+[56.576987] (-) TimerEvent: {}
+[56.677707] (-) TimerEvent: {}
+[56.778304] (-) TimerEvent: {}
+[56.878797] (-) TimerEvent: {}
+[56.979471] (-) TimerEvent: {}
+[57.080091] (-) TimerEvent: {}
+[57.180855] (-) TimerEvent: {}
+[57.281560] (-) TimerEvent: {}
+[57.382236] (-) TimerEvent: {}
+[57.483189] (-) TimerEvent: {}
+[57.584400] (-) TimerEvent: {}
+[57.685105] (-) TimerEvent: {}
+[57.785720] (-) TimerEvent: {}
+[57.886560] (-) TimerEvent: {}
+[57.987264] (-) TimerEvent: {}
+[58.088061] (-) TimerEvent: {}
+[58.188701] (-) TimerEvent: {}
+[58.289475] (-) TimerEvent: {}
+[58.390048] (-) TimerEvent: {}
+[58.490851] (-) TimerEvent: {}
+[58.591552] (-) TimerEvent: {}
+[58.692108] (-) TimerEvent: {}
+[58.792826] (-) TimerEvent: {}
+[58.893545] (-) TimerEvent: {}
+[58.994282] (-) TimerEvent: {}
+[59.094825] (-) TimerEvent: {}
+[59.195556] (-) TimerEvent: {}
+[59.296278] (-) TimerEvent: {}
+[59.396924] (-) TimerEvent: {}
+[59.497697] (-) TimerEvent: {}
+[59.598580] (-) TimerEvent: {}
+[59.699184] (-) TimerEvent: {}
+[59.799780] (-) TimerEvent: {}
+[59.900455] (-) TimerEvent: {}
+[60.001121] (-) TimerEvent: {}
+[60.101927] (-) TimerEvent: {}
+[60.202689] (-) TimerEvent: {}
+[60.303412] (-) TimerEvent: {}
+[60.404018] (-) TimerEvent: {}
+[60.504667] (-) TimerEvent: {}
+[60.605513] (-) TimerEvent: {}
+[60.706389] (-) TimerEvent: {}
+[60.807077] (-) TimerEvent: {}
+[60.907806] (-) TimerEvent: {}
+[61.008598] (-) TimerEvent: {}
+[61.109527] (-) TimerEvent: {}
+[61.210459] (-) TimerEvent: {}
+[61.311339] (-) TimerEvent: {}
+[61.412180] (-) TimerEvent: {}
+[61.512849] (-) TimerEvent: {}
+[61.613633] (-) TimerEvent: {}
+[61.714546] (-) TimerEvent: {}
+[61.815313] (-) TimerEvent: {}
+[61.916161] (-) TimerEvent: {}
+[62.016872] (-) TimerEvent: {}
+[62.117538] (-) TimerEvent: {}
+[62.218403] (-) TimerEvent: {}
+[62.319199] (-) TimerEvent: {}
+[62.419755] (-) TimerEvent: {}
+[62.520299] (-) TimerEvent: {}
+[62.621176] (-) TimerEvent: {}
+[62.721900] (-) TimerEvent: {}
+[62.822627] (-) TimerEvent: {}
+[62.923405] (-) TimerEvent: {}
+[63.024332] (-) TimerEvent: {}
+[63.125180] (-) TimerEvent: {}
+[63.225997] (-) TimerEvent: {}
+[63.326795] (-) TimerEvent: {}
+[63.427488] (-) TimerEvent: {}
+[63.528016] (-) TimerEvent: {}
+[63.628654] (-) TimerEvent: {}
+[63.729458] (-) TimerEvent: {}
+[63.830240] (-) TimerEvent: {}
+[63.930872] (-) TimerEvent: {}
+[64.031544] (-) TimerEvent: {}
+[64.132184] (-) TimerEvent: {}
+[64.232837] (-) TimerEvent: {}
+[64.333505] (-) TimerEvent: {}
+[64.434181] (-) TimerEvent: {}
+[64.534922] (-) TimerEvent: {}
+[64.635738] (-) TimerEvent: {}
+[64.736669] (-) TimerEvent: {}
+[64.837467] (-) TimerEvent: {}
+[64.938093] (-) TimerEvent: {}
+[65.038660] (-) TimerEvent: {}
+[65.139275] (-) TimerEvent: {}
+[65.239951] (-) TimerEvent: {}
+[65.340580] (-) TimerEvent: {}
+[65.441301] (-) TimerEvent: {}
+[65.542016] (-) TimerEvent: {}
+[65.642739] (-) TimerEvent: {}
+[65.743404] (-) TimerEvent: {}
+[65.844262] (-) TimerEvent: {}
+[65.944982] (-) TimerEvent: {}
+[66.045785] (-) TimerEvent: {}
+[66.146603] (-) TimerEvent: {}
+[66.247368] (-) TimerEvent: {}
+[66.348054] (-) TimerEvent: {}
+[66.448837] (-) TimerEvent: {}
+[66.549506] (-) TimerEvent: {}
+[66.650698] (-) TimerEvent: {}
+[66.751389] (-) TimerEvent: {}
+[66.852074] (-) TimerEvent: {}
+[66.952721] (-) TimerEvent: {}
+[67.053241] (-) TimerEvent: {}
+[67.153902] (-) TimerEvent: {}
+[67.254774] (-) TimerEvent: {}
+[67.355577] (-) TimerEvent: {}
+[67.456348] (-) TimerEvent: {}
+[67.556893] (-) TimerEvent: {}
+[67.657658] (-) TimerEvent: {}
+[67.758509] (-) TimerEvent: {}
+[67.859064] (-) TimerEvent: {}
+[67.959860] (-) TimerEvent: {}
+[68.060674] (-) TimerEvent: {}
+[68.161447] (-) TimerEvent: {}
+[68.262008] (-) TimerEvent: {}
+[68.362692] (-) TimerEvent: {}
+[68.463455] (-) TimerEvent: {}
+[68.564048] (-) TimerEvent: {}
+[68.664660] (-) TimerEvent: {}
+[68.765256] (-) TimerEvent: {}
+[68.865834] (-) TimerEvent: {}
+[68.966515] (-) TimerEvent: {}
+[69.067160] (-) TimerEvent: {}
+[69.167940] (-) TimerEvent: {}
+[69.268758] (-) TimerEvent: {}
+[69.369390] (-) TimerEvent: {}
+[69.470102] (-) TimerEvent: {}
+[69.570804] (-) TimerEvent: {}
+[69.671415] (-) TimerEvent: {}
+[69.772039] (-) TimerEvent: {}
+[69.872670] (-) TimerEvent: {}
+[69.973287] (-) TimerEvent: {}
+[70.073894] (-) TimerEvent: {}
+[70.174484] (-) TimerEvent: {}
+[70.275178] (-) TimerEvent: {}
+[70.375872] (-) TimerEvent: {}
+[70.476598] (-) TimerEvent: {}
+[70.577193] (-) TimerEvent: {}
+[70.677785] (-) TimerEvent: {}
+[70.778473] (-) TimerEvent: {}
+[70.879328] (-) TimerEvent: {}
+[70.980198] (-) TimerEvent: {}
+[71.081031] (-) TimerEvent: {}
+[71.181714] (-) TimerEvent: {}
+[71.282507] (-) TimerEvent: {}
+[71.383334] (-) TimerEvent: {}
+[71.484186] (-) TimerEvent: {}
+[71.584983] (-) TimerEvent: {}
+[71.685790] (-) TimerEvent: {}
+[71.786492] (-) TimerEvent: {}
+[71.887323] (-) TimerEvent: {}
+[71.987954] (-) TimerEvent: {}
+[72.088670] (-) TimerEvent: {}
+[72.189655] (-) TimerEvent: {}
+[72.290350] (-) TimerEvent: {}
+[72.391008] (-) TimerEvent: {}
+[72.491795] (-) TimerEvent: {}
+[72.592431] (-) TimerEvent: {}
+[72.693019] (-) TimerEvent: {}
+[72.794052] (-) TimerEvent: {}
+[72.895278] (-) TimerEvent: {}
+[72.995951] (-) TimerEvent: {}
+[73.096794] (-) TimerEvent: {}
+[73.197399] (-) TimerEvent: {}
+[73.297917] (-) TimerEvent: {}
+[73.398579] (-) TimerEvent: {}
+[73.499320] (-) TimerEvent: {}
+[73.600305] (-) TimerEvent: {}
+[73.701006] (-) TimerEvent: {}
+[73.801840] (-) TimerEvent: {}
+[73.902414] (-) TimerEvent: {}
+[74.003257] (-) TimerEvent: {}
+[74.103971] (-) TimerEvent: {}
+[74.204643] (-) TimerEvent: {}
+[74.305325] (-) TimerEvent: {}
+[74.405973] (-) TimerEvent: {}
+[74.506736] (-) TimerEvent: {}
+[74.607445] (-) TimerEvent: {}
+[74.708232] (-) TimerEvent: {}
+[74.808758] (-) TimerEvent: {}
+[74.909393] (-) TimerEvent: {}
+[75.010106] (-) TimerEvent: {}
+[75.110891] (-) TimerEvent: {}
+[75.211504] (-) TimerEvent: {}
+[75.312325] (-) TimerEvent: {}
+[75.413163] (-) TimerEvent: {}
+[75.513898] (-) TimerEvent: {}
+[75.614827] (-) TimerEvent: {}
+[75.715502] (-) TimerEvent: {}
+[75.816299] (-) TimerEvent: {}
+[75.917084] (-) TimerEvent: {}
+[76.017749] (-) TimerEvent: {}
+[76.118411] (-) TimerEvent: {}
+[76.219006] (-) TimerEvent: {}
+[76.319650] (-) TimerEvent: {}
+[76.420467] (-) TimerEvent: {}
+[76.521220] (-) TimerEvent: {}
+[76.621872] (-) TimerEvent: {}
+[76.722540] (-) TimerEvent: {}
+[76.823206] (-) TimerEvent: {}
+[76.923841] (-) TimerEvent: {}
+[77.024554] (-) TimerEvent: {}
+[77.125298] (-) TimerEvent: {}
+[77.225875] (-) TimerEvent: {}
+[77.326495] (-) TimerEvent: {}
+[77.427335] (-) TimerEvent: {}
+[77.528125] (-) TimerEvent: {}
+[77.628935] (-) TimerEvent: {}
+[77.729599] (-) TimerEvent: {}
+[77.830208] (-) TimerEvent: {}
+[77.930938] (-) TimerEvent: {}
+[78.032142] (-) TimerEvent: {}
+[78.132840] (-) TimerEvent: {}
+[78.233386] (-) TimerEvent: {}
+[78.334194] (-) TimerEvent: {}
+[78.434834] (-) TimerEvent: {}
+[78.535392] (-) TimerEvent: {}
+[78.635868] (-) TimerEvent: {}
+[78.736461] (-) TimerEvent: {}
+[78.837036] (-) TimerEvent: {}
+[78.937589] (-) TimerEvent: {}
+[79.038194] (-) TimerEvent: {}
+[79.138847] (-) TimerEvent: {}
+[79.239490] (-) TimerEvent: {}
+[79.340173] (-) TimerEvent: {}
+[79.440858] (-) TimerEvent: {}
+[79.541438] (-) TimerEvent: {}
+[79.642132] (-) TimerEvent: {}
+[79.742872] (-) TimerEvent: {}
+[79.843471] (-) TimerEvent: {}
+[79.944256] (-) TimerEvent: {}
+[80.045003] (-) TimerEvent: {}
+[80.145777] (-) TimerEvent: {}
+[80.246631] (-) TimerEvent: {}
+[80.347512] (-) TimerEvent: {}
+[80.448202] (-) TimerEvent: {}
+[80.548912] (-) TimerEvent: {}
+[80.649539] (-) TimerEvent: {}
+[80.750036] (-) TimerEvent: {}
+[80.850684] (-) TimerEvent: {}
+[80.951296] (-) TimerEvent: {}
+[81.052093] (-) TimerEvent: {}
+[81.152798] (-) TimerEvent: {}
+[81.253495] (-) TimerEvent: {}
+[81.354317] (-) TimerEvent: {}
+[81.455130] (-) TimerEvent: {}
+[81.555874] (-) TimerEvent: {}
+[81.656681] (-) TimerEvent: {}
+[81.757316] (-) TimerEvent: {}
+[81.858071] (-) TimerEvent: {}
+[81.958700] (-) TimerEvent: {}
+[82.060030] (-) TimerEvent: {}
+[82.160909] (-) TimerEvent: {}
+[82.261576] (-) TimerEvent: {}
+[82.362373] (-) TimerEvent: {}
+[82.463052] (-) TimerEvent: {}
+[82.563883] (-) TimerEvent: {}
+[82.664841] (-) TimerEvent: {}
+[82.765600] (-) TimerEvent: {}
+[82.866193] (-) TimerEvent: {}
+[82.966668] (-) TimerEvent: {}
+[83.067243] (-) TimerEvent: {}
+[83.167705] (-) TimerEvent: {}
+[83.268646] (-) TimerEvent: {}
+[83.369698] (-) TimerEvent: {}
+[83.470325] (-) TimerEvent: {}
+[83.571146] (-) TimerEvent: {}
+[83.671823] (-) TimerEvent: {}
+[83.772541] (-) TimerEvent: {}
+[83.873220] (-) TimerEvent: {}
+[83.973817] (-) TimerEvent: {}
+[84.074342] (-) TimerEvent: {}
+[84.175119] (-) TimerEvent: {}
+[84.275805] (-) TimerEvent: {}
+[84.376541] (-) TimerEvent: {}
+[84.477284] (-) TimerEvent: {}
+[84.578007] (-) TimerEvent: {}
+[84.678786] (-) TimerEvent: {}
+[84.779529] (-) TimerEvent: {}
+[84.880496] (-) TimerEvent: {}
+[84.981400] (-) TimerEvent: {}
+[85.082188] (-) TimerEvent: {}
+[85.182892] (-) TimerEvent: {}
+[85.283772] (-) TimerEvent: {}
+[85.384680] (-) TimerEvent: {}
+[85.485194] (-) TimerEvent: {}
+[85.585993] (-) TimerEvent: {}
+[85.686779] (-) TimerEvent: {}
+[85.787345] (-) TimerEvent: {}
+[85.888272] (-) TimerEvent: {}
+[85.988937] (-) TimerEvent: {}
+[86.089564] (-) TimerEvent: {}
+[86.190293] (-) TimerEvent: {}
+[86.290924] (-) TimerEvent: {}
+[86.391554] (-) TimerEvent: {}
+[86.492244] (-) TimerEvent: {}
+[86.592874] (-) TimerEvent: {}
+[86.693607] (-) TimerEvent: {}
+[86.794326] (-) TimerEvent: {}
+[86.895073] (-) TimerEvent: {}
+[86.995572] (-) TimerEvent: {}
+[87.096105] (-) TimerEvent: {}
+[87.196791] (-) TimerEvent: {}
+[87.297465] (-) TimerEvent: {}
+[87.398263] (-) TimerEvent: {}
+[87.499069] (-) TimerEvent: {}
+[87.599750] (-) TimerEvent: {}
+[87.700452] (-) TimerEvent: {}
+[87.800964] (-) TimerEvent: {}
+[87.901571] (-) TimerEvent: {}
+[88.002356] (-) TimerEvent: {}
+[88.103315] (-) TimerEvent: {}
+[88.203858] (-) TimerEvent: {}
+[88.304575] (-) TimerEvent: {}
+[88.405410] (-) TimerEvent: {}
+[88.506362] (-) TimerEvent: {}
+[88.606994] (-) TimerEvent: {}
+[88.707654] (-) TimerEvent: {}
+[88.808417] (-) TimerEvent: {}
+[88.909221] (-) TimerEvent: {}
+[89.009880] (-) TimerEvent: {}
+[89.110535] (-) TimerEvent: {}
+[89.211451] (-) TimerEvent: {}
+[89.312289] (-) TimerEvent: {}
+[89.413154] (-) TimerEvent: {}
+[89.514116] (-) TimerEvent: {}
+[89.614934] (-) TimerEvent: {}
+[89.715446] (-) TimerEvent: {}
+[89.816104] (-) TimerEvent: {}
+[89.916713] (-) TimerEvent: {}
+[90.017316] (-) TimerEvent: {}
+[90.118098] (-) TimerEvent: {}
+[90.218869] (-) TimerEvent: {}
+[90.319539] (-) TimerEvent: {}
+[90.420294] (-) TimerEvent: {}
+[90.520908] (-) TimerEvent: {}
+[90.621588] (-) TimerEvent: {}
+[90.722261] (-) TimerEvent: {}
+[90.822991] (-) TimerEvent: {}
+[90.923726] (-) TimerEvent: {}
+[91.024242] (-) TimerEvent: {}
+[91.124845] (-) TimerEvent: {}
+[91.225539] (-) TimerEvent: {}
+[91.326448] (-) TimerEvent: {}
+[91.427328] (-) TimerEvent: {}
+[91.528009] (-) TimerEvent: {}
+[91.628662] (-) TimerEvent: {}
+[91.729440] (-) TimerEvent: {}
+[91.830385] (-) TimerEvent: {}
+[91.931224] (-) TimerEvent: {}
+[92.032002] (-) TimerEvent: {}
+[92.132702] (-) TimerEvent: {}
+[92.233493] (-) TimerEvent: {}
+[92.334247] (-) TimerEvent: {}
+[92.434834] (-) TimerEvent: {}
+[92.535484] (-) TimerEvent: {}
+[92.636097] (-) TimerEvent: {}
+[92.736850] (-) TimerEvent: {}
+[92.837616] (-) TimerEvent: {}
+[92.938451] (-) TimerEvent: {}
+[93.039286] (-) TimerEvent: {}
+[93.140022] (-) TimerEvent: {}
+[93.240537] (-) TimerEvent: {}
+[93.341211] (-) TimerEvent: {}
+[93.442015] (-) TimerEvent: {}
+[93.542706] (-) TimerEvent: {}
+[93.643335] (-) TimerEvent: {}
+[93.744072] (-) TimerEvent: {}
+[93.844706] (-) TimerEvent: {}
+[93.945327] (-) TimerEvent: {}
+[94.046040] (-) TimerEvent: {}
+[94.146826] (-) TimerEvent: {}
+[94.247596] (-) TimerEvent: {}
+[94.348390] (-) TimerEvent: {}
+[94.449128] (-) TimerEvent: {}
+[94.549858] (-) TimerEvent: {}
+[94.650590] (-) TimerEvent: {}
+[94.751118] (-) TimerEvent: {}
+[94.851834] (-) TimerEvent: {}
+[94.952631] (-) TimerEvent: {}
+[95.053296] (-) TimerEvent: {}
+[95.153923] (-) TimerEvent: {}
+[95.254859] (-) TimerEvent: {}
+[95.355789] (-) TimerEvent: {}
+[95.456472] (-) TimerEvent: {}
+[95.557270] (-) TimerEvent: {}
+[95.658307] (-) TimerEvent: {}
+[95.758948] (-) TimerEvent: {}
+[95.859546] (-) TimerEvent: {}
+[95.960185] (-) TimerEvent: {}
+[96.060880] (-) TimerEvent: {}
+[96.161418] (-) TimerEvent: {}
+[96.262012] (-) TimerEvent: {}
+[96.362941] (-) TimerEvent: {}
+[96.464182] (-) TimerEvent: {}
+[96.565206] (-) TimerEvent: {}
+[96.666014] (-) TimerEvent: {}
+[96.766784] (-) TimerEvent: {}
+[96.867475] (-) TimerEvent: {}
+[96.968166] (-) TimerEvent: {}
+[97.068818] (-) TimerEvent: {}
+[97.169584] (-) TimerEvent: {}
+[97.270246] (-) TimerEvent: {}
+[97.370981] (-) TimerEvent: {}
+[97.471596] (-) TimerEvent: {}
+[97.572292] (-) TimerEvent: {}
+[97.673059] (-) TimerEvent: {}
+[97.774513] (-) TimerEvent: {}
+[97.875397] (-) TimerEvent: {}
+[97.976071] (-) TimerEvent: {}
+[98.076892] (-) TimerEvent: {}
+[98.177671] (-) TimerEvent: {}
+[98.278196] (-) TimerEvent: {}
+[98.379000] (-) TimerEvent: {}
+[98.479671] (-) TimerEvent: {}
+[98.580393] (-) TimerEvent: {}
+[98.681119] (-) TimerEvent: {}
+[98.781846] (-) TimerEvent: {}
+[98.882617] (-) TimerEvent: {}
+[98.983344] (-) TimerEvent: {}
+[99.083922] (-) TimerEvent: {}
+[99.184695] (-) TimerEvent: {}
+[99.285359] (-) TimerEvent: {}
+[99.385933] (-) TimerEvent: {}
+[99.486538] (-) TimerEvent: {}
+[99.587274] (-) TimerEvent: {}
+[99.687985] (-) TimerEvent: {}
+[99.788567] (-) TimerEvent: {}
+[99.889333] (-) TimerEvent: {}
+[99.989981] (-) TimerEvent: {}
+[100.090601] (-) TimerEvent: {}
+[100.191346] (-) TimerEvent: {}
+[100.292090] (-) TimerEvent: {}
+[100.392632] (-) TimerEvent: {}
+[100.493228] (-) TimerEvent: {}
+[100.594045] (-) TimerEvent: {}
+[100.694931] (-) TimerEvent: {}
+[100.795589] (-) TimerEvent: {}
+[100.896252] (-) TimerEvent: {}
+[100.997014] (-) TimerEvent: {}
+[101.097835] (-) TimerEvent: {}
+[101.198673] (-) TimerEvent: {}
+[101.299463] (-) TimerEvent: {}
+[101.400295] (-) TimerEvent: {}
+[101.500935] (-) TimerEvent: {}
+[101.601961] (-) TimerEvent: {}
+[101.702601] (-) TimerEvent: {}
+[101.803358] (-) TimerEvent: {}
+[101.904535] (-) TimerEvent: {}
+[102.007139] (-) TimerEvent: {}
+[102.108304] (-) TimerEvent: {}
+[102.209410] (-) TimerEvent: {}
+[102.310463] (-) TimerEvent: {}
+[102.411300] (-) TimerEvent: {}
+[102.512004] (-) TimerEvent: {}
+[102.612836] (-) TimerEvent: {}
+[102.713609] (-) TimerEvent: {}
+[102.814284] (-) TimerEvent: {}
+[102.915090] (-) TimerEvent: {}
+[103.015862] (-) TimerEvent: {}
+[103.116490] (-) TimerEvent: {}
+[103.217249] (-) TimerEvent: {}
+[103.318176] (-) TimerEvent: {}
+[103.418819] (-) TimerEvent: {}
+[103.519480] (-) TimerEvent: {}
+[103.620178] (-) TimerEvent: {}
+[103.721090] (-) TimerEvent: {}
+[103.821922] (-) TimerEvent: {}
+[103.922567] (-) TimerEvent: {}
+[104.023320] (-) TimerEvent: {}
+[104.124146] (-) TimerEvent: {}
+[104.224980] (-) TimerEvent: {}
+[104.325896] (-) TimerEvent: {}
+[104.426793] (-) TimerEvent: {}
+[104.527678] (-) TimerEvent: {}
+[104.628649] (-) TimerEvent: {}
+[104.729644] (-) TimerEvent: {}
+[104.830527] (-) TimerEvent: {}
+[104.931211] (-) TimerEvent: {}
+[105.032085] (-) TimerEvent: {}
+[105.132872] (-) TimerEvent: {}
+[105.233629] (-) TimerEvent: {}
+[105.334324] (-) TimerEvent: {}
+[105.434983] (-) TimerEvent: {}
+[105.535435] (-) TimerEvent: {}
+[105.635984] (-) TimerEvent: {}
+[105.736664] (-) TimerEvent: {}
+[105.837422] (-) TimerEvent: {}
+[105.938030] (-) TimerEvent: {}
+[106.038764] (-) TimerEvent: {}
+[106.139414] (-) TimerEvent: {}
+[106.240217] (-) TimerEvent: {}
+[106.341193] (-) TimerEvent: {}
+[106.442061] (-) TimerEvent: {}
+[106.542666] (-) TimerEvent: {}
+[106.643552] (-) TimerEvent: {}
+[106.744320] (-) TimerEvent: {}
+[106.844944] (-) TimerEvent: {}
+[106.945752] (-) TimerEvent: {}
+[107.046494] (-) TimerEvent: {}
+[107.147181] (-) TimerEvent: {}
+[107.247782] (-) TimerEvent: {}
+[107.348585] (-) TimerEvent: {}
+[107.449248] (-) TimerEvent: {}
+[107.550041] (-) TimerEvent: {}
+[107.650753] (-) TimerEvent: {}
+[107.751566] (-) TimerEvent: {}
+[107.852366] (-) TimerEvent: {}
+[107.953070] (-) TimerEvent: {}
+[108.053670] (-) TimerEvent: {}
+[108.154384] (-) TimerEvent: {}
+[108.254959] (-) TimerEvent: {}
+[108.355644] (-) TimerEvent: {}
+[108.456260] (-) TimerEvent: {}
+[108.557008] (-) TimerEvent: {}
+[108.657852] (-) TimerEvent: {}
+[108.758468] (-) TimerEvent: {}
+[108.859068] (-) TimerEvent: {}
+[108.959875] (-) TimerEvent: {}
+[109.060669] (-) TimerEvent: {}
+[109.161357] (-) TimerEvent: {}
+[109.262010] (-) TimerEvent: {}
+[109.362641] (-) TimerEvent: {}
+[109.463460] (-) TimerEvent: {}
+[109.564192] (-) TimerEvent: {}
+[109.665010] (-) TimerEvent: {}
+[109.765662] (-) TimerEvent: {}
+[109.866355] (-) TimerEvent: {}
+[109.966976] (-) TimerEvent: {}
+[110.067558] (-) TimerEvent: {}
+[110.168236] (-) TimerEvent: {}
+[110.269052] (-) TimerEvent: {}
+[110.370035] (-) TimerEvent: {}
+[110.470942] (-) TimerEvent: {}
+[110.571824] (-) TimerEvent: {}
+[110.672602] (-) TimerEvent: {}
+[110.773351] (-) TimerEvent: {}
+[110.874238] (-) TimerEvent: {}
+[110.975133] (-) TimerEvent: {}
+[111.075848] (-) TimerEvent: {}
+[111.176645] (-) TimerEvent: {}
+[111.277377] (-) TimerEvent: {}
+[111.378125] (-) TimerEvent: {}
+[111.478785] (-) TimerEvent: {}
+[111.579594] (-) TimerEvent: {}
+[111.680423] (-) TimerEvent: {}
+[111.781078] (-) TimerEvent: {}
+[111.881833] (-) TimerEvent: {}
+[111.982438] (-) TimerEvent: {}
+[112.083129] (-) TimerEvent: {}
+[112.183808] (-) TimerEvent: {}
+[112.284874] (-) TimerEvent: {}
+[112.385934] (-) TimerEvent: {}
+[112.486949] (-) TimerEvent: {}
+[112.588217] (-) TimerEvent: {}
+[112.689350] (-) TimerEvent: {}
+[112.790307] (-) TimerEvent: {}
+[112.891342] (-) TimerEvent: {}
+[112.992432] (-) TimerEvent: {}
+[113.093556] (-) TimerEvent: {}
+[113.194548] (-) TimerEvent: {}
+[113.295351] (-) TimerEvent: {}
+[113.396124] (-) TimerEvent: {}
+[113.496856] (-) TimerEvent: {}
+[113.597470] (-) TimerEvent: {}
+[113.698207] (-) TimerEvent: {}
+[113.798910] (-) TimerEvent: {}
+[113.899693] (-) TimerEvent: {}
+[114.000459] (-) TimerEvent: {}
+[114.101070] (-) TimerEvent: {}
+[114.201793] (-) TimerEvent: {}
+[114.302604] (-) TimerEvent: {}
+[114.403387] (-) TimerEvent: {}
+[114.503997] (-) TimerEvent: {}
+[114.604672] (-) TimerEvent: {}
+[114.705501] (-) TimerEvent: {}
+[114.806197] (-) TimerEvent: {}
+[114.906934] (-) TimerEvent: {}
+[115.007557] (-) TimerEvent: {}
+[115.108318] (-) TimerEvent: {}
+[115.209035] (-) TimerEvent: {}
+[115.309790] (-) TimerEvent: {}
+[115.410433] (-) TimerEvent: {}
+[115.511125] (-) TimerEvent: {}
+[115.611775] (-) TimerEvent: {}
+[115.712542] (-) TimerEvent: {}
+[115.813297] (-) TimerEvent: {}
+[115.913876] (-) TimerEvent: {}
+[116.014584] (-) TimerEvent: {}
+[116.115352] (-) TimerEvent: {}
+[116.215971] (-) TimerEvent: {}
+[116.316675] (-) TimerEvent: {}
+[116.417400] (-) TimerEvent: {}
+[116.517951] (-) TimerEvent: {}
+[116.618542] (-) TimerEvent: {}
+[116.719164] (-) TimerEvent: {}
+[116.819652] (-) TimerEvent: {}
+[116.920340] (-) TimerEvent: {}
+[117.021153] (-) TimerEvent: {}
+[117.121995] (-) TimerEvent: {}
+[117.222744] (-) TimerEvent: {}
+[117.323878] (-) TimerEvent: {}
+[117.424567] (-) TimerEvent: {}
+[117.525273] (-) TimerEvent: {}
+[117.626037] (-) TimerEvent: {}
+[117.726636] (-) TimerEvent: {}
+[117.827259] (-) TimerEvent: {}
+[117.927861] (-) TimerEvent: {}
+[118.028599] (-) TimerEvent: {}
+[118.129196] (-) TimerEvent: {}
+[118.229708] (-) TimerEvent: {}
+[118.330313] (-) TimerEvent: {}
+[118.430874] (-) TimerEvent: {}
+[118.531690] (-) TimerEvent: {}
+[118.632258] (-) TimerEvent: {}
+[118.733267] (-) TimerEvent: {}
+[118.834328] (-) TimerEvent: {}
+[118.935049] (-) TimerEvent: {}
+[119.035825] (-) TimerEvent: {}
+[119.136645] (-) TimerEvent: {}
+[119.237362] (-) TimerEvent: {}
+[119.338135] (-) TimerEvent: {}
+[119.438925] (-) TimerEvent: {}
+[119.539550] (-) TimerEvent: {}
+[119.640172] (-) TimerEvent: {}
+[119.740892] (-) TimerEvent: {}
+[119.841634] (-) TimerEvent: {}
+[119.942206] (-) TimerEvent: {}
+[120.042951] (-) TimerEvent: {}
+[120.143679] (-) TimerEvent: {}
+[120.244551] (-) TimerEvent: {}
+[120.345521] (-) TimerEvent: {}
+[120.446488] (-) TimerEvent: {}
+[120.547374] (-) TimerEvent: {}
+[120.648018] (-) TimerEvent: {}
+[120.748833] (-) TimerEvent: {}
+[120.849654] (-) TimerEvent: {}
+[120.950594] (-) TimerEvent: {}
+[121.051118] (-) TimerEvent: {}
+[121.151613] (-) TimerEvent: {}
+[121.252074] (-) TimerEvent: {}
+[121.352718] (-) TimerEvent: {}
+[121.453430] (-) TimerEvent: {}
+[121.554171] (-) TimerEvent: {}
+[121.654976] (-) TimerEvent: {}
+[121.756004] (-) TimerEvent: {}
+[121.856604] (-) TimerEvent: {}
+[121.957399] (-) TimerEvent: {}
+[122.058244] (-) TimerEvent: {}
+[122.159039] (-) TimerEvent: {}
+[122.259667] (-) TimerEvent: {}
+[122.360373] (-) TimerEvent: {}
+[122.461180] (-) TimerEvent: {}
+[122.561682] (-) TimerEvent: {}
+[122.662305] (-) TimerEvent: {}
+[122.763109] (-) TimerEvent: {}
+[122.864247] (-) TimerEvent: {}
+[122.965199] (-) TimerEvent: {}
+[123.066206] (-) TimerEvent: {}
+[123.166917] (-) TimerEvent: {}
+[123.267803] (-) TimerEvent: {}
+[123.368375] (-) TimerEvent: {}
+[123.469319] (-) TimerEvent: {}
+[123.570312] (-) TimerEvent: {}
+[123.671119] (-) TimerEvent: {}
+[123.771949] (-) TimerEvent: {}
+[123.872684] (-) TimerEvent: {}
+[123.973362] (-) TimerEvent: {}
+[124.074086] (-) TimerEvent: {}
+[124.174833] (-) TimerEvent: {}
+[124.275578] (-) TimerEvent: {}
+[124.376271] (-) TimerEvent: {}
+[124.477038] (-) TimerEvent: {}
+[124.577827] (-) TimerEvent: {}
+[124.678679] (-) TimerEvent: {}
+[124.779396] (-) TimerEvent: {}
+[124.880236] (-) TimerEvent: {}
+[124.980929] (-) TimerEvent: {}
+[125.081724] (-) TimerEvent: {}
+[125.182385] (-) TimerEvent: {}
+[125.283114] (-) TimerEvent: {}
+[125.383909] (-) TimerEvent: {}
+[125.484586] (-) TimerEvent: {}
+[125.585281] (-) TimerEvent: {}
+[125.686081] (-) TimerEvent: {}
+[125.786691] (-) TimerEvent: {}
+[125.887198] (-) TimerEvent: {}
+[125.987984] (-) TimerEvent: {}
+[126.088948] (-) TimerEvent: {}
+[126.189639] (-) TimerEvent: {}
+[126.290188] (-) TimerEvent: {}
+[126.390795] (-) TimerEvent: {}
+[126.491498] (-) TimerEvent: {}
+[126.592403] (-) TimerEvent: {}
+[126.693346] (-) TimerEvent: {}
+[126.794094] (-) TimerEvent: {}
+[126.894741] (-) TimerEvent: {}
+[126.995446] (-) TimerEvent: {}
+[127.096142] (-) TimerEvent: {}
+[127.196839] (-) TimerEvent: {}
+[127.297491] (-) TimerEvent: {}
+[127.398193] (-) TimerEvent: {}
+[127.498739] (-) TimerEvent: {}
+[127.599361] (-) TimerEvent: {}
+[127.699957] (-) TimerEvent: {}
+[127.800837] (-) TimerEvent: {}
+[127.901401] (-) TimerEvent: {}
+[128.002041] (-) TimerEvent: {}
+[128.102769] (-) TimerEvent: {}
+[128.203499] (-) TimerEvent: {}
+[128.304292] (-) TimerEvent: {}
+[128.404972] (-) TimerEvent: {}
+[128.505801] (-) TimerEvent: {}
+[128.606398] (-) TimerEvent: {}
+[128.707277] (-) TimerEvent: {}
+[128.807922] (-) TimerEvent: {}
+[128.908928] (-) TimerEvent: {}
+[129.009660] (-) TimerEvent: {}
+[129.110344] (-) TimerEvent: {}
+[129.210808] (-) TimerEvent: {}
+[129.311311] (-) TimerEvent: {}
+[129.411787] (-) TimerEvent: {}
+[129.512330] (-) TimerEvent: {}
+[129.612883] (-) TimerEvent: {}
+[129.713389] (-) TimerEvent: {}
+[129.814105] (-) TimerEvent: {}
+[129.914745] (-) TimerEvent: {}
+[130.015504] (-) TimerEvent: {}
+[130.116093] (-) TimerEvent: {}
+[130.216823] (-) TimerEvent: {}
+[130.317652] (-) TimerEvent: {}
+[130.418636] (-) TimerEvent: {}
+[130.519531] (-) TimerEvent: {}
+[130.620342] (-) TimerEvent: {}
+[130.721050] (-) TimerEvent: {}
+[130.821618] (-) TimerEvent: {}
+[130.922483] (-) TimerEvent: {}
+[131.023247] (-) TimerEvent: {}
+[131.123759] (-) TimerEvent: {}
+[131.224395] (-) TimerEvent: {}
+[131.324961] (-) TimerEvent: {}
+[131.425675] (-) TimerEvent: {}
+[131.526362] (-) TimerEvent: {}
+[131.627110] (-) TimerEvent: {}
+[131.727757] (-) TimerEvent: {}
+[131.828325] (-) TimerEvent: {}
+[131.928789] (-) TimerEvent: {}
+[132.029261] (-) TimerEvent: {}
+[132.129714] (-) TimerEvent: {}
+[132.230320] (-) TimerEvent: {}
+[132.331018] (-) TimerEvent: {}
+[132.431742] (-) TimerEvent: {}
+[132.532380] (-) TimerEvent: {}
+[132.633068] (-) TimerEvent: {}
+[132.733717] (-) TimerEvent: {}
+[132.834345] (-) TimerEvent: {}
+[132.934926] (-) TimerEvent: {}
+[133.035536] (-) TimerEvent: {}
+[133.136143] (-) TimerEvent: {}
+[133.236787] (-) TimerEvent: {}
+[133.337488] (-) TimerEvent: {}
+[133.438354] (-) TimerEvent: {}
+[133.539084] (-) TimerEvent: {}
+[133.639805] (-) TimerEvent: {}
+[133.740405] (-) TimerEvent: {}
+[133.841095] (-) TimerEvent: {}
+[133.941774] (-) TimerEvent: {}
+[134.042585] (-) TimerEvent: {}
+[134.143106] (-) TimerEvent: {}
+[134.243709] (-) TimerEvent: {}
+[134.344546] (-) TimerEvent: {}
+[134.445400] (-) TimerEvent: {}
+[134.545927] (-) TimerEvent: {}
+[134.646383] (-) TimerEvent: {}
+[134.746915] (-) TimerEvent: {}
+[134.847657] (-) TimerEvent: {}
+[134.879775] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for ignition-math6 -- found version 6.15.1\n'}
+[134.887408] (audibot_gazebo) StdoutLine: {'line': b'-- Looking for ignition-transport8 -- found version 8.2.1\n'}
+[134.888190] (audibot_gazebo) StdoutLine: {'line': b'-- Searching for dependencies of ignition-transport8\n'}
+[134.947929] (-) TimerEvent: {}
+[135.048547] (-) TimerEvent: {}
+[135.149328] (-) TimerEvent: {}
+[135.250029] (-) TimerEvent: {}
+[135.350541] (-) TimerEvent: {}
+[135.451237] (-) TimerEvent: {}
+[135.551773] (-) TimerEvent: {}
+[135.652687] (-) TimerEvent: {}
+[135.753177] (-) TimerEvent: {}
+[135.854153] (-) TimerEvent: {}
+[135.954848] (-) TimerEvent: {}
+[136.055474] (-) TimerEvent: {}
+[136.155978] (-) TimerEvent: {}
+[136.256601] (-) TimerEvent: {}
+[136.357307] (-) TimerEvent: {}
+[136.457989] (-) TimerEvent: {}
+[136.558721] (-) TimerEvent: {}
+[136.659720] (-) TimerEvent: {}
+[136.760441] (-) TimerEvent: {}
+[136.861296] (-) TimerEvent: {}
+[136.962082] (-) TimerEvent: {}
+[137.063002] (-) TimerEvent: {}
+[137.163759] (-) TimerEvent: {}
+[137.264345] (-) TimerEvent: {}
+[137.295849] (audibot_gazebo) StdoutLine: {'line': b'-- Found Protobuf: /usr/lib/x86_64-linux-gnu/libprotobuf.so (found suitable version "3.12.4", minimum required is "3") \n'}
+[137.364522] (-) TimerEvent: {}
+[137.465193] (-) TimerEvent: {}
+[137.565978] (-) TimerEvent: {}
+[137.666591] (-) TimerEvent: {}
+[137.767104] (-) TimerEvent: {}
+[137.867811] (-) TimerEvent: {}
+[137.906734] (audibot_gazebo) JobEnded: {'identifier': 'audibot_gazebo', 'rc': 'SIGINT'}
+[137.918300] (audibot) JobSkipped: {'identifier': 'audibot'}
+[137.918477] (-) EventReactorShutdown: {}

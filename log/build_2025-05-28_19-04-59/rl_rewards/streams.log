@@ -1,0 +1,19 @@
+[3.109s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/build --no-deps symlink_data
+[3.653s] running develop
+[3.653s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[3.653s]   warnings.warn(
+[3.927s] running egg_info
+[3.928s] writing rl_rewards.egg-info/PKG-INFO
+[3.928s] writing dependency_links to rl_rewards.egg-info/dependency_links.txt
+[3.929s] writing entry points to rl_rewards.egg-info/entry_points.txt
+[3.929s] writing requirements to rl_rewards.egg-info/requires.txt
+[3.929s] writing top-level names to rl_rewards.egg-info/top_level.txt
+[3.930s] reading manifest file 'rl_rewards.egg-info/SOURCES.txt'
+[3.931s] writing manifest file 'rl_rewards.egg-info/SOURCES.txt'
+[3.936s] running build_ext
+[3.940s] Creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages/rl-rewards.egg-link (link to .)
+[3.941s] Installing rl_rewards script to /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/rl_rewards
+[3.945s] 
+[3.946s] Installed /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards
+[3.947s] running symlink_data
+[3.985s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/build --no-deps symlink_data

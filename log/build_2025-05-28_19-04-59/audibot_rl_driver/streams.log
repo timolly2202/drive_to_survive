@@ -1,0 +1,22 @@
+[1.398s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build --no-deps symlink_data --force
+[1.713s] running develop
+[1.713s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[1.714s]   warnings.warn(
+[1.937s] running egg_info
+[1.938s] writing audibot_rl_driver.egg-info/PKG-INFO
+[1.938s] writing dependency_links to audibot_rl_driver.egg-info/dependency_links.txt
+[1.939s] writing entry points to audibot_rl_driver.egg-info/entry_points.txt
+[1.939s] writing requirements to audibot_rl_driver.egg-info/requires.txt
+[1.940s] writing top-level names to audibot_rl_driver.egg-info/top_level.txt
+[1.941s] reading manifest file 'audibot_rl_driver.egg-info/SOURCES.txt'
+[1.942s] writing manifest file 'audibot_rl_driver.egg-info/SOURCES.txt'
+[1.944s] running build_ext
+[1.944s] Creating /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages/audibot-rl-driver.egg-link (link to .)
+[1.945s] Installing rl_agent_node script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/audibot_rl_driver
+[1.945s] Installing rl_agent_test script to /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/audibot_rl_driver
+[1.946s] 
+[1.946s] Installed /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver
+[1.946s] running symlink_data
+[1.946s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/resource/audibot_rl_driver -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/share/ament_index/resource_index/packages
+[1.947s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/share/audibot_rl_driver
+[1.982s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/audibot_rl_driver/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/audibot_rl_driver/build --no-deps symlink_data --force

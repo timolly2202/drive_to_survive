@@ -1,0 +1,21 @@
+[10.671s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/build --no-deps symlink_data
+[11.939s] running develop
+[11.950s] /usr/lib/python3/dist-packages/setuptools/command/easy_install.py:158: EasyInstallDeprecationWarning: easy_install command is deprecated. Use build and pip and other standards-based tools.
+[11.951s]   warnings.warn(
+[12.892s] running egg_info
+[12.892s] writing rl_rewards.egg-info/PKG-INFO
+[12.892s] writing dependency_links to rl_rewards.egg-info/dependency_links.txt
+[12.893s] writing entry points to rl_rewards.egg-info/entry_points.txt
+[12.894s] writing requirements to rl_rewards.egg-info/requires.txt
+[12.894s] writing top-level names to rl_rewards.egg-info/top_level.txt
+[12.895s] reading manifest file 'rl_rewards.egg-info/SOURCES.txt'
+[12.912s] writing manifest file 'rl_rewards.egg-info/SOURCES.txt'
+[12.915s] running build_ext
+[12.915s] Creating /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages/rl-rewards.egg-link (link to .)
+[12.916s] Installing rl_rewards script to /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/rl_rewards
+[12.917s] 
+[12.917s] Installed /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards
+[12.918s] running symlink_data
+[12.918s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/resource/rl_rewards -> /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/share/ament_index/resource_index/packages
+[12.931s] symbolically linking /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/package.xml -> /home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/share/rl_rewards
+[13.130s] Invoked command in '/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards' returned '0': PYTHONPATH=/home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/prefix_override:/usr/lib/python3/dist-packages/colcon_core/task/python/colcon_distutils_commands:/home/tejas_bhuta/git/drive_to_survive/install/rl_rewards/lib/python3.10/site-packages:${PYTHONPATH} /usr/bin/python3 -W ignore:setup.py install is deprecated setup.py develop --editable --build-directory /home/tejas_bhuta/git/drive_to_survive/build/rl_rewards/build --no-deps symlink_data

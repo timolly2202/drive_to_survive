@@ -1,0 +1,8 @@
+source;share/audibot/hook/cmake_prefix_path.ps1
+source;share/audibot/hook/cmake_prefix_path.dsv
+source;share/audibot/hook/cmake_prefix_path.sh
+source;share/audibot/local_setup.bash
+source;share/audibot/local_setup.dsv
+source;share/audibot/local_setup.ps1
+source;share/audibot/local_setup.sh
+source;share/audibot/local_setup.zsh

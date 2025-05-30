@@ -1,0 +1,46 @@
+[1.029s] Invoking command in '/home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf': CMAKE_PREFIX_PATH=/opt/ros/humble /usr/bin/cmake /home/tejas_bhuta/git/drive_to_survive/resources/gazebo_tf -DAMENT_CMAKE_SYMLINK_INSTALL=1 -DCMAKE_INSTALL_PREFIX=/home/tejas_bhuta/git/drive_to_survive/install/gazebo_tf
+[1.382s] -- The C compiler identification is GNU 11.4.0
+[1.512s] -- The CXX compiler identification is GNU 11.4.0
+[1.879s] -- Detecting C compiler ABI info
+[2.041s] -- Detecting C compiler ABI info - done
+[2.051s] -- Check for working C compiler: /usr/bin/cc - skipped
+[2.051s] -- Detecting C compile features
+[2.052s] -- Detecting C compile features - done
+[2.055s] -- Detecting CXX compiler ABI info
+[2.247s] -- Detecting CXX compiler ABI info - done
+[2.256s] -- Check for working CXX compiler: /usr/bin/c++ - skipped
+[2.256s] -- Detecting CXX compile features
+[2.257s] -- Detecting CXX compile features - done
+[2.260s] -- Found ament_cmake: 1.3.10 (/opt/ros/humble/share/ament_cmake/cmake)
+[2.504s] -- Found Python3: /usr/bin/python3 (found version "3.10.12") found components: Interpreter 
+[2.626s] -- Override CMake install command with custom implementation using symlinks instead of copying resources
+[2.669s] -- Found rclcpp: 16.0.10 (/opt/ros/humble/share/rclcpp/cmake)
+[2.920s] -- Found rosidl_generator_c: 3.1.5 (/opt/ros/humble/share/rosidl_generator_c/cmake)
+[2.928s] -- Found rosidl_adapter: 3.1.5 (/opt/ros/humble/share/rosidl_adapter/cmake)
+[2.937s] -- Found rosidl_generator_cpp: 3.1.5 (/opt/ros/humble/share/rosidl_generator_cpp/cmake)
+[2.950s] -- Using all available rosidl_typesupport_c: rosidl_typesupport_fastrtps_c;rosidl_typesupport_introspection_c
+[2.966s] -- Using all available rosidl_typesupport_cpp: rosidl_typesupport_fastrtps_cpp;rosidl_typesupport_introspection_cpp
+[3.024s] -- Found rmw_implementation_cmake: 6.1.2 (/opt/ros/humble/share/rmw_implementation_cmake/cmake)
+[3.028s] -- Found rmw_fastrtps_cpp: 6.2.7 (/opt/ros/humble/share/rmw_fastrtps_cpp/cmake)
+[8.926s] -- Found OpenSSL: /usr/lib/x86_64-linux-gnu/libcrypto.so (found version "3.0.2")  
+[20.188s] -- Found FastRTPS: /opt/ros/humble/include  
+[30.670s] -- Using RMW implementation 'rmw_fastrtps_cpp' as default
+[30.683s] -- Looking for pthread.h
+[30.965s] -- Looking for pthread.h - found
+[30.966s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+[31.347s] -- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+[31.349s] -- Found Threads: TRUE  
+[31.443s] -- Found rclcpp_components: 16.0.10 (/opt/ros/humble/share/rclcpp_components/cmake)
+[31.472s] -- Found std_srvs: 4.2.4 (/opt/ros/humble/share/std_srvs/cmake)
+[31.489s] -- Found geometry_msgs: 4.2.4 (/opt/ros/humble/share/geometry_msgs/cmake)
+[31.508s] -- Found nav_msgs: 4.2.4 (/opt/ros/humble/share/nav_msgs/cmake)
+[31.525s] -- Found gazebo_msgs: 3.7.0 (/opt/ros/humble/share/gazebo_msgs/cmake)
+[31.570s] -- Found tf2: 0.25.8 (/opt/ros/humble/share/tf2/cmake)
+[31.575s] -- Found tf2_ros: 0.25.8 (/opt/ros/humble/share/tf2_ros/cmake)
+[31.654s] -- Found tf2_geometry_msgs: 0.25.8 (/opt/ros/humble/share/tf2_geometry_msgs/cmake)
+[31.724s] -- Found eigen3_cmake_module: 0.1.1 (/opt/ros/humble/share/eigen3_cmake_module/cmake)
+[31.727s] -- Found Eigen3: TRUE (found version "3.4.0") 
+[31.727s] -- Ensuring Eigen3 include directory is part of orocos-kdl CMake target
+[31.828s] -- Configuring done
+[31.854s] -- Generating done
+[31.857s] -- Build files have been written to: /home/tejas_bhuta/git/drive_to_survive/build/gazebo_tf
