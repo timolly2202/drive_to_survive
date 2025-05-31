@@ -281,28 +281,23 @@
    
   <!-- Setup. -->
 
-  <!-- Running the code -->
-   <h2 class="title is-3" id="project-setup">Running the Project</h2>
+<!-- Running the code -->
+<h2 class="title is-3" id="project-setup">Running the Project</h2>
 
-    <p>This project requires ROS2 (Humble) with Gazebo and RViz, set up on Ubuntu 22.04 in order to run.</p>
+<p>This project requires ROS2 (Humble) with Gazebo and RViz, set up on Ubuntu 22.04 in order to run.</p>
 
-    <pre><code class="language-bash">
-    # Launch world
-    ros2 launch gazebo_tf drive_to_survive.launch.py
+<p>Once the environment is built, launch the following components from separate terminals:</p>
 
-    # Start YOLO detectors
-    ros2 launch audibot_yolo multi_camera.launch.py
+<pre><code class="language-bash">
+# 1. Launch the environment manager (with optional RViz visualization)
+ros2 run rl_gym environment_manager use_rviz:=true
 
-    # Run RL Rewards
-    ros2 run rl_rewards rl_rewards
+# 2. In a new terminal, start the RL agent
+ros2 run audibot_rl_driver rl_agent_node
+</code></pre>
 
-    # Start RL Agent
-    ros2 run audibot_rl_driver rl_agent_node
-    </code></pre>
-
-  <!-- Running the code -->
-  </div>
-</section>
+<p>Optionally, you can run <code>use_rviz:=false</code> if RViz visualization is not needed.</p>
+<!--/ Running the code -->
 
 
 <section class="section">
@@ -329,7 +324,7 @@
             <img src="./static/images/environment2.png"
                 class="teaser-image"
                 alt="Environment 2 Image">
-            <figcaption class="has-text-centered mt-2"><em>Environment 2 Image</em></figcaption>
+            <figcaption class="has-text-centered mt-2"><em>Environment Images</em></figcaption>
           </figure>
 
         </div>
