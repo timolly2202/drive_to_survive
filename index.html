@@ -465,7 +465,7 @@ ros2 run audibot_rl_driver rl_agent_node
             The agent was set up with an epsilon-greedy strategy for action selection. Initially, a high epsilon value meant broad exploration of the discrete action space by choosing random actions. This epsilon gradually decayed over total_agent_steps_taken, prompting the agent to start to exploit its learned Q-values by selecting actions predicted to have the highest reward. To further guide the agent in the early training phases when the policy was still largely random, a heuristic-assisted action selection mechanism was implemented. With a decaying probability (controlled by ASSIST_PROB_START, ASSIST_PROB_END, and ASSIST_DECAY_STEPS parameters), the agent would temporarily use a simple heuristic to choose an action aimed at steering towards the current goal. This was designed to accelerate initial learning by guiding the agent towards more relevant state-action regions.
           </p>
           <p>
-            As a result of these adaptations and dedicated training over several days, the DQN agent began to show a clear positive learning trend. The cumulative rewards per episode, though initially negative or highly variable, started to trend towards positive values over approximately 1300 training episodes. This indicated that the agent was successfully learning a policy to navigate towards the goals more effectively and incur fewer penalties, even with relatively long episode durations. While challenges like occasional cone collisions persisted due to the reward function's primary focus on goal achievement, the overall trajectory demonstrated successful learning within the simplified framework.
+            As a result of these adaptations and dedicated training over several days, the DQN agent began to show a slight positive learning trend. The cumulative rewards per episode, though initially negative or highly variable, started to trend towards positive values over approximately 1300 training episodes, however it wasn't very stable with alot of spikes. This indicated that the agent might have need more turing in the rewards logic to navigate towards the goals more effectively and incur fewer penalties. While challenges like occasional cone collisions persisted due to the reward function's primary focus on goal achievement, the overall trajectory demonstrated satisfactory learning within the simplified reward framework.
           </p>
 
           <h3>4. Reflection and Lessons Learned</h3>
@@ -481,7 +481,7 @@ ros2 run audibot_rl_driver rl_agent_node
 
           <h3>5. Future recommendations</h3>
           <p>
-            We can improve the dense reward function by adding small penalties for hitting cones or going off track. We could also discourage jerky or aggressive moves by giving negative rewards for sudden steering or acceleration. This would help the car learn to drive more smoothly. 
+            We can improve the dense reward function by adding small penalties for hitting cones or going off track. We could also discourage jerky or aggressive moves by giving negative rewards for sudden steering or acceleration. This would help the car learn to drive more smoothly. From there we would hopefully see more stable positive rewards on the graph after training.
           </p>
 
           <h3>6. Conclusion</h3>
