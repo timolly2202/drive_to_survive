@@ -401,54 +401,95 @@ ros2 run audibot_rl_driver rl_agent_node
     <!-- Concurrent Work. -->
     <div class="columns is-centered">
       <div class="column is-full-width">
-        <h2 class="title is-3">Results discussion and reflection</h2>
+        <h2 class="title is-3">Results, Discussion and Reflection</h2>
 
         <div class="content has-text-justified">
+          <div class="content has-text-justified">
+          <h3>1. Introduction to Results and Discussion</h3>
           <p>
-            This is a sample text to show how the results discussion and 
-            reflection would look like in your own project. You can use this 
-            space to describe the main results obtained, the limitations of your work, 
-            and the future work that could be done.
+            This section outlines the outcomes of the "Drive to Survive" project. The final aim was to develop a DQN-based autonomous agent capable of sequential goal navigation within a simulated Gazebo environment, using YOLO for cone perception. We will cover the results achieved, the evolution of the project including challenges faced, the adaptations made by the team, and a reflection on the overall process and learnings.
           </p>
-          <p>
-            Orem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod 
-            tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, 
-            quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo 
-            consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse 
-            cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat 
-            non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-          </p>
-          <p>
-            Tim's dot points:
-            <p>Challenges with RL</p>
-            <ul>
-              <li>
-                We had trouble getting the gazebo to reset after each episode. It ended up needing a full shutdown and restart with subprocesses which caused problems.
-                <ul>
-                  <li>Subprocesses didn't work nicely with gzserver and took a while to figure out.</li>
-                </ul>
-              </li>
-              <li>
-                We started out going for just goals in training, which caused it to crash into the cones. It also stopped since we didn't give it less rewards for staying still. This led to erratic training rewards, as seen in the DQN training graph.
-              </li>
-              <li>
-                We didn't have time to make the rewards system more expansive (like staying in track and not hitting cones, etc) so this is what we would do in the future.
-              </li>
-            </ul>
 
-            <p>YOLO Successes</p>
-            <ul>
-              <li>
-                Had to manually label 200 images to train the YOLO to detect cones and firetrucks so we could put it in the observation space for the car. It worked really well after training at getting the objects relatively close to the car. It was less successful for the cones further away since in some cases they were only around 4 pixels.
-              </li>
-              <li>
-                All four cameras get all the close cones bounding boxes surrounding the car.
-              </li>
-            </ul>
+          <h3>2. Achieved Results</h3>
+          <h4>Created a Gazebo Environment and ROS 2 Integration</h4>
+          <p>
+            A simulated driving environment was configured in Gazebo, adapted from resources used in a previous "Programming for Mechatronic Systems" subject. This environment leverages ROS 2 (Humble), providing a relevant platform for developing and testing AI algorithms in a robotics context, aligning well with the "Artificial Intelligence in Robotics" class objectives.
+          </p>
+          <h4>Trained YOLO Object Detection</h4>
+          <p>
+            A YOLO (You Only Look Once) object detection system based on Convolutional Neural Networks (CNN) was trained to identify cones and firetrucks. This involved manually labeling approximately 200 images from the simulation to create a custom dataset. The trained model demonstrated good performance in detecting objects relatively close to the car across all four of its simulated cameras. While detection of distant cones (appearing as only a few pixels) was less reliable, the system effectively provided bounding boxes for nearby cones.
+          </p>
+          <h4>rl_gym Environment Management for training episodes</h4>
+          <p>
+            To facilitate Reinforcement Learning training, a dedicated ROS 2 package named rl_gym was developed. Its primary role was to manage the Gazebo simulation lifecycle for each training episode. Upon receiving an episode start request from the DQN agent, the rl_gym node would launch the Gazebo world and the necessary camera nodes. Once the environment was operational, it published a confirmation signal back to the DQN agent. After the Rewards Package signaled the end of an episode (by publishing the final rewards), rl_gym was designed to terminate these nodes and await the next training episode request.
+          </p>
+          <h4>Trained a DQN RL Agent</h4>
+          <p>
+            A DQN agent was implemented to navigate the simulated environment by driving towards a sequence of predefined goals. The agent utilized a discrete action space, mapping its learned policy to throttle, steering, and brake commands for the simulated Audibot. During training over 1300 episodes, the agent demonstrated the ability to drive towards these goals. However, initial training, which focused solely on reaching goals, sometimes resulted in collisions with cones and periods of inaction due to an incomplete reward function. The training reward graph indicated fluctuating performance, highlighting the need for further refinement of the reward signals for more consistent learning.
+          </p>
+          <h4>Setup a LIDAR-Based Cone Classification with SVM</h4>
+          <p>
+            A LIDAR processing pipeline was developed using a ROS 2 package named cluster_puck. This system could detect object clusters from 2D LIDAR scans, apply KMeans clustering and Principal Component Analysis (PCA) for feature extraction, and then classify these clusters (e.g., as cones) using a Support Vector Machine (SVM). This component successfully demonstrated real-time labeling, training, and visualization of detected cones in RViz.
+          </p>
+          <h4>Made an Experimental Rewards setup (rl_rewards_node)</h4>
+          <p>
+            A separate ROS 2 node, rl_rewards_node, was created to enhance modularity and better integrate with the ROS 2 ecosystem. The idea was that it would act as an "episode supervisor." This node was responsible for Loading and publishing the sequence of target goals. Determining if the car was on the track using YOLO detections. Detecting episode termination conditions (e.g., off-track, task completion, timeout). Calculating and publishing a final cumulative reward for the episode.
+          </p>
+
+          <h3>3. Discussion of Challenges and Project Evolution</h3>
+          <p>
+            The project initially aimed for a comprehensive autonomous driving system within the ROS 2 and Gazebo framework. We explored using the Reinforcement Learning algorithm, Proxy Policy Optimisation (PPO), to train the Audibot. This was envisioned to be supported by multiple, interconnected ROS 2 modules: YOLO for cone perception, LIDAR processing, an external rl_rewards_node for managing game logic and scoring, and an rl_gym package to interface with the Gazebo environment. The goal was a modular design, allowing different team members to develop and contribute each component as a ROS Node.
+          </p>
+          <p>
+            While each package was completed successfully on its own, several challenges arose when integrating them.
+          </p>
+          <p>
+            Our initial project design involved two ROS 2 nodes for perceiving cones for the agent's observation space. We planned to use information from two distinct systems: camera-based YOLO object detection and the LIDAR-based cluster_puck package. The yolo was designed to identify the cone (from the fire truck) while the lidar calculated its position from the car. This may have been an overly complex setup. After the mid-project presentation we received the following feedback from Raphael Falque, who noted, "... You probably want to drop one of the implementations for the cone detection or combine them (e.g., yolo for cone detection and lidar for position prediction)". We tools this advice onboard and continued on with just Yolo in the observation space in the meantime to streamline getting the RL training.
+          </p>
+          <p>
+            Another challenge we faced was reliably managing the Gazebo simulation for repeated RL training episodes. We encountered issues with consistently resetting the environment after each episode, which initially required full simulation shutdowns and restarts via subprocesses. These subprocesses did not always interact smoothly with the gzserver, and resolving these issues took considerable time. Adapting the pre-existing Gazebo environment from a prior subject also involved a significant setup effort to meet the specific demands of an RL training pipeline.
+          </p>
+          <p>
+            Early attempts at RL training faced challenges in achieving stable learning. When the training focused solely on reaching waypoints, the agent often collided with cones or would remain stationary, as the initial reward structure did not sufficiently penalize inaction or encourage path following. This resulted in erratic training reward patterns. The initial design, which included the external rl_rewards_node, also meant the RL agent received its primary feedback through this separate module, which may have introduced delays or complexities in the reward signaling necessary for effective step-by-step learning.
+          </p>
+          <p>
+            The turning point in the project was when we decided to set up a Deep Q-Network (DQN) for your training agent. This decision to ditch PPO was partly influenced by prior positive experiences with DQN, providing a more familiar framework. The primary objective was to train the AudiBot to drive sequentially from goal to goal. We streamlined the code by absorbing the Dense Reward and Goal Management into the logic within the audibot_rl_driver (DQN) node. This significantly improved reliability and consistency of the episodes. The DQN agent was now responsible for calculating its own dense, step-by-step rewards. It achieved this by directly subscribing to and interpreting signals like /in_track_status and /current_goal from Jarred's rl_rewards_node, rather than relying on a fully externalized dense reward calculation. Furthermore, the DQN node took over the management of progressing through the sequence of goals, including loading the goals.json file, tracking the current goal_index, and checking for goal achievement using logic similar to that in the original rl_rewards_node.
+          </p>
+          <p>
+            What we didn’t realize at the time of making the separate rl_rewards package was that the DQN agent needs to consistently receive rewards, step by step, during the episode. We initially thought it just received the total rewards at the end of the episode. This was a learning curve for us.
+          </p>
+          <p>
+            Next, we simplified the The rl_gym package's function and made it the primary environment launcher and resetter. The DQN node (audibot_rl_driver) assumed responsibility for direct sensor subscriptions and all observation processing. Now that we had it training continually we could start turning the DQN hyperparameters. They were iteratively adjusted to improve learning. Parameters such as the LEARNING_RATE for the AdamW optimizer, the EPS_DECAY rate governing the exploration-exploitation balance, and the TARGET_UPDATE_FREQUENCY for the target Q-network were refined based on observed training performance and agent stability during training sessions.
+          </p>
+          <p>
+            The agent was set up with an epsilon-greedy strategy for action selection. Initially, a high epsilon value meant broad exploration of the discrete action space by choosing random actions. This epsilon gradually decayed over total_agent_steps_taken, prompting the agent to start to exploit its learned Q-values by selecting actions predicted to have the highest reward. To further guide the agent in the early training phases when the policy was still largely random, a heuristic-assisted action selection mechanism was implemented. With a decaying probability (controlled by ASSIST_PROB_START, ASSIST_PROB_END, and ASSIST_DECAY_STEPS parameters), the agent would temporarily use a simple heuristic to choose an action aimed at steering towards the current goal. This was designed to accelerate initial learning by guiding the agent towards more relevant state-action regions.
+          </p>
+          <p>
+            As a result of these adaptations and dedicated training over several days, the DQN agent began to show a clear positive learning trend. The cumulative rewards per episode, though initially negative or highly variable, started to trend towards positive values over approximately 1300 training episodes. This indicated that the agent was successfully learning a policy to navigate towards the goals more effectively and incur fewer penalties, even with relatively long episode durations. While challenges like occasional cone collisions persisted due to the reward function's primary focus on goal achievement, the overall trajectory demonstrated successful learning within the simplified framework.
+          </p>
+
+          <h3>4. Reflection and Lessons Learned</h3>
+          <p>
+            The biggest lesson we learned from this project was to start simple and build up gradually, rather than developing multiple systems and trying to integrate everything at once. Simplifying the architecture by consolidating everything into the DQN agent node (audibot_rl_driver) made a big difference, ensuring the agent received immediate and consistent feedback. However, we’re glad we experimented with nodes, it showed real potential for modular ROS2 reinforcement learning projects in the future.
+          </p>
+          <p>
+            Training YOLO to detect cones and firetrucks showed us that a lot of the work in AI happens before the model even runs. One teammate had to manually label around 200 images, which took time but was key to getting good results. Good Data collection and preparation is just as important as the algorithm itself.
+          </p>
+          <p>
+            This project highlighted the value of an iterative approach and strong teamwork. Our early attempt with PPO evolved into a more practical DQN implementation, aligning better with our skills and timeline. Setting up a working Gazebo training environment also demanded persistence, especially in solving reset and launch issues. Regular online meetings kept communication clear and helped us work through challenges together. This collaborative process was key to getting the project over the line.
+          </p>
+
+          <h3>5. Future recommendations</h3>
+          <p>
+            We can improve the dense reward function by adding small penalties for hitting cones or going off track. We could also discourage jerky or aggressive moves by giving negative rewards for sudden steering or acceleration. This would help the car learn to drive more smoothly. 
+          </p>
+
+          <h3>6. Conclusion</h3>
+          <p>
+            The project successfully pivoted to develop a DQN agent capable of sequential goal navigation in a ROS 2 Gazebo environment, utilizing YOLO for cone perception. The agent demonstrated a positive learning trend over approximately 1300 training episodes. Key lessons from this project include the value of iterative development, realistic scope management, the critical need for dense reward signals in RL, and the practical effort involved in data preparation for perception systems like YOLO. The team's adaptability was crucial in delivering a functional RL-controlled agent.
           </p>
         </div>
-      </div>
-    </div>
+          
     <!--/ Concurrent Work. -->
 
   </div>
