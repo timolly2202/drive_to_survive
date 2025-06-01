@@ -128,13 +128,17 @@
         <span class="dnerf">Drive to Survive</span> 
         Here are the final main components of the system:
         <br><br>
-        -audibot_rl_driver (DQN) ROS node: Controls the Audibot using a Deep Q-Network, manages goal navigation, processes observations, calculates rewards, and refines learning through hyperparameter adjustments and an epsilon-greedy strategy.
+        -audibot_rl_driver (DQN) ROS node:
+        Controls the Audibot using a Deep Q-Network, manages goal navigation, processes observations, calculates rewards, and refines learning through hyperparameter adjustments and an epsilon-greedy strategy.
         <br><br>
-        -rl_gym ROS node: Serves as the primary environment launcher and resetter for the Gazebo simulation during training episodes.
+        -rl_gym ROS node:
+        Serves as the primary environment launcher and resetter for the Gazebo simulation during training episodes.
         <br><br>
-        -Gazebo environment: A simulated world featuring a race track, various objects (cones, firetrucks), and an Audi R8 model, equipped with a 2D LiDAR sensor and RGB-D cameras.
+        -Gazebo environment:
+        A simulated world featuring a race track, various objects (cones, firetrucks), and an Audi R8 model, equipped with a 2D LiDAR sensor and RGB-D cameras.
         <br><br>
-        -YOLO object detection system: A CNN-based system trained to identify cones and firetrucks within the Gazebo environment using manually labeled images from the Audi's cameras.
+        -YOLO object detection system:
+        A CNN-based system trained to identify cones and firetrucks within the Gazebo environment using manually labeled images from the Audi's cameras.
       </h2>
     </div>
   </div>
