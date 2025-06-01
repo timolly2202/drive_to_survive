@@ -124,22 +124,25 @@
       <img src="./static/images/teaser.png"
             class="teaser-image"
             alt="Teaser."/>
+            <br><br>
       <h2 class="subtitle has-text-centered">
         <span class="dnerf">Drive to Survive</span> 
-        Here are the final main components of the system:
-        <br><br>
-        -audibot_rl_driver (DQN) ROS node:
-        Controls the Audibot using a Deep Q-Network, manages goal navigation, processes observations, calculates rewards, and refines learning through hyperparameter adjustments and an epsilon-greedy strategy.
-        <br><br>
-        -rl_gym ROS node:
-        Serves as the primary environment launcher and resetter for the Gazebo simulation during training episodes.
-        <br><br>
-        -Gazebo environment:
-        A simulated world featuring a race track, various objects (cones, firetrucks), and an Audi R8 model, equipped with RGB-D cameras.
-        <br><br>
-        -YOLO object detection system:
-        A CNN-based system trained to identify cones and firetrucks within the Gazebo environment using manually labeled images from the Audi's cameras.
+        consists of these main components:
       </h2>
+      <ul>
+        <li>
+          <strong>audibot_rl_driver (DQN) ROS node:</strong> Controls the Audibot using a Deep Q-Network, manages goal navigation, processes observations, calculates rewards, and refines learning through hyperparameter adjustments and an epsilon-greedy strategy.
+        </li>
+        <li>
+          <strong>rl_gym ROS node:</strong> Serves as the primary environment launcher and resetter for the Gazebo simulation during training episodes.
+        </li>
+        <li>
+          <strong>Gazebo environment:</strong> A simulated world featuring a race track, various objects (cones, firetrucks), and an Audi R8 model, equipped with RGB-D cameras.
+        </li>
+        <li>
+          <strong>YOLO object detection system:</strong> A CNN-based system trained to identify cones and firetrucks within the Gazebo environment using manually labeled images from the Audi's cameras.
+        </li>
+      </ul>
     </div>
   </div>
 </section>
