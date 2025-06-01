@@ -126,10 +126,15 @@
             alt="Teaser."/>
       <h2 class="subtitle has-text-centered">
         <span class="dnerf">Drive to Survive</span> 
-        sample of teaser image for your project. 
-        Note that this image is AI generated and does not reflect any flowchart of an 
-        actual framework. However, this text would be a great place to give a quick 
-        summary of your own flowchart.
+        Here are the final main components of the system:
+        <br><br>
+        -audibot_rl_driver (DQN) ROS node: Controls the Audibot using a Deep Q-Network, manages goal navigation, processes observations, calculates rewards, and refines learning through hyperparameter adjustments and an epsilon-greedy strategy.
+        <br><br>
+        -rl_gym ROS node: Serves as the primary environment launcher and resetter for the Gazebo simulation during training episodes.
+        <br><br>
+        -Gazebo environment: A simulated world featuring a race track, various objects (cones, firetrucks), and an Audi R8 model, equipped with a 2D LiDAR sensor and RGB-D cameras.
+        <br><br>
+        -YOLO object detection system: A CNN-based system trained to identify cones and firetrucks within the Gazebo environment using manually labeled images from the Audi's cameras.
       </h2>
     </div>
   </div>
@@ -212,7 +217,7 @@
     <!-- Portfolio video. -->
     <div class="columns is-centered has-text-centered">
       <div class="column is-full-width">
-        <h2 id="portfolio-video" class="title is-3">Portfolio Video SAMPLE STILL</h2>
+        <h2 id="portfolio-video" class="title is-3">Drive_2_Survive Project Video</h2>
         <!-- 
         <p>
           As a youtube link:
@@ -225,15 +230,9 @@
         <!-- <p>
           Directly embedded video:
         </p> -->
-        <div class="content has-text-centered">
-          <video id="replay-video"
-                  controls
-                  preload
-                  playsinline
-                  width="100%">
-            <source src="./static/videos/portfolio_instructions.mp4"
-                    type="video/mp4">
-          </video>
+        <div class="publication-video">
+          <iframe src="https://www.youtube.com/watch?v=_IHY9wzep7Y&ab"
+                  frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
       </div>
     </div>
